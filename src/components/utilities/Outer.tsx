@@ -37,13 +37,13 @@ export function Outer<T extends DivBaseData = DivBaseData>({
     const visibility = useDerivedFromVarsSimple<Visibility>(json.visibility || 'visible', variables || new Map());
     const alpha = useDerivedFromVarsSimple<number>(json.alpha !== undefined ? json.alpha : 1, variables || new Map());
 
-    // Extract properties directly from JSON for MVP (non-reactive)
-    const paddings = json.paddings;
-    const margins = json.margins;
+    // Paddings and margins need expression evaluation (e.g. @{safeAreaTop})
+    const paddings = useDerivedFromVarsSimple(json.paddings, variables || new Map());
+    const margins = useDerivedFromVarsSimple(json.margins, variables || new Map());
     const background = json.background;
-    const border = json.border;
-    const width = json.width;
-    const height = json.height;
+    const border = useDerivedFromVarsSimple(json.border, variables || new Map());
+    const width = useDerivedFromVarsSimple(json.width, variables || new Map());
+    const height = useDerivedFromVarsSimple(json.height, variables || new Map());
 
     // Actions - use type assertion for now (will be refined in component implementations)
     const jsonAny = json as any;

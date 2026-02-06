@@ -40,6 +40,9 @@ export {
 
 export type { VariableType, VariableValue } from './expressions/variable';
 
+// Global variables controller
+export { createGlobalVariablesController, GlobalVariablesController } from './expressions/globalVariablesController';
+
 // Context hooks (for advanced usage)
 export { useDivKitContext, DivKitContext } from './context/DivKitContext';
 

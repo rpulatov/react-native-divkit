@@ -11,9 +11,13 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 // Import DivKit from the library
 // In a real project, you would use:
 // import { DivKit } from 'react-native-divkit';
-import { DivKit } from '../../src';
+import {
+  DivKit,
+  createGlobalVariablesController,
+  createVariable,
+} from '../../src';
 import type { DivKitProps } from '../../src';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 // Sample DivKit JSON configurations
 const simpleTextJson = {
@@ -367,8 +371,15 @@ const withVariablesJson = {
         div: {
           type: 'container',
           orientation: 'vertical',
-          paddings: { top: 16, bottom: 16, left: 16, right: 16 },
+          paddings: { top: '@{safeAreaTop}', bottom: 16, left: 16, right: 16 },
           items: [
+            {
+              type: 'text',
+              text: 'Global safeAreaTop @{safeAreaTop}',
+              font_size: 16,
+              text_color: '#666666',
+              margins: { bottom: 8 },
+            },
             {
               type: 'text',
               text: 'Hello, @{userName}!',
@@ -618,6 +629,13 @@ function AppContent() {
 
   const currentExample = examples[selectedExample];
 
+  // Global variables controller — shared between two DivKit instances
+  const globalController = useMemo(() => {
+    const controller = createGlobalVariablesController();
+    controller.setVariable(createVariable('safeAreaTop', 'integer', 50));
+    return controller;
+  }, []);
+
   // Add log entry
   const addLog = useCallback((message: string) => {
     const timestamp = new Date().toLocaleTimeString();
@@ -710,6 +728,7 @@ function AppContent() {
           direction="ltr"
           platform="touch"
           style={styles.divKit}
+          globalVariablesController={globalController}
         />
       </ScrollView>
 

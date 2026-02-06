@@ -18,7 +18,7 @@
  * - Extensions
  */
 
-import React, { useMemo, useCallback, useRef } from 'react';
+import React, { useMemo, useCallback, useRef, useEffect } from 'react';
 import { View, StyleSheet, type ViewStyle } from 'react-native';
 import type { Action, DivJson, DivVariable, Direction } from '../typings/common';
 import type { DivBaseData } from './types/base';
@@ -29,6 +29,7 @@ import { ActionContext, type ActionContextValue } from './context/ActionContext'
 import { StateContext, type StateContextValue, type StateSetter } from './context/StateContext';
 import { DivComponent } from './components/DivComponent';
 import { createVariable, Variable, type VariableType } from './expressions/variable';
+import { GlobalVariablesController } from './expressions/globalVariablesController';
 import { applyTemplatesRecursively } from './utils/applyTemplate';
 import { wrapError, type WrappedError } from './utils/wrapError';
 import { arrayInsert, arrayRemove, arraySet } from './actions/array';
@@ -80,6 +81,9 @@ export interface DivKitProps {
 
     /** Component ID (for debugging) */
     id?: string;
+
+    /** Global variables controller for sharing variables across DivKit instances */
+    globalVariablesController?: GlobalVariablesController;
 }
 
 /**
@@ -95,7 +99,8 @@ export function DivKit({
     direction = 'ltr',
     platform = 'touch',
     style,
-    id = 'root'
+    id = 'root',
+    globalVariablesController
 }: DivKitProps) {
     const componentIdCounter = useRef(0);
     const componentsMap = useRef<Map<string, ComponentContext>>(new Map());
@@ -149,10 +154,26 @@ export function DivKit({
         };
     }, [data, logError]);
 
-    // Initialize variables
+    // Create or reuse variables controller
+    const variablesController = useMemo(
+        () => globalVariablesController || new GlobalVariablesController(),
+        [globalVariablesController]
+    );
+
+    const globalVariables = variablesController.getVariables();
+
+    // Initialize variables: local (from JSON) + global, local has precedence
     const variables = useMemo(() => {
+        const localVariables = new Map<string, Variable>();
+        // Combined map: local and global variables, with local in precedence
         const map = new Map<string, Variable>();
 
+        // First, add global variables
+        for (const [varName, variable] of globalVariables) {
+            map.set(varName, variable);
+        }
+
+        // Then, add local variables (from card JSON) — they override globals
         initialVariables.forEach((varData: DivVariable) => {
             try {
                 // Skip property variables for MVP (complex feature)
@@ -160,7 +181,17 @@ export function DivKit({
                     return;
                 }
 
+                if (localVariables.has(varData.name)) {
+                    logError(
+                        wrapError(new Error('Duplicate variable'), {
+                            additional: { name: varData.name }
+                        })
+                    );
+                    return;
+                }
+
                 const variable = createVariable(varData.name, varData.type as VariableType, varData.value);
+                localVariables.set(varData.name, variable);
                 map.set(varData.name, variable);
             } catch (err) {
                 logError(
@@ -175,7 +206,21 @@ export function DivKit({
         });
 
         return map;
-    }, [initialVariables, logError]);
+    }, [initialVariables, globalVariables, logError]);
+
+    // Subscribe to new global variables added after initialization
+    useEffect(() => {
+        const store = variablesController.getLastAddedVariableStore();
+        const unsubscribe = store.subscribe((newVarName: string) => {
+            if (newVarName && !variables.has(newVarName)) {
+                const varInstance = globalVariables.get(newVarName);
+                if (varInstance) {
+                    variables.set(newVarName, varInstance);
+                }
+            }
+        });
+        return unsubscribe;
+    }, [variablesController, variables, globalVariables]);
 
     // Generate unique component IDs
     const genId = useCallback((key: string): string => {
