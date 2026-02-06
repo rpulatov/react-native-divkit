@@ -43,10 +43,7 @@ export function DivImage({ componentContext }: DivImageProps) {
         variables || new Map()
     );
 
-    const scale = useDerivedFromVarsSimple<ImageScale>(
-        json.scale || 'fill',
-        variables || new Map()
-    );
+    const scale = useDerivedFromVarsSimple<ImageScale>(json.scale || 'fill', variables || new Map());
 
     const placeholderColor = useDerivedFromVarsSimple<string | undefined>(
         json.placeholder_color,
@@ -103,12 +100,6 @@ export function DivImage({ componentContext }: DivImageProps) {
         return style;
     }, [json.aspect]);
 
-    // Handle image load events
-    const handleLoadStart = () => {
-        setLoading(true);
-        setError(false);
-    };
-
     const handleLoadEnd = () => {
         setLoading(false);
     };
@@ -146,7 +137,6 @@ export function DivImage({ componentContext }: DivImageProps) {
                     source={{ uri: imageUrl }}
                     style={imageStyle}
                     resizeMode={resizeMode}
-                    onLoadStart={handleLoadStart}
                     onLoadEnd={handleLoadEnd}
                     onError={handleError}
                 />
