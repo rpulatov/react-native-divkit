@@ -32,7 +32,7 @@ export interface DivContainerProps {
  */
 export function DivContainer({ componentContext }: DivContainerProps) {
     const { direction } = useDivKitContext();
-    const { json, variables, childrenContext } = componentContext;
+    const { json, variables } = componentContext;
 
     // Reactive properties
     const orientation = useDerivedFromVarsSimple<ContainerOrientation>(
@@ -89,7 +89,7 @@ export function DivContainer({ componentContext }: DivContainerProps) {
 
         // Item spacing (gap between items)
         // React Native 0.71+ supports gap property
-        if (itemSpacing > 0 && orientation !== 'overlap') {
+        if (itemSpacing && itemSpacing > 0 && orientation !== 'overlap') {
             style.gap = itemSpacing;
         }
 
@@ -119,14 +119,9 @@ export function DivContainer({ componentContext }: DivContainerProps) {
         }
 
         return json.items.map((item, index) => {
-            let childContext = childrenContext?.[index];
-
-            if (!childContext) {
-                // Generates context if not provided
-                childContext = componentContext.produceChildContext(item, {
-                    path: index,
-                });
-            }
+            const childContext = componentContext.produceChildContext(item, {
+                path: index,
+            });
 
             if (!childContext) {
                 return null;
@@ -167,7 +162,7 @@ export function DivContainer({ componentContext }: DivContainerProps) {
  */
 function mapContentAlignmentToJustify(
     alignment: ContentAlignmentHorizontal | ContentAlignmentVertical | undefined,
-    direction: 'ltr' | 'rtl' = 'ltr'
+    _direction: 'ltr' | 'rtl' = 'ltr'
 ): ViewStyle['justifyContent'] {
     if (!alignment) return 'flex-start';
 
@@ -199,7 +194,7 @@ function mapContentAlignmentToJustify(
  */
 function mapContentAlignmentToAlign(
     alignment: ContentAlignmentHorizontal | ContentAlignmentVertical | undefined,
-    direction: 'ltr' | 'rtl' = 'ltr'
+    _direction: 'ltr' | 'rtl' = 'ltr'
 ): ViewStyle['alignItems'] {
     if (!alignment) return 'flex-start';
 

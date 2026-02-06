@@ -12,7 +12,7 @@
   ],
   "scripts": {
     "build": "npm run build:peggy && tsc",
-    "build:peggy": "peggy src/expressions/expressions.peggy --allowed-start-rules start,JsonStringContents --format es -o src/expressions/expressions.ts",
+    "build:peggy": "peggy src/expressions/expressions.peggy --allowed-start-rules start,JsonStringContents --format es -o src/expressions/expressions.ts && printf '%s\n%s\n' '// @ts-nocheck' \"$(cat src/expressions/expressions.ts)\" > src/expressions/expressions.ts",
     "test": "jest",
     "lint": "eslint src --ext .ts,.tsx",
     "typecheck": "tsc --noEmit"

@@ -1,4 +1,3 @@
-import type { Readable } from 'svelte/store';
 import type { Action, TemplateContext } from '../../typings/common';
 import type { MaybeMissing } from '../expressions/json';
 import type { Variable, VariableType } from '../expressions/variable';
@@ -8,7 +7,10 @@ import type { Store } from '../../typings/store';
 import type { evalExpression } from '../expressions/eval';
 import type { Node } from '../expressions/ast';
 import type { CustomFunctions } from '../expressions/funcs/customFuncs';
-import type { PagerData } from '../stores/pagers';
+
+interface Readable<T> {
+    subscribe(run: (value: T) => void): () => void;
+}
 
 export type StateSetter = (stateId: string) => Promise<ComponentContext | undefined>;
 

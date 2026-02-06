@@ -29,7 +29,7 @@ import { ActionContext, type ActionContextValue } from './context/ActionContext'
 import { StateContext, type StateContextValue, type StateSetter } from './context/StateContext';
 import { DivComponent } from './components/DivComponent';
 import { createVariable, Variable, type VariableType } from './expressions/variable';
-import { applyTemplate, applyTemplatesRecursively } from './utils/applyTemplate';
+import { applyTemplatesRecursively } from './utils/applyTemplate';
 import { wrapError, type WrappedError } from './utils/wrapError';
 import { arrayInsert, arrayRemove, arraySet } from './actions/array';
 import { dictSetValue } from './actions/dict';

@@ -70,7 +70,7 @@ export function customFunctionWrap(fn: DivFunction): Func {
                 ast = cacheGet(fn.body) || parse(fn.body, {
                     startRule: 'JsonStringContents'
                 });
-                cacheSet(fn.body, ast);
+                cacheSet(fn.body, ast!);
             }
 
             const vars: VariablesMap = new Map();
@@ -79,11 +79,10 @@ export function customFunctionWrap(fn: DivFunction): Func {
                     throw new Error('Incorrect argument type: function');
                 }
                 const instance = createConstVariable(fn.arguments[index].name, arg.type, arg.value);
-                // DatetimeVariable doesnt exist right know, but works fine
                 vars.set(instance.getName(), instance as Variable);
             });
 
-            const res = evalExpression(vars, ctx.customFunctions, ctx.store, ast, {
+            const res = evalExpression(vars, ctx.customFunctions, ctx.store, ast!, {
                 weekStartDay: ctx.weekStartDay
             });
             res.warnings.forEach(warn => {

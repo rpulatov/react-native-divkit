@@ -239,7 +239,7 @@ export class ArrayVariable extends Variable<unknown[], 'array'> {
     }
 }
 
-export const TYPE_TO_CLASS: Record<VariableType, typeof Variable<VariableValue, VariableType>> = {
+export const TYPE_TO_CLASS: Record<VariableType, new (name: string, value: any) => Variable> = {
     string: StringVariable,
     number: NumberVariable,
     integer: IntegerVariable,
@@ -254,7 +254,7 @@ export function createVariable(
     name: string,
     type: VariableType,
     value: unknown
-): InstanceType<typeof TYPE_TO_CLASS[typeof type]> {
+): Variable {
     if (!(type in TYPE_TO_CLASS)) {
         throw new Error('Unsupported variable type');
     }
@@ -333,11 +333,11 @@ for (const type in CONST_TYPE_TO_CLASS) {
     Class.prototype.setValue = constSetter;
 }
 
-export function createConstVariable<T extends VariableType | 'datetime'>(
+export function createConstVariable(
     name: string,
-    type: T,
+    type: VariableType | 'datetime',
     value: unknown
-): InstanceType<typeof CONST_TYPE_TO_CLASS[T]> {
+): Variable {
     if (!(type in CONST_TYPE_TO_CLASS)) {
         throw new Error('Unsupported variable type');
     }

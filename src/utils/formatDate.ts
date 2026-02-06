@@ -2,7 +2,7 @@
 
 type FormatGetter = (opts: Intl.DateTimeFormatOptions & {
     date?: Date;
-}, field: Intl.DateTimeFormatPartTypes | 'week' | 'weekyear' | 'extendedyear' | 'weekofmonth' | 'dayofyear' | 'dayofweekinmonth' | 'weekdaynumeric' | 'timezoneoffset') => string | undefined;
+}, field: Intl.DateTimeFormatPartTypes | 'week' | 'weekyear' | 'extendedyear' | 'weekofmonth' | 'dayofyear' | 'dayofweekinmonth' | 'weekdaynumeric' | 'timezoneoffset' | 'fractionalSecond') => string | undefined;
 
 function formatNumber(num: string | undefined, len: number | undefined): string | undefined {
     if (!num || !len) {
@@ -160,7 +160,7 @@ const formatters: Record<string, (token: number, getter: FormatGetter) => string
     S(token, getter) {
         const res = getter({
             fractionalSecondDigits: Math.min(3, token) as 1 | 2 | 3
-        }, 'fractionalSecond');
+        } as any, 'fractionalSecond');
 
         if (res && token > 3) {
             return res.padEnd(token, '0');
@@ -353,6 +353,8 @@ export function formatDate(date: Date, format: string, {
                 return parts[i].value;
             }
         }
+
+        return undefined;
     };
 
     return (format

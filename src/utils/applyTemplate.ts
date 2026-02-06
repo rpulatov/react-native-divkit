@@ -1,4 +1,4 @@
-import { wrapError, type WrappedError } from "./wrapError";
+import type { WrappedError } from "./wrapError";
 import type { DivBase, TemplateContext } from "../../typings/common";
 import type { DivBaseData } from "../types/base";
 
@@ -6,7 +6,7 @@ export function applyTemplate<T extends DivBase>(
   json: T,
   templateContext: TemplateContext,
   templates: Record<string, unknown>,
-  logError: (error: WrappedError) => void,
+  _logError: (error: WrappedError) => void,
 ): {
   json: T;
   templateContext: TemplateContext;
@@ -15,7 +15,7 @@ export function applyTemplate(
   json: DivBaseData,
   templateContext: TemplateContext,
   templates: Record<string, unknown>,
-  logError: (error: WrappedError) => void,
+  _logError: (error: WrappedError) => void,
 ): {
   json: DivBaseData;
   templateContext: TemplateContext;
@@ -119,7 +119,7 @@ export function applyTemplatesRecursively(
     try {
       const res = applyTemplate(json, {}, templates, logError);
       resolvedJson = res.json;
-    } catch (e) {
+    } catch (_e) {
       // Expansion failed
     }
   }

@@ -5,6 +5,7 @@ import type { DivImageData } from '../../types/image';
 import type { ImageScale } from '../../types/imageScale';
 import { Outer } from '../utilities/Outer';
 import { useDerivedFromVarsSimple } from '../../hooks/useDerivedFromVars';
+import { wrapError } from '../../utils/wrapError';
 
 export interface DivImageProps {
     componentContext: ComponentContext<DivImageData>;
@@ -115,7 +116,7 @@ export function DivImage({ componentContext }: DivImageProps) {
     const handleError = () => {
         setLoading(false);
         setError(true);
-        componentContext.logError(new Error(`Failed to load image: ${imageUrl}`));
+        componentContext.logError(wrapError(new Error(`Failed to load image: ${imageUrl}`)));
     };
 
     // Render error state

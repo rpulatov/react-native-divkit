@@ -292,8 +292,8 @@ function decimalFormat(
             minimumIntegerDigits: Math.min(Math.max(minimumIntegerDigits, 1), 21),
             minimumFractionDigits: Math.min(Math.max(minimumFractionDigits, 0), 100),
             maximumFractionDigits: Math.min(Math.max(maximumFractionDigits, minimumFractionDigits, 0), 100),
-            roundingMode: 'halfEven'
-        });
+            roundingMode: 'halfEven' as any
+        } as any);
 
         let result = formatter.format(arg.value);
 
