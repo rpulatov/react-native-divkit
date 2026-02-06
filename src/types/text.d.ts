@@ -12,6 +12,8 @@ import type { FontVariationSettings } from './fontVariationSettings';
 
 export type FontWeight = 'light' | 'regular' | 'medium' | 'bold';
 
+export type FontSizeUnit = 'dp' | 'sp' | 'px';
+
 export type LineStyle = 'none' | 'single';
 
 export type Truncate = 'none' | 'end';
@@ -19,7 +21,7 @@ export type Truncate = 'none' | 'end';
 export interface TextStyles {
     font_size?: number;
     font_family?: string;
-    // font_size_unit
+    font_size_unit?: FontSizeUnit;
     font_feature_settings?: string;
     letter_spacing?: number;
     font_weight?: FontWeight;
@@ -109,7 +111,7 @@ export interface TextEllipsis {
 
 export interface DivTextData extends DivBaseData, DivActionableData, TextStyles {
     type: 'text';
-    // font_size_unit;
+    font_size_unit?: FontSizeUnit;
     max_lines?: number;
     // min_hidden_lines;
     auto_ellipsize?: BooleanInt;

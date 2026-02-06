@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import { Text, TextStyle } from 'react-native';
+import { PixelRatio, Text, TextStyle } from 'react-native';
 import type { ComponentContext } from '../../types/componentContext';
-import type { DivTextData, FontWeight, Truncate } from '../../types/text';
+import type { DivTextData, FontSizeUnit, FontWeight, Truncate } from '../../types/text';
 import { Outer } from '../utilities/Outer';
 import { useDerivedFromVarsSimple } from '../../hooks/useDerivedFromVars';
 import { useDivKitContext } from '../../context/DivKitContext';
@@ -46,7 +46,22 @@ export function DivText({ componentContext }: DivTextProps) {
         variables || new Map()
     );
 
+    const fontSizeUnit = useDerivedFromVarsSimple<FontSizeUnit>(json.font_size_unit || 'sp', variables || new Map());
+
     const maxLines = useDerivedFromVarsSimple<number | undefined>(json.max_lines, variables || new Map());
+
+    // Convert size value based on font_size_unit
+    // sp = scalable pixels (allowFontScaling handles this in RN)
+    // dp = density-independent pixels (RN default unit)
+    // px = physical pixels (need to divide by PixelRatio)
+    const convertSize = (value: number): number => {
+        if (fontSizeUnit === 'px') {
+            return value / PixelRatio.get();
+        }
+        return value;
+    };
+
+    const allowFontScaling = fontSizeUnit === 'sp';
 
     // Build text style
     const textStyle = useMemo((): TextStyle => {
@@ -54,7 +69,7 @@ export function DivText({ componentContext }: DivTextProps) {
 
         // Font size
         if (fontSize) {
-            style.fontSize = fontSize;
+            style.fontSize = convertSize(fontSize);
         }
 
         // Text color
@@ -84,9 +99,7 @@ export function DivText({ componentContext }: DivTextProps) {
 
         // Line height
         if (json.line_height && fontSize) {
-            // DivKit line_height is in pixels, React Native expects ratio or pixels
-            // Convert to ratio: line_height / font_size
-            style.lineHeight = json.line_height;
+            style.lineHeight = convertSize(json.line_height);
         }
 
         // Letter spacing
@@ -131,6 +144,7 @@ export function DivText({ componentContext }: DivTextProps) {
         return style;
     }, [
         fontSize,
+        fontSizeUnit,
         textColor,
         textAlignmentHorizontal,
         json.font_weight,
@@ -165,7 +179,7 @@ export function DivText({ componentContext }: DivTextProps) {
                 style={textStyle}
                 numberOfLines={numberOfLines}
                 ellipsizeMode={ellipsizeMode}
-                allowFontScaling={false} // DivKit has fixed sizes
+                allowFontScaling={allowFontScaling}
             >
                 {text}
             </Text>
