@@ -8,6 +8,7 @@ import type { MaybeMissing } from '../../expressions/json';
 import { useDerivedFromVarsSimple } from '../../hooks/useDerivedFromVars';
 import { useActionHandler, useHasActions } from '../../hooks/useAction';
 import { useDivKitContext } from '../../context/DivKitContext';
+import { useLayoutParams } from '../../context/LayoutParamsContext';
 import { Background } from './Background';
 
 export interface OuterProps<T extends DivBaseData = DivBaseData> {
@@ -28,6 +29,7 @@ export function Outer<T extends DivBaseData = DivBaseData>({
     style: customStyle
 }: OuterProps<T>) {
     const { direction } = useDivKitContext();
+    const layoutParams = useLayoutParams();
     const { json, variables } = componentContext;
 
     // Only use reactive hooks for truly dynamic properties (visibility, alpha)
@@ -66,29 +68,30 @@ export function Outer<T extends DivBaseData = DivBaseData>({
         }
 
         // Width
+        const parentOrientation = layoutParams.parentContainerOrientation;
+
         if (width) {
             const widthVal = width as MaybeMissing<any>;
             if (widthVal.type === 'fixed') {
                 styles.width = (widthVal as FixedSize).value;
             } else if (widthVal.type === 'match_parent') {
-                // Use alignSelf: 'stretch' instead of width: '100%' so that
-                // margins are subtracted from the available space rather than
-                // added on top of 100%, which would cause overflow.
                 styles.alignSelf = 'stretch';
-                styles.flexGrow = (widthVal as MatchParentSize).weight || 1;
-                // CSS defaults flex-shrink to 1, but RN defaults to 0.
-                // Without flexShrink, items in horizontal containers won't
-                // shrink below their content size, causing text overflow.
-                styles.flexShrink = 1;
+                // flexGrow only on the main axis (horizontal parent)
+                if (parentOrientation === 'horizontal') {
+                    styles.flexGrow = (widthVal as MatchParentSize).weight || 1;
+                    styles.flexShrink = 1;
+                }
             } else if (widthVal.type === 'wrap_content') {
                 styles.alignSelf = 'flex-start';
-                // React Native default is wrap_content-like for View
             }
         } else {
             // Default: match_parent
             styles.alignSelf = 'stretch';
-            styles.flexGrow = 1;
-            styles.flexShrink = 1;
+            // flexGrow only on the main axis (horizontal parent) or outside a container
+            if (!parentOrientation || parentOrientation === 'horizontal') {
+                styles.flexGrow = 1;
+                styles.flexShrink = 1;
+            }
         }
 
         // Height
@@ -97,8 +100,13 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             if (heightVal.type === 'fixed') {
                 styles.height = (heightVal as FixedSize).value;
             } else if (heightVal.type === 'match_parent') {
-                styles.height = '100%';
-                styles.flexGrow = (heightVal as MatchParentSize).weight || 1;
+                // flexGrow only on the main axis (vertical parent)
+                if (parentOrientation === 'vertical') {
+                    styles.flexGrow = (heightVal as MatchParentSize).weight || 1;
+                } else {
+                    // Cross axis — stretch via alignSelf or explicit height
+                    styles.alignSelf = 'stretch';
+                }
             }
             // wrap_content is default in React Native
         }
@@ -209,7 +217,7 @@ export function Outer<T extends DivBaseData = DivBaseData>({
         }
 
         return styles;
-    }, [visibility, alpha, width, height, paddings, margins, background, border, direction]);
+    }, [visibility, alpha, width, height, paddings, margins, background, border, direction, layoutParams]);
 
     const finalStyle = useMemo(() => {
         return StyleSheet.flatten([containerStyle, customStyle]);

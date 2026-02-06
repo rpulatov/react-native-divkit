@@ -3,10 +3,12 @@ import { View, ViewStyle } from 'react-native';
 import type { ComponentContext } from '../../types/componentContext';
 import type { DivContainerData, ContainerOrientation } from '../../types/container';
 import type { ContentAlignmentHorizontal, ContentAlignmentVertical } from '../../types/alignment';
+import type { LayoutParams } from '../../types/layoutParams';
 import { Outer } from '../utilities/Outer';
 import { DivComponent } from '../DivComponent';
 import { useDerivedFromVarsSimple } from '../../hooks/useDerivedFromVars';
 import { useDivKitContext } from '../../context/DivKitContext';
+import { LayoutParamsContext } from '../../context/LayoutParamsContext';
 
 export interface DivContainerProps {
     componentContext: ComponentContext<DivContainerData>;
@@ -14,20 +16,6 @@ export interface DivContainerProps {
 
 /**
  * DivContainer component - renders a flex container with child items
- * MVP implementation with basic features:
- * - Vertical/horizontal/overlap orientation
- * - Content alignment (horizontal & vertical)
- * - Item spacing (gap)
- * - Flex layout with proper alignment
- *
- * Deferred for post-MVP:
- * - Wrap layout mode
- * - Separators (show_at_start, show_between, show_at_end)
- * - Line separators (for wrap mode)
- * - Aspect ratio constraints
- * - Item builder (dynamic items from data)
- * - Clip to bounds
- *
  * Based on Web Container.svelte
  */
 export function DivContainer({ componentContext }: DivContainerProps) {
@@ -52,11 +40,10 @@ export function DivContainer({ componentContext }: DivContainerProps) {
 
     const itemSpacing = useDerivedFromVarsSimple<number>(json.item_spacing || 0, variables || new Map());
 
-    // Build container style
+    // Build container style — passed to Outer via style prop
+    // Outer's View becomes the flex container directly (Background is absolute-positioned)
     const containerStyle = useMemo((): ViewStyle => {
-        const style: ViewStyle = {
-            display: 'flex'
-        };
+        const style: ViewStyle = {};
 
         // Orientation -> flexDirection
         if (orientation === 'horizontal') {
@@ -64,34 +51,42 @@ export function DivContainer({ componentContext }: DivContainerProps) {
         } else if (orientation === 'vertical') {
             style.flexDirection = 'column';
         } else if (orientation === 'overlap') {
-            // Overlap is like CSS position: relative with absolute children
-            // In React Native, this is achieved differently
-            // For MVP, we'll use a simple approach with View
             style.position = 'relative';
         }
 
-        // Content alignment horizontal
-        // Maps to justifyContent for row, alignItems for column
+        // Content alignment
         if (orientation === 'horizontal') {
-            // Horizontal orientation: content_alignment_horizontal -> justifyContent
             style.justifyContent = mapContentAlignmentToJustify(contentAlignmentHorizontal, direction);
-            // content_alignment_vertical -> alignItems (cross axis)
             style.alignItems = mapContentAlignmentToAlign(contentAlignmentVertical);
         } else if (orientation === 'vertical') {
-            // Vertical orientation: content_alignment_vertical -> justifyContent
             style.justifyContent = mapContentAlignmentToJustify(contentAlignmentVertical, direction);
-            // content_alignment_horizontal -> alignItems (cross axis)
             style.alignItems = mapContentAlignmentToAlign(contentAlignmentHorizontal, direction);
         }
 
-        // Item spacing (gap between items)
-        // React Native 0.71+ supports gap property
+        // Item spacing
         if (itemSpacing && itemSpacing > 0 && orientation !== 'overlap') {
             style.gap = itemSpacing;
         }
 
         return style;
     }, [orientation, contentAlignmentHorizontal, contentAlignmentVertical, itemSpacing, direction]);
+
+    // LayoutParams for children — tells Outer how to handle flex sizing
+    const childLayoutParams = useMemo((): LayoutParams => {
+        const params: LayoutParams = {};
+
+        if (orientation === 'overlap') {
+            params.overlapParent = true;
+        }
+
+        if (orientation === 'horizontal') {
+            params.parentContainerOrientation = 'horizontal';
+        } else if (orientation === 'vertical') {
+            params.parentContainerOrientation = 'vertical';
+        }
+
+        return params;
+    }, [orientation]);
 
     // For overlap mode, we need to position children absolutely
     const childWrapperStyle = useMemo((): ViewStyle | undefined => {
@@ -107,9 +102,6 @@ export function DivContainer({ componentContext }: DivContainerProps) {
         return undefined;
     }, [orientation]);
 
-    // Render children
-    // We'll import DivComponent dynamically or assume it's available
-    // For now, we'll use a placeholder and fix this in the integration phase
     const renderChildren = () => {
         if (!json.items || json.items.length === 0) {
             return null;
@@ -140,8 +132,10 @@ export function DivContainer({ componentContext }: DivContainerProps) {
     };
 
     return (
-        <Outer componentContext={componentContext}>
-            <View style={containerStyle}>{renderChildren()}</View>
+        <Outer componentContext={componentContext} style={containerStyle}>
+            <LayoutParamsContext.Provider value={childLayoutParams}>
+                {renderChildren()}
+            </LayoutParamsContext.Provider>
         </Outer>
     );
 }
