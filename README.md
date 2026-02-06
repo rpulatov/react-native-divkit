@@ -1,51 +1,60 @@
 # react-native-divkit
 
-DivKit renderer for React Native - Server-driven UI framework.
+Рендерер DivKit для React Native — фреймворк для Server-Driven UI.
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![npm version](https://img.shields.io/npm/v/react-native-divkit.svg)](https://www.npmjs.com/package/react-native-divkit)
 
-## Overview
+## Обзор
 
-DivKit is a server-driven UI framework that allows you to define UI layouts in JSON and render them natively. This React Native implementation is based on the [DivKit Web](../web/divkit/) implementation, reusing the expression engine and adapting components for React Native.
+DivKit — это фреймворк для построения UI на основе данных с сервера (Server-Driven UI), который позволяет описывать макеты в формате JSON и рендерить их нативно. Данная реализация для React Native основана на веб-версии DivKit, переиспользуя движок выражений и адаптируя компоненты под React Native.
 
-## Status
+## Статус
 
-**MVP Version 0.1.0-alpha**
+**MVP Версия 0.1.0-alpha**
 
-| Feature             | Status      |
+| Функция             | Статус      |
 | ------------------- | ----------- |
-| Text component      | ✅ Complete |
-| Container component | ✅ Complete |
-| Image component     | ✅ Complete |
-| State component     | ✅ Complete |
-| Variable system     | ✅ Complete |
-| Expression engine   | ✅ Complete |
-| Action handlers     | ✅ Complete |
-| Template resolution | ✅ Complete |
+| Текстовый компонент | ✅ Готово   |
+| Компонент контейнера| ✅ Готово   |
+| Компонент изображения| ✅ Готово  |
+| Компонент состояния | ✅ Готово   |
+| Система переменных  | ✅ Готово   |
+| Движок выражений    | ✅ Готово   |
+| Обработчики действий| ✅ Готово   |
+| Подстановка шаблонов| ✅ Готово   |
 
-## Installation
+## Скриншоты
+
+<p>
+  <img src="screenshots/image1.png" width="200" alt="" />
+  <img src="screenshots/image3.png" width="200" alt="" />
+  <img src="screenshots/image4.png" width="200" alt="" />
+  <img src="screenshots/image8.png" width="200" alt="" />
+</p>
+
+## Установка
 
 ```bash
 npm install react-native-divkit
 ```
 
-### Optional Dependencies
+### Опциональные зависимости
 
-For enhanced functionality, install these optional packages:
+Для расширенной функциональности установите следующие пакеты:
 
 ```bash
-# Optimized image loading with caching
+# Оптимизированная загрузка изображений с кешированием
 npm install react-native-fast-image
 
-# Gradient support (backgrounds)
+# Поддержка градиентов (фоны)
 npm install react-native-linear-gradient
 
-# Clipboard support
+# Поддержка буфера обмена
 npm install @react-native-clipboard/clipboard
 ```
 
-## Quick Start
+## Быстрый старт
 
 ```tsx
 import { DivKit } from 'react-native-divkit';
@@ -58,7 +67,7 @@ const divKitJson = {
                 state_id: 0,
                 div: {
                     type: 'text',
-                    text: 'Hello, @{name}!',
+                    text: 'Привет, @{name}!',
                     font_size: 24,
                     text_color: '#000000',
                     text_alignment_horizontal: 'center'
@@ -69,7 +78,7 @@ const divKitJson = {
             {
                 type: 'string',
                 name: 'name',
-                value: 'World'
+                value: 'Мир'
             }
         ]
     }
@@ -79,22 +88,22 @@ export default function App() {
     return (
         <DivKit
             data={divKitJson}
-            onStat={stat => console.log('Stat:', stat.type, stat.action.log_id)}
-            onCustomAction={action => console.log('Custom action:', action.url)}
-            onError={error => console.error('Error:', error.message)}
+            onStat={stat => console.log('Статистика:', stat.type, stat.action.log_id)}
+            onCustomAction={action => console.log('Кастомное действие:', action.url)}
+            onError={error => console.error('Ошибка:', error.message)}
         />
     );
 }
 ```
 
-## Components
+## Компоненты
 
-### Text
+### Text (Текст)
 
 ```json
 {
     "type": "text",
-    "text": "Hello World",
+    "text": "Привет, мир",
     "font_size": 16,
     "font_weight": "bold",
     "text_color": "#000000",
@@ -103,21 +112,21 @@ export default function App() {
 }
 ```
 
-### Container
+### Container (Контейнер)
 
 ```json
 {
     "type": "container",
     "orientation": "vertical",
     "items": [
-        { "type": "text", "text": "Item 1" },
-        { "type": "text", "text": "Item 2" }
+        { "type": "text", "text": "Элемент 1" },
+        { "type": "text", "text": "Элемент 2" }
     ],
     "content_alignment_horizontal": "center"
 }
 ```
 
-### Image
+### Image (Изображение)
 
 ```json
 {
@@ -129,7 +138,7 @@ export default function App() {
 }
 ```
 
-### State
+### State (Состояние)
 
 ```json
 {
@@ -139,25 +148,25 @@ export default function App() {
     "states": [
         {
             "state_id": "state1",
-            "div": { "type": "text", "text": "State 1" }
+            "div": { "type": "text", "text": "Состояние 1" }
         },
         {
             "state_id": "state2",
-            "div": { "type": "text", "text": "State 2" }
+            "div": { "type": "text", "text": "Состояние 2" }
         }
     ]
 }
 ```
 
-## Variables
+## Переменные
 
-Define variables in your JSON:
+Объявление переменных в JSON:
 
 ```json
 {
     "card": {
         "variables": [
-            { "type": "string", "name": "userName", "value": "World" },
+            { "type": "string", "name": "userName", "value": "Мир" },
             { "type": "integer", "name": "counter", "value": 0 },
             { "type": "color", "name": "textColor", "value": "#FF0000" },
             { "type": "boolean", "name": "isActive", "value": true }
@@ -166,37 +175,37 @@ Define variables in your JSON:
 }
 ```
 
-Use variables in expressions:
+Использование переменных в выражениях:
 
 ```json
 {
     "type": "text",
-    "text": "Hello, @{userName}!",
+    "text": "Привет, @{userName}!",
     "text_color": "@{textColor}"
 }
 ```
 
-### Variable Types
+### Типы переменных
 
-| Type      | Description      | Example            |
+| Тип       | Описание         | Пример             |
 | --------- | ---------------- | ------------------ |
-| `string`  | Text value       | `"Hello"`          |
-| `integer` | Whole number     | `42`               |
-| `number`  | Decimal number   | `3.14`             |
-| `boolean` | True/false       | `true`             |
-| `color`   | Color value      | `"#FF5500"`        |
-| `url`     | URL string       | `"https://..."`    |
-| `dict`    | Key-value object | `{"key": "value"}` |
-| `array`   | List of values   | `[1, 2, 3]`        |
+| `string`  | Текстовая строка | `"Hello"`          |
+| `integer` | Целое число      | `42`               |
+| `number`  | Дробное число    | `3.14`             |
+| `boolean` | Логическое       | `true`             |
+| `color`   | Цвет             | `"#FF5500"`        |
+| `url`     | URL              | `"https://..."`    |
+| `dict`    | Словарь (объект) | `{"key": "value"}` |
+| `array`   | Список (массив)  | `[1, 2, 3]`        |
 
-## Actions
+## Действия (Actions)
 
-Actions are triggered by user interaction:
+Действия вызываются при взаимодействии с пользователем:
 
 ```json
 {
     "type": "text",
-    "text": "Tap me",
+    "text": "Нажми меня",
     "actions": [
         {
             "log_id": "button_tap",
@@ -206,9 +215,9 @@ Actions are triggered by user interaction:
 }
 ```
 
-### Typed Actions
+### Типизированные действия
 
-#### set_variable
+#### set_variable (установка переменной)
 
 ```json
 {
@@ -220,7 +229,7 @@ Actions are triggered by user interaction:
 }
 ```
 
-#### set_state
+#### set_state (смена состояния)
 
 ```json
 {
@@ -232,21 +241,21 @@ Actions are triggered by user interaction:
 }
 ```
 
-## Props
+## Свойства (Props)
 
-| Prop             | Type                   | Required | Description                        |
-| ---------------- | ---------------------- | -------- | ---------------------------------- |
-| `data`           | `DivJson`              | Yes      | DivKit JSON data                   |
-| `onStat`         | `(stat) => void`       | No       | Statistics callback                |
-| `onCustomAction` | `(action) => void`     | No       | Custom action handler              |
-| `onError`        | `(error) => void`      | No       | Error handler                      |
-| `direction`      | `'ltr' \| 'rtl'`       | No       | Text direction (default: `'ltr'`)  |
-| `platform`       | `'desktop' \| 'touch'` | No       | Platform type (default: `'touch'`) |
-| `style`          | `ViewStyle`            | No       | Container style                    |
+| Свойство         | Тип                    | Обязательно | Описание                           |
+| ---------------- | ---------------------- | ----------- | ---------------------------------- |
+| `data`           | `DivJson`              | Да          | JSON-данные DivKit                 |
+| `onStat`         | `(stat) => void`       | Нет         | Колбэк статистики                  |
+| `onCustomAction` | `(action) => void`     | Нет         | Обработчик кастомных действий      |
+| `onError`        | `(error) => void`      | Нет         | Обработчик ошибок                  |
+| `direction`      | `'ltr' \| 'rtl'`       | Нет         | Направление текста (по умолч.: `'ltr'`) |
+| `platform`       | `'desktop' \| 'touch'` | Нет         | Тип платформы (по умолч.: `'touch'`) |
+| `style`          | `ViewStyle`            | Нет         | Стили контейнера                   |
 
-## Hooks
+## Хуки
 
-For advanced usage, you can use hooks directly:
+Для продвинутого использования вы можете использовать хуки напрямую:
 
 ```tsx
 import { useDivKitContext, useVariable, useVariableState, useAction } from 'react-native-divkit';
@@ -257,82 +266,74 @@ function MyComponent() {
 
     return (
         <View>
-            <Text>Count: {counter}</Text>
-            <Button onPress={() => setVariable('counter', counter + 1)} title="Increment" />
+            <Text>Счетчик: {counter}</Text>
+            <Button onPress={() => setVariable('counter', counter + 1)} title="Увеличить" />
         </View>
     );
 }
 ```
 
-## Examples
+## Примеры
 
-See the [examples/BasicExample](examples/BasicExample/) directory for a complete React Native app demonstrating all features.
+Смотрите директорию [examples/BasicExample](examples/BasicExample/) для готового React Native приложения, демонстрирующего все возможности.
 
 ```bash
 cd examples/BasicExample
 npm install
-npm run ios   # or npm run android
+npm run ios   # или npm run android
 ```
 
-## Documentation
+## Документация
 
-- [API Reference](docs/API.md) - Complete API documentation
-- [Migration Guide](docs/MIGRATION.md) - Migrating from Web version
-- [Architecture](docs/ARCHITECTURE.md) - Internal architecture
+- [Справочник API](docs/API.md) - Полная документация API
+- [Руководство по миграции](docs/MIGRATION.md) - Миграция с веб-версии
+- [Архитектура](docs/ARCHITECTURE.md) - Внутренняя архитектура
 
-## Not Included in MVP
+## Не включено в MVP
 
-The following features are planned for future versions:
+Следующие функции запланированы для будущих версий:
 
-- Gallery, Pager, Slider, Tabs
-- Input, Select, Switch
-- Video, Lottie animations
-- Text ranges, complex gradients
-- Advanced transitions and animations
-- Custom components API
+- Gallery (Галерея), Pager (Пейджер), Slider (Слайдер), Tabs (Вкладки)
+- Input (Ввод), Select (Выбор), Switch (Переключатель)
+- Видео, Lottie-анимации
+- Диапазоны текста, сложные градиенты
+- Продвинутые переходы и анимации
+- API пользовательских компонентов
 
-## Architecture
+## Архитектура
 
-This library is based on DivKit Web (TypeScript + Svelte):
+Библиотека основана на DivKit Web (TypeScript + Svelte):
 
-| Component         | Reuse                   |
+| Компонент         | Переиспользование       |
 | ----------------- | ----------------------- |
-| Expression engine | 100% copied             |
-| Type definitions  | 100% copied             |
-| Utilities         | ~90% adapted            |
-| Components        | ~20% (rewritten for RN) |
-| Context system    | New (React-specific)    |
+| Движок выражений  | 100% скопировано        |
+| Определения типов | 100% скопировано        |
+| Утилиты           | ~90% адаптировано       |
+| Компоненты        | ~20% (переписано под RN)|
+| Система контекстов| Новая (специфично для React)|
 
-## Development
+## Разработка
 
 ```bash
-# Install dependencies
+# Установка зависимостей
 npm install
 
-# Build PEG parser
+# Сборка парсера PEG
 npm run build:peggy
 
-# Type check
+# Проверка типов
 npm run typecheck
 
-# Lint
+# Линтинг
 npm run lint
 
-# Build
+# Сборка
 npm run build
 
-# Test
+# Тесты
 npm test
 ```
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
-
-## License
+## Лицензия
 
 Apache 2.0

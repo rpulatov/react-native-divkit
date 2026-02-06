@@ -13,6 +13,7 @@ module.exports = {
     },
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
+        '^react-native-svg$': '<rootDir>/tests/__mocks__/react-native-svg.ts',
         '^react-native$': '<rootDir>/tests/__mocks__/react-native.ts',
         '^react$': '<rootDir>/tests/__mocks__/react.ts'
     },
