@@ -190,9 +190,6 @@ const storiesJson = {
               items: [
                 {
                   type: '_template_list_item',
-                  width: {
-                    type: 'match_parent',
-                  },
                   list_text: 'Авторская кухня от лучших шефов',
                   list_color: '#fff50a',
                   list_text_size: 24,
@@ -202,15 +199,6 @@ const storiesJson = {
                 },
                 {
                   type: '_template_list_item',
-                  width: {
-                    type: 'match_parent',
-                  },
-                  actions: [
-                    {
-                      url: 'https://',
-                      log_id: 'action_id',
-                    },
-                  ],
                   list_text: 'Свежие морепродукты и локальные продукты',
                   list_color: '#fff50a',
                   list_text_size: 24,
@@ -220,9 +208,6 @@ const storiesJson = {
                 },
                 {
                   type: '_template_list_item',
-                  width: {
-                    type: 'match_parent',
-                  },
                   list_text: 'Вид на море, горы и виноградники',
                   list_color: '#fff50a',
                   list_text_size: 24,
@@ -232,9 +217,6 @@ const storiesJson = {
                 },
                 {
                   type: '_template_list_item',
-                  width: {
-                    type: 'match_parent',
-                  },
                   list_text: 'Рестораны для особых вечеров и путешествий',
                   list_color: '#fff50a',
                   list_text_size: 24,
@@ -261,7 +243,7 @@ const storiesJson = {
                 type: 'match_parent',
               },
               margins: {
-                top: 30,
+                top: 20,
               },
               font_size: 26,
               text_color: '#ffffff',
