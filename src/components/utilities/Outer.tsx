@@ -76,6 +76,10 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                 // added on top of 100%, which would cause overflow.
                 styles.alignSelf = 'stretch';
                 styles.flexGrow = (widthVal as MatchParentSize).weight || 1;
+                // CSS defaults flex-shrink to 1, but RN defaults to 0.
+                // Without flexShrink, items in horizontal containers won't
+                // shrink below their content size, causing text overflow.
+                styles.flexShrink = 1;
             } else if (widthVal.type === 'wrap_content') {
                 styles.alignSelf = 'flex-start';
                 // React Native default is wrap_content-like for View
@@ -84,6 +88,7 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             // Default: match_parent
             styles.alignSelf = 'stretch';
             styles.flexGrow = 1;
+            styles.flexShrink = 1;
         }
 
         // Height
