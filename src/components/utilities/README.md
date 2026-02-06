@@ -9,6 +9,7 @@ Base utility components for DivKit React Native library.
 Base wrapper component for all DivKit components. Handles common properties like visibility, sizing, padding, margins, background, borders, and actions.
 
 **Features:**
+
 - ✅ Visibility handling (`gone`, `invisible`, `visible`)
 - ✅ Width/Height sizing (`fixed`, `match_parent`, `wrap_content`)
 - ✅ Padding and margins (with RTL support)
@@ -25,11 +26,11 @@ Base wrapper component for all DivKit components. Handles common properties like
 import { Outer } from './components/utilities';
 
 function MyComponent({ componentContext }) {
-  return (
-    <Outer componentContext={componentContext}>
-      <Text>Content goes here</Text>
-    </Outer>
-  );
+    return (
+        <Outer componentContext={componentContext}>
+            <Text>Content goes here</Text>
+        </Outer>
+    );
 }
 ```
 
@@ -58,6 +59,7 @@ If the component has `actions` defined in JSON, Outer automatically wraps childr
 **RTL Support:**
 
 Padding and margins respect `direction` from DivKitContext:
+
 - `start`/`end` → automatically mapped to `left`/`right` based on direction
 - Supports both LTR and RTL layouts
 
@@ -73,14 +75,14 @@ Fallback component for unsupported component types. Renders a placeholder in DEV
 import { Unknown } from './components/utilities';
 
 function ComponentResolver({ type }) {
-  switch (type) {
-    case 'text':
-      return <DivText />;
-    case 'container':
-      return <DivContainer />;
-    default:
-      return <Unknown type={type} message="Not implemented yet" />;
-  }
+    switch (type) {
+        case 'text':
+            return <DivText />;
+        case 'container':
+            return <DivContainer />;
+        default:
+            return <Unknown type={type} message="Not implemented yet" />;
+    }
 }
 ```
 
@@ -104,12 +106,14 @@ function ComponentResolver({ type }) {
 The current implementation is MVP-focused and includes only essential features:
 
 **Included:**
+
 - Basic sizing and layout
 - Solid color backgrounds
 - Simple borders and shadows
 - Basic action handling
 
 **Deferred (Post-MVP):**
+
 - Complex backgrounds (images, gradients)
 - Advanced animations and transitions
 - Extensions
@@ -152,24 +156,24 @@ import { render } from '@testing-library/react-native';
 import { Outer } from './Outer';
 
 it('renders children when visible', () => {
-  const { getByText } = render(
-    <Outer componentContext={mockContext}>
-      <Text>Test</Text>
-    </Outer>
-  );
-  expect(getByText('Test')).toBeTruthy();
+    const { getByText } = render(
+        <Outer componentContext={mockContext}>
+            <Text>Test</Text>
+        </Outer>
+    );
+    expect(getByText('Test')).toBeTruthy();
 });
 
 it('returns null when visibility is gone', () => {
-  const context = {
-    ...mockContext,
-    json: { ...mockContext.json, visibility: 'gone' }
-  };
-  const { queryByText } = render(
-    <Outer componentContext={context}>
-      <Text>Test</Text>
-    </Outer>
-  );
-  expect(queryByText('Test')).toBeNull();
+    const context = {
+        ...mockContext,
+        json: { ...mockContext.json, visibility: 'gone' }
+    };
+    const { queryByText } = render(
+        <Outer componentContext={context}>
+            <Text>Test</Text>
+        </Outer>
+    );
+    expect(queryByText('Test')).toBeNull();
 });
 ```

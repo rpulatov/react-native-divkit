@@ -72,10 +72,7 @@ export interface UseDerivedFromVarsOptions {
  * // When userName variable changes, text automatically updates
  * ```
  */
-export function useDerivedFromVars<T>(
-    jsonProp: T,
-    options: UseDerivedFromVarsOptions
-): MaybeMissing<T> {
+export function useDerivedFromVars<T>(jsonProp: T, options: UseDerivedFromVarsOptions): MaybeMissing<T> {
     const {
         variables,
         additionalVars,
@@ -106,11 +103,7 @@ export function useDerivedFromVars<T>(
 
     // Apply variables and get initial value
     const getComputedValue = () => {
-        const { result, usedVars } = prepared.applyVars(
-            allVariables,
-            customFunctions,
-            keepComplex
-        );
+        const { result, usedVars } = prepared.applyVars(allVariables, customFunctions, keepComplex);
         return { result, usedVars };
     };
 
@@ -179,9 +172,6 @@ export function useDerivedFromVars<T>(
  * const text = useDerivedFromVarsSimple(json.text, variables);
  * ```
  */
-export function useDerivedFromVarsSimple<T>(
-    jsonProp: T,
-    variables: VariablesMap
-): MaybeMissing<T> {
+export function useDerivedFromVarsSimple<T>(jsonProp: T, variables: VariablesMap): MaybeMissing<T> {
     return useDerivedFromVars(jsonProp, { variables });
 }

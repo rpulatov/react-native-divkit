@@ -19,23 +19,23 @@ This guide helps developers migrate from DivKit Web (Svelte) to DivKit React Nat
 
 DivKit React Native is based on the DivKit Web (TypeScript + Svelte) implementation:
 
-| Aspect | Code Reuse |
-|--------|------------|
-| Expression engine | 100% - copied directly |
-| Type definitions | 100% - copied directly |
-| Utilities | ~90% - minor adaptations |
-| Components | 20% - rewritten for RN |
-| Context/State | 0% - new React implementation |
+| Aspect            | Code Reuse                    |
+| ----------------- | ----------------------------- |
+| Expression engine | 100% - copied directly        |
+| Type definitions  | 100% - copied directly        |
+| Utilities         | ~90% - minor adaptations      |
+| Components        | 20% - rewritten for RN        |
+| Context/State     | 0% - new React implementation |
 
 ### Key Differences
 
-| Feature | Web (Svelte) | React Native |
-|---------|--------------|--------------|
-| Rendering | DOM + CSS | React Native Views |
-| State management | Svelte stores | React hooks + Observable |
-| Styling | CSS + inline styles | StyleSheet |
-| Animations | CSS transitions | LayoutAnimation (MVP) |
-| Events | DOM events | Pressable/TouchableOpacity |
+| Feature          | Web (Svelte)        | React Native               |
+| ---------------- | ------------------- | -------------------------- |
+| Rendering        | DOM + CSS           | React Native Views         |
+| State management | Svelte stores       | React hooks + Observable   |
+| Styling          | CSS + inline styles | StyleSheet                 |
+| Animations       | CSS transitions     | LayoutAnimation (MVP)      |
+| Events           | DOM events          | Pressable/TouchableOpacity |
 
 ---
 
@@ -47,23 +47,27 @@ DivKit JSON is **fully compatible** between Web and React Native for MVP compone
 
 ```json
 {
-  "card": {
-    "log_id": "example",
-    "states": [{
-      "state_id": 0,
-      "div": {
-        "type": "text",
-        "text": "Hello, @{name}!",
-        "font_size": 20,
-        "text_color": "#000000"
-      }
-    }],
-    "variables": [{
-      "type": "string",
-      "name": "name",
-      "value": "World"
-    }]
-  }
+    "card": {
+        "log_id": "example",
+        "states": [
+            {
+                "state_id": 0,
+                "div": {
+                    "type": "text",
+                    "text": "Hello, @{name}!",
+                    "font_size": 20,
+                    "text_color": "#000000"
+                }
+            }
+        ],
+        "variables": [
+            {
+                "type": "string",
+                "name": "name",
+                "value": "World"
+            }
+        ]
+    }
 }
 ```
 
@@ -103,12 +107,7 @@ All built-in functions are supported.
 ```tsx
 import { DivKit } from 'react-native-divkit';
 
-<DivKit
-  data={divKitJson}
-  onStat={handleStat}
-  onCustomAction={handleCustomAction}
-  onError={handleError}
-/>
+<DivKit data={divKitJson} onStat={handleStat} onCustomAction={handleCustomAction} onError={handleError} />;
 ```
 
 ### Callbacks
@@ -117,9 +116,9 @@ import { DivKit } from 'react-native-divkit';
 
 ```javascript
 const callbacks = {
-  onStat: (stat) => console.log(stat),
-  onCustomAction: (action) => handleAction(action),
-  onError: (error) => console.error(error)
+    onStat: stat => console.log(stat),
+    onCustomAction: action => handleAction(action),
+    onError: error => console.error(error)
 };
 ```
 
@@ -127,9 +126,9 @@ const callbacks = {
 
 ```tsx
 <DivKit
-  onStat={(stat) => console.log(stat.type, stat.action)}
-  onCustomAction={(action) => handleAction(action)}
-  onError={(error) => console.error(error.message)}
+    onStat={stat => console.log(stat.type, stat.action)}
+    onCustomAction={action => handleAction(action)}
+    onError={error => console.error(error.message)}
 />
 ```
 
@@ -151,15 +150,15 @@ nameVar.set('Alice');
 import { useVariable, useVariableSetter } from 'react-native-divkit';
 
 function MyComponent() {
-  const name = useVariable('userName');
-  const setName = useVariableSetter('userName');
+    const name = useVariable('userName');
+    const setName = useVariableSetter('userName');
 
-  return (
-    <View>
-      <Text>Name: {name}</Text>
-      <Button onPress={() => setName('Alice')} title="Set Name" />
-    </View>
-  );
+    return (
+        <View>
+            <Text>Name: {name}</Text>
+            <Button onPress={() => setName('Alice')} title="Set Name" />
+        </View>
+    );
 }
 ```
 
@@ -169,13 +168,13 @@ Or using context:
 import { useDivKitContext } from 'react-native-divkit';
 
 function MyComponent() {
-  const { getVariable, setVariable } = useDivKitContext();
+    const { getVariable, setVariable } = useDivKitContext();
 
-  const handlePress = () => {
-    setVariable('userName', 'Alice');
-  };
+    const handlePress = () => {
+        setVariable('userName', 'Alice');
+    };
 
-  return <Button onPress={handlePress} title="Set Name" />;
+    return <Button onPress={handlePress} title="Set Name" />;
 }
 ```
 
@@ -186,11 +185,13 @@ function MyComponent() {
 ### Text Component
 
 **Web (renders as):**
+
 ```html
 <span class="div-text" style="font-size: 16px; color: #000;">Hello</span>
 ```
 
 **React Native (renders as):**
+
 ```tsx
 <Text style={{ fontSize: 16, color: '#000000' }}>Hello</Text>
 ```
@@ -198,32 +199,31 @@ function MyComponent() {
 ### Container Component
 
 **Web (renders as):**
+
 ```html
 <div class="div-container" style="display: flex; flex-direction: column;">
-  <!-- children -->
+    <!-- children -->
 </div>
 ```
 
 **React Native (renders as):**
+
 ```tsx
-<View style={{ flexDirection: 'column' }}>
-  {/* children */}
-</View>
+<View style={{ flexDirection: 'column' }}>{/* children */}</View>
 ```
 
 ### Image Component
 
 **Web (renders as):**
+
 ```html
 <img src="https://..." style="object-fit: cover;" />
 ```
 
 **React Native (renders as):**
+
 ```tsx
-<Image
-  source={{ uri: 'https://...' }}
-  style={{ resizeMode: 'cover' }}
-/>
+<Image source={{ uri: 'https://...' }} style={{ resizeMode: 'cover' }} />
 ```
 
 ### State Component
@@ -240,15 +240,16 @@ Behavior is identical - renders one child based on current state ID.
 
 **React Native:** Uses density-independent pixels (dp).
 
-| Web CSS | React Native |
-|---------|--------------|
-| `width: 100px` | `width: 100` |
-| `width: 50%` | `width: '50%'` |
+| Web CSS           | React Native   |
+| ----------------- | -------------- |
+| `width: 100px`    | `width: 100`   |
+| `width: 50%`      | `width: '50%'` |
 | `font-size: 16px` | `fontSize: 16` |
 
 ### Colors
 
 Identical format:
+
 - `#RGB` → `#RGB`
 - `#RRGGBB` → `#RRGGBB`
 - `#AARRGGBB` → converted to `rgba()`
@@ -257,22 +258,24 @@ Identical format:
 
 Most flexbox properties map directly:
 
-| CSS | React Native |
-|-----|--------------|
-| `flex-direction: row` | `flexDirection: 'row'` |
+| CSS                       | React Native               |
+| ------------------------- | -------------------------- |
+| `flex-direction: row`     | `flexDirection: 'row'`     |
 | `justify-content: center` | `justifyContent: 'center'` |
 | `align-items: flex-start` | `alignItems: 'flex-start'` |
-| `gap: 10px` | `gap: 10` (RN 0.71+) |
+| `gap: 10px`               | `gap: 10` (RN 0.71+)       |
 
 ### Borders
 
 **Web:**
+
 ```css
 border: 1px solid #000;
 border-radius: 8px;
 ```
 
 **React Native:**
+
 ```typescript
 {
   borderWidth: 1,
@@ -309,24 +312,26 @@ border-radius: 8px;
 ### URL Actions
 
 **Web:**
+
 ```javascript
-onCustomAction: (action) => {
-  window.location.href = action.url;
-}
+onCustomAction: action => {
+    window.location.href = action.url;
+};
 ```
 
 **React Native:**
+
 ```tsx
 import { Linking } from 'react-native';
 
-onCustomAction: (action) => {
-  if (action.url.startsWith('http')) {
-    Linking.openURL(action.url);
-  } else {
-    // Handle custom schemes
-    handleCustomScheme(action.url);
-  }
-}
+onCustomAction: action => {
+    if (action.url.startsWith('http')) {
+        Linking.openURL(action.url);
+    } else {
+        // Handle custom schemes
+        handleCustomScheme(action.url);
+    }
+};
 ```
 
 ### set_variable Action
@@ -356,12 +361,14 @@ Automatic fallback if not installed.
 ### Creating Variables
 
 **Web (Svelte stores):**
+
 ```javascript
 import { writable } from 'svelte/store';
 const variable = writable('initial');
 ```
 
 **React Native (Observable):**
+
 ```typescript
 import { Observable } from '../stores/createObservable';
 const variable = new Observable('initial');
@@ -372,11 +379,13 @@ The Variable class abstracts this difference - your JSON doesn't need to change.
 ### Subscribing to Variables
 
 **Web:**
+
 ```javascript
 $: derivedValue = $myVariable + 1;
 ```
 
 **React Native:**
+
 ```tsx
 const myValue = useVariable('myVariable');
 const derivedValue = useMemo(() => myValue + 1, [myValue]);
@@ -385,11 +394,13 @@ const derivedValue = useMemo(() => myValue + 1, [myValue]);
 ### Reactive Expressions
 
 **Web (using Svelte reactivity):**
+
 ```svelte
 $: text = getDerivedFromVars(json.text);
 ```
 
 **React Native (using hooks):**
+
 ```tsx
 const text = useDerivedFromVars(json.text, variables);
 ```
@@ -402,25 +413,25 @@ const text = useDerivedFromVars(json.text, variables);
 
 These features are planned for future versions:
 
-| Feature | Web Support | RN MVP | RN Future |
-|---------|-------------|--------|-----------|
-| Text | Full | Basic | 0.2.0 |
-| Container | Full | Basic | 0.2.0 |
-| Image | Full | Basic | 0.2.0 |
-| State | Full | Full | - |
-| Gallery | Full | No | 0.2.0 |
-| Pager | Full | No | 0.2.0 |
-| Tabs | Full | No | 0.2.0 |
-| Input | Full | No | 0.3.0 |
-| Select | Full | No | 0.3.0 |
-| Video | Full | No | 0.3.0 |
-| Lottie | Full | No | 0.3.0 |
-| Text ranges | Full | No | 0.2.0 |
-| Gradients | Full | Partial | 0.2.0 |
-| Animations | Full | Basic | 0.2.0 |
-| Timers | Full | No | 0.2.0 |
-| Tooltips | Full | No | 0.3.0 |
-| Custom components | Full | No | 0.3.0 |
+| Feature           | Web Support | RN MVP  | RN Future |
+| ----------------- | ----------- | ------- | --------- |
+| Text              | Full        | Basic   | 0.2.0     |
+| Container         | Full        | Basic   | 0.2.0     |
+| Image             | Full        | Basic   | 0.2.0     |
+| State             | Full        | Full    | -         |
+| Gallery           | Full        | No      | 0.2.0     |
+| Pager             | Full        | No      | 0.2.0     |
+| Tabs              | Full        | No      | 0.2.0     |
+| Input             | Full        | No      | 0.3.0     |
+| Select            | Full        | No      | 0.3.0     |
+| Video             | Full        | No      | 0.3.0     |
+| Lottie            | Full        | No      | 0.3.0     |
+| Text ranges       | Full        | No      | 0.2.0     |
+| Gradients         | Full        | Partial | 0.2.0     |
+| Animations        | Full        | Basic   | 0.2.0     |
+| Timers            | Full        | No      | 0.2.0     |
+| Tooltips          | Full        | No      | 0.3.0     |
+| Custom components | Full        | No      | 0.3.0     |
 
 ### Platform Differences
 

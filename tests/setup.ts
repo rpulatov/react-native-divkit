@@ -3,11 +3,15 @@
  */
 
 // Mock optional dependencies
-jest.mock('@react-native-clipboard/clipboard', () => ({
-    default: {
-        setString: jest.fn()
-    }
-}), { virtual: true });
+jest.mock(
+    '@react-native-clipboard/clipboard',
+    () => ({
+        default: {
+            setString: jest.fn()
+        }
+    }),
+    { virtual: true }
+);
 
 // Suppress console.error in tests unless needed
 const originalConsoleError = console.error;

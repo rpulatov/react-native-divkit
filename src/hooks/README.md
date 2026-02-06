@@ -9,19 +9,21 @@ Custom React hooks для работы с DivKit в React Native приложе�
 Главный hook для подстановки переменных в JSON props с автоматическим обновлением при изменении переменных.
 
 **Использование:**
+
 ```tsx
 import { useDerivedFromVars } from './hooks';
 
 function DivText({ json, variables }: Props) {
-  // json.text = "Hello @{userName}!"
-  const text = useDerivedFromVars(json.text, { variables });
-  // text = "Hello Alice!" - обновляется при изменении userName
+    // json.text = "Hello @{userName}!"
+    const text = useDerivedFromVars(json.text, { variables });
+    // text = "Hello Alice!" - обновляется при изменении userName
 
-  return <Text>{text}</Text>;
+    return <Text>{text}</Text>;
 }
 ```
 
 **Опции:**
+
 - `variables` - Map переменных из DivKitContext
 - `additionalVars` - дополнительные локальные переменные
 - `keepComplex` - сохранять dict/array как объекты (не stringify)
@@ -30,6 +32,7 @@ function DivText({ json, variables }: Props) {
 - `weekStartDay` - день начала недели (0 = воскресенье)
 
 **Simplified version:**
+
 ```tsx
 const text = useDerivedFromVarsSimple(json.text, variables);
 ```
@@ -41,32 +44,35 @@ const text = useDerivedFromVarsSimple(json.text, variables);
 Подписывается на конкретную переменную по имени и обновляет компонент при её изменении.
 
 **Использование:**
+
 ```tsx
 import { useVariable } from './hooks';
 
 function UserGreeting() {
-  const userName = useVariable('userName');
+    const userName = useVariable('userName');
 
-  return <Text>Hello {userName}</Text>;
+    return <Text>Hello {userName}</Text>;
 }
 ```
 
 **Related hooks:**
+
 - `useVariableInstance(variable)` - подписка на Variable инстанс
 - `useVariableSetter(name)` - получить setter функцию
 - `useVariableState(name)` - получить [value, setter] tuple (как useState)
 
 **Example with setter:**
+
 ```tsx
 function Counter() {
-  const [count, setCount] = useVariableState('counter');
+    const [count, setCount] = useVariableState('counter');
 
-  return (
-    <View>
-      <Text>Count: {count}</Text>
-      <Button title="+" onPress={() => setCount((count || 0) + 1)} />
-    </View>
-  );
+    return (
+        <View>
+            <Text>Count: {count}</Text>
+            <Button title="+" onPress={() => setCount((count || 0) + 1)} />
+        </View>
+    );
 }
 ```
 
@@ -77,39 +83,42 @@ function Counter() {
 Hooks для выполнения DivKit actions (click, visibility, etc.)
 
 **Использование:**
+
 ```tsx
 import { useActionHandler } from './hooks';
 
 function DivText({ json }: { json: DivTextJson }) {
-  const onPress = useActionHandler(json.actions);
+    const onPress = useActionHandler(json.actions);
 
-  return (
-    <Pressable onPress={onPress}>
-      <Text>{json.text}</Text>
-    </Pressable>
-  );
+    return (
+        <Pressable onPress={onPress}>
+            <Text>{json.text}</Text>
+        </Pressable>
+    );
 }
 ```
 
 **Available hooks:**
+
 - `useAction(options)` - выполнить одиночный action
 - `useActions(options)` - выполнить массив actions
 - `useActionHandler(actions, options)` - получить onPress handler
 - `useHasActions(actions)` - проверить наличие actions
 
 **Example with useAction:**
+
 ```tsx
 function MyButton() {
-  const execAction = useAction({ processUrls: true });
+    const execAction = useAction({ processUrls: true });
 
-  const handlePress = () => {
-    execAction({
-      log_id: 'button_click',
-      typed: { type: 'set_variable', variable_name: 'counter', value: 42 }
-    });
-  };
+    const handlePress = () => {
+        execAction({
+            log_id: 'button_click',
+            typed: { type: 'set_variable', variable_name: 'counter', value: 42 }
+        });
+    };
 
-  return <Button title="Click" onPress={handlePress} />;
+    return <Button title="Click" onPress={handlePress} />;
 }
 ```
 
@@ -136,11 +145,11 @@ function MyButton() {
 
 Эти hooks заменяют Svelte реактивные конструкции:
 
-| Svelte (Web) | React Native (Hooks) |
-|--------------|----------------------|
+| Svelte (Web)                            | React Native (Hooks)                      |
+| --------------------------------------- | ----------------------------------------- |
 | `$: derived = getDerivedFromVars(json)` | `useDerivedFromVars(json, { variables })` |
-| `$variable` (auto-subscribe) | `useVariable('variable')` |
-| `execAnyActions(actions)` | `useActions(options)` |
+| `$variable` (auto-subscribe)            | `useVariable('variable')`                 |
+| `execAnyActions(actions)`               | `useActions(options)`                     |
 
 ---
 
@@ -168,7 +177,7 @@ const userName = useVariable('userName'); // undefined если не найде�
 
 // Для проверки наличия:
 if (userName !== undefined) {
-  // переменная существует
+    // переменная существует
 }
 ```
 
@@ -181,8 +190,8 @@ const onPress = useActionHandler(json.actions);
 // ✅ Сложный случай - используйте useActions для контроля
 const execActions = useActions({ componentContext, processUrls: false });
 const handlePress = async () => {
-  await execActions(json.actions);
-  console.log('Actions completed');
+    await execActions(json.actions);
+    console.log('Actions completed');
 };
 ```
 
@@ -198,24 +207,22 @@ import { useVariable } from './hooks';
 import { createVariable } from '../expressions/variable';
 
 test('useVariable subscribes and updates', () => {
-  const variable = createVariable('test', 'string', 'initial');
-  const variables = new Map([['test', variable]]);
+    const variable = createVariable('test', 'string', 'initial');
+    const variables = new Map([['test', variable]]);
 
-  const { result } = renderHook(() => useVariable('test'), {
-    wrapper: ({ children }) => (
-      <DivKitContext.Provider value={{ variables, /* ... */ }}>
-        {children}
-      </DivKitContext.Provider>
-    )
-  });
+    const { result } = renderHook(() => useVariable('test'), {
+        wrapper: ({ children }) => (
+            <DivKitContext.Provider value={{ variables /* ... */ }}>{children}</DivKitContext.Provider>
+        )
+    });
 
-  expect(result.current).toBe('initial');
+    expect(result.current).toBe('initial');
 
-  act(() => {
-    variable.setValue('updated');
-  });
+    act(() => {
+        variable.setValue('updated');
+    });
 
-  expect(result.current).toBe('updated');
+    expect(result.current).toBe('updated');
 });
 ```
 
@@ -246,12 +253,12 @@ test('useVariable subscribes and updates', () => {
 ```tsx
 // React Native
 function DivText({ json }: Props) {
-  const { variables } = useDivKitContext();
+    const { variables } = useDivKitContext();
 
-  const text = useDerivedFromVarsSimple(json.text, variables);
-  const color = useDerivedFromVarsSimple(json.color, variables);
+    const text = useDerivedFromVarsSimple(json.text, variables);
+    const color = useDerivedFromVarsSimple(json.color, variables);
 
-  return <Text style={{ color }}>{text}</Text>;
+    return <Text style={{ color }}>{text}</Text>;
 }
 ```
 
@@ -260,6 +267,7 @@ function DivText({ json }: Props) {
 ## Next Steps
 
 После реализации hooks, следующие фазы:
+
 - **Phase 4:** Base Component Wrapper (Outer.tsx)
 - **Phase 5:** MVP Components (Text, Container, Image, State)
 - **Phase 6:** Main DivKit Component integration

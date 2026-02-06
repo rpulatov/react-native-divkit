@@ -7,46 +7,46 @@ export type Subscriber<T> = (value: T) => void;
 export type Unsubscriber = () => void;
 
 export class Observable<T> {
-  private value: T;
-  private subscribers = new Set<Subscriber<T>>();
+    private value: T;
+    private subscribers = new Set<Subscriber<T>>();
 
-  constructor(initialValue: T) {
-    this.value = initialValue;
-  }
-
-  /**
-   * Subscribe to value changes
-   * @param callback Function called immediately with current value and on each change
-   * @returns Unsubscribe function
-   */
-  subscribe(callback: Subscriber<T>): Unsubscriber {
-    this.subscribers.add(callback);
-    // Immediately call with current value (Svelte store behavior)
-    callback(this.value);
-
-    return () => {
-      this.subscribers.delete(callback);
-    };
-  }
-
-  /**
-   * Update the value and notify all subscribers
-   * @param newValue New value to set
-   */
-  set(newValue: T): void {
-    if (this.value !== newValue) {
-      this.value = newValue;
-      this.subscribers.forEach(cb => cb(newValue));
+    constructor(initialValue: T) {
+        this.value = initialValue;
     }
-  }
 
-  /**
-   * Get current value without subscribing
-   * @returns Current value
-   */
-  get(): T {
-    return this.value;
-  }
+    /**
+     * Subscribe to value changes
+     * @param callback Function called immediately with current value and on each change
+     * @returns Unsubscribe function
+     */
+    subscribe(callback: Subscriber<T>): Unsubscriber {
+        this.subscribers.add(callback);
+        // Immediately call with current value (Svelte store behavior)
+        callback(this.value);
+
+        return () => {
+            this.subscribers.delete(callback);
+        };
+    }
+
+    /**
+     * Update the value and notify all subscribers
+     * @param newValue New value to set
+     */
+    set(newValue: T): void {
+        if (this.value !== newValue) {
+            this.value = newValue;
+            this.subscribers.forEach(cb => cb(newValue));
+        }
+    }
+
+    /**
+     * Get current value without subscribing
+     * @returns Current value
+     */
+    get(): T {
+        return this.value;
+    }
 }
 
 /**
@@ -55,7 +55,7 @@ export class Observable<T> {
  * @returns Observable instance
  */
 export function writable<T>(initialValue: T): Observable<T> {
-  return new Observable(initialValue);
+    return new Observable(initialValue);
 }
 
 /**

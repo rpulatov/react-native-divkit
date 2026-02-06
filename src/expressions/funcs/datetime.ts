@@ -78,7 +78,7 @@ function setDay(_ctx: EvalContext, datetime: DatetimeValue, day: IntegerValue): 
     const copy = new Date(datetime.value);
     const intVal = Number(day.value);
 
-    if (intVal <= 0 && intVal !== -1 || intVal > getMaxDate(copy)) {
+    if ((intVal <= 0 && intVal !== -1) || intVal > getMaxDate(copy)) {
         throw new Error(`Unable to set day ${intVal} for date ${valToString(datetime, false)}.`);
     }
 
@@ -156,8 +156,15 @@ function setMillis(_ctx: EvalContext, datetime: DatetimeValue, millis: IntegerVa
 }
 
 const getter = (
-    method: 'getUTCFullYear' | 'getUTCMonth' | 'getUTCDate' | 'getUTCDay' | 'getUTCHours' | 'getUTCMinutes' |
-        'getUTCSeconds' | 'getUTCMilliseconds'
+    method:
+        | 'getUTCFullYear'
+        | 'getUTCMonth'
+        | 'getUTCDate'
+        | 'getUTCDay'
+        | 'getUTCHours'
+        | 'getUTCMinutes'
+        | 'getUTCSeconds'
+        | 'getUTCMilliseconds'
 ) => {
     return (_ctx: EvalContext, datetime: DatetimeValue): EvalValue => {
         const copy = new Date(datetime.value.getTime());

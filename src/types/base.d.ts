@@ -4,12 +4,34 @@ import type { Border } from './border';
 import type { Background } from './background';
 import type { EdgeInsets } from './edgeInserts';
 import type { Dimension } from './sizes';
-import type { Action, AnimatorDirection, AnimatorRepeatCount, BooleanInt, DisappearAction, DivFunction, DivVariable, Interpolation, VariableTrigger, VisibilityAction } from '../../typings/common';
+import type {
+    Action,
+    AnimatorDirection,
+    AnimatorRepeatCount,
+    BooleanInt,
+    DisappearAction,
+    DivFunction,
+    DivVariable,
+    Interpolation,
+    VariableTrigger,
+    VisibilityAction
+} from '../../typings/common';
 import type { Focus } from './focus';
 import type { Animation } from './animation';
 
-export type AccessibilityType = 'none' | 'button' | 'image' | 'text' | 'edit_text' |
-    'header' | 'tab_bar' | 'list' | 'select' | 'checkbox' | 'radio' | 'auto';
+export type AccessibilityType =
+    | 'none'
+    | 'button'
+    | 'image'
+    | 'text'
+    | 'edit_text'
+    | 'header'
+    | 'tab_bar'
+    | 'list'
+    | 'select'
+    | 'checkbox'
+    | 'radio'
+    | 'auto';
 
 export type AccessibilityMode = 'default' | 'merge' | 'exclude';
 
@@ -64,10 +86,12 @@ export interface ChangeBoundsTransition extends TransitionBase {
     type: 'change_bounds';
 }
 
-export type TransitionChange = ChangeBoundsTransition | {
-    type: 'set';
-    items: TransitionChange[];
-}
+export type TransitionChange =
+    | ChangeBoundsTransition
+    | {
+          type: 'set';
+          items: TransitionChange[];
+      };
 
 export interface PivotFixedValue {
     type: 'pivot-fixed';
@@ -133,8 +157,16 @@ export type TooltipMode = TooltipModeModal | TooltipModeNonModal;
 export interface Tooltip {
     id: string;
     div: DivBaseData;
-    position: 'left' | 'top-left' | 'top' | 'top-right' | 'right' |
-        'bottom-right' | 'bottom' | 'bottom-left' | 'center';
+    position:
+        | 'left'
+        | 'top-left'
+        | 'top'
+        | 'top-right'
+        | 'right'
+        | 'bottom-right'
+        | 'bottom'
+        | 'bottom-left'
+        | 'center';
     duration?: number;
     offset?: {
         x: {

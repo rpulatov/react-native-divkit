@@ -102,7 +102,7 @@ describe('Variable Binding Integration', () => {
             const variable = createVariable('config', 'dict', { theme: 'light' });
             const values: object[] = [];
 
-            variable.subscribe(val => values.push({ ...val as object }));
+            variable.subscribe(val => values.push({ ...(val as object) }));
 
             variable.setValue({ theme: 'dark', fontSize: 14 });
 

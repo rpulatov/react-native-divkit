@@ -1,8 +1,11 @@
 import type { Node } from './ast';
 
-export function walk(ast: Node, visitors: {
-    [Type in Node['type']]?: (node: Extract<Node, { type: Type }>) => void;
-}): void {
+export function walk(
+    ast: Node,
+    visitors: {
+        [Type in Node['type']]?: (node: Extract<Node, { type: Type }>) => void;
+    }
+): void {
     visitors[ast.type]?.(ast as any);
 
     switch (ast.type) {

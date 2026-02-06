@@ -25,9 +25,7 @@ export function useVariable(variableName: string): VariableValue | undefined {
     const { getVariable } = useDivKitContext();
     const variable = getVariable(variableName);
 
-    const [value, setValue] = useState<VariableValue | undefined>(() =>
-        variable ? variable.getValue() : undefined
-    );
+    const [value, setValue] = useState<VariableValue | undefined>(() => (variable ? variable.getValue() : undefined));
 
     useEffect(() => {
         if (!variable) {
@@ -36,7 +34,7 @@ export function useVariable(variableName: string): VariableValue | undefined {
         }
 
         // Subscribe to variable changes
-        const unsubscribe = variable.subscribe((newValue) => {
+        const unsubscribe = variable.subscribe(newValue => {
             setValue(newValue);
         });
 
@@ -60,12 +58,8 @@ export function useVariable(variableName: string): VariableValue | undefined {
  * }
  * ```
  */
-export function useVariableInstance<T extends VariableValue>(
-    variable: Variable<T> | undefined
-): T | undefined {
-    const [value, setValue] = useState<T | undefined>(() =>
-        variable ? variable.getValue() : undefined
-    );
+export function useVariableInstance<T extends VariableValue>(variable: Variable<T> | undefined): T | undefined {
+    const [value, setValue] = useState<T | undefined>(() => (variable ? variable.getValue() : undefined));
 
     useEffect(() => {
         if (!variable) {
@@ -74,7 +68,7 @@ export function useVariableInstance<T extends VariableValue>(
         }
 
         // Subscribe to variable changes
-        const unsubscribe = variable.subscribe((newValue) => {
+        const unsubscribe = variable.subscribe(newValue => {
             setValue(newValue);
         });
 
@@ -109,9 +103,7 @@ export function useVariableInstance<T extends VariableValue>(
  * }
  * ```
  */
-export function useVariableSetter(
-    variableName: string
-): ((value: VariableValue) => void) | undefined {
+export function useVariableSetter(variableName: string): ((value: VariableValue) => void) | undefined {
     const { setVariable } = useDivKitContext();
 
     // Return stable function reference
@@ -143,9 +135,7 @@ export function useVariableSetter(
  * }
  * ```
  */
-export function useVariableState(
-    variableName: string
-): [VariableValue | undefined, (value: VariableValue) => void] {
+export function useVariableState(variableName: string): [VariableValue | undefined, (value: VariableValue) => void] {
     const value = useVariable(variableName);
     const { setVariable } = useDivKitContext();
 

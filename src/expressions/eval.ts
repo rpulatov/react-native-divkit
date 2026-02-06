@@ -2,17 +2,37 @@
 /* eslint-disable no-else-return */
 
 import type {
-    BinaryExpression, BooleanLiteral, CallExpression, CompareOperator,
-    ConditionalExpression, EqualityOperator, FactorOperator, IntegerLiteral,
+    BinaryExpression,
+    BooleanLiteral,
+    CallExpression,
+    CompareOperator,
+    ConditionalExpression,
+    EqualityOperator,
+    FactorOperator,
+    IntegerLiteral,
     LogicalExpression,
     MethodExpression,
-    Node, NumberLiteral, StringLiteral, SumOperator,
+    Node,
+    NumberLiteral,
+    StringLiteral,
+    SumOperator,
     TemplateLiteral,
     TryExpression,
-    UnaryExpression, Variable
+    UnaryExpression,
+    Variable
 } from './ast';
 import type { WrappedError } from '../utils/wrapError';
-import { convertArgs, findBestMatchedFunc, type Func, funcByArgs, type FuncMatch, type FuncMatchError, funcs, methodByArgs, methods } from './funcs/funcs';
+import {
+    convertArgs,
+    findBestMatchedFunc,
+    type Func,
+    funcByArgs,
+    type FuncMatch,
+    type FuncMatchError,
+    funcs,
+    methodByArgs,
+    methods
+} from './funcs/funcs';
 import {
     checkIntegerOverflow,
     evalError,
@@ -34,9 +54,28 @@ import type { CustomFunctions } from './funcs/customFuncs';
 
 export type VariablesMap = Map<string, VariableInstance>;
 
-export type EvalTypes = 'string' | 'number' | 'integer' | 'boolean' | 'color' | 'url' | 'datetime' | 'dict' | 'array' | 'function';
+export type EvalTypes =
+    | 'string'
+    | 'number'
+    | 'integer'
+    | 'boolean'
+    | 'color'
+    | 'url'
+    | 'datetime'
+    | 'dict'
+    | 'array'
+    | 'function';
 
-export type EvalTypesWithoutDatetime = 'string' | 'number' | 'integer' | 'boolean' | 'color' | 'url' | 'dict' | 'array' | 'function';
+export type EvalTypesWithoutDatetime =
+    | 'string'
+    | 'number'
+    | 'integer'
+    | 'boolean'
+    | 'color'
+    | 'url'
+    | 'dict'
+    | 'array'
+    | 'function';
 
 export interface EvalValueBase {
     type: string;
@@ -93,8 +132,17 @@ export interface FuncValue extends EvalValueBase {
     value: Func[];
 }
 
-export type EvalValue = StringValue | UrlValue | ColorValue | NumberValue | IntegerValue |
-    BooleanValue | DatetimeValue | DictValue | ArrayValue | FuncValue;
+export type EvalValue =
+    | StringValue
+    | UrlValue
+    | ColorValue
+    | NumberValue
+    | IntegerValue
+    | BooleanValue
+    | DatetimeValue
+    | DictValue
+    | ArrayValue
+    | FuncValue;
 
 export interface EvalError {
     type: 'error';
@@ -281,8 +329,8 @@ function evalBinaryEquality<T extends EvalValue>(operator: EqualityOperator, lef
 
 function evalBinaryCompare<T extends EvalValue>(operator: CompareOperator, left: T, right: T): EvalValue {
     if (
-        left.type !== NUMBER && left.type !== INTEGER && left.type !== DATETIME ||
-        right.type !== NUMBER && right.type !== INTEGER && right.type !== DATETIME
+        (left.type !== NUMBER && left.type !== INTEGER && left.type !== DATETIME) ||
+        (right.type !== NUMBER && right.type !== INTEGER && right.type !== DATETIME)
     ) {
         evalError(
             `${valToPreview(left)} ${operator} ${valToPreview(right)}`,
@@ -331,9 +379,10 @@ function evalBinarySum<T extends EvalValue>(ctx: EvalContext, operator: SumOpera
         };
     }
 
-    let res: number | bigint = operator === '+' ?
-        (left.value as bigint) + (right.value as bigint) :
-        (left.value as bigint) - (right.value as bigint);
+    let res: number | bigint =
+        operator === '+'
+            ? (left.value as bigint) + (right.value as bigint)
+            : (left.value as bigint) - (right.value as bigint);
 
     // integer
     if (left.type === INTEGER) {
@@ -341,10 +390,7 @@ function evalBinarySum<T extends EvalValue>(ctx: EvalContext, operator: SumOpera
             res = roundInteger(ctx, res);
             checkIntegerOverflow(ctx, res);
         } catch (err: any) {
-            evalError(
-                `${valToPreview(left)} ${operator} ${valToPreview(right)}`,
-                err.message
-            );
+            evalError(`${valToPreview(left)} ${operator} ${valToPreview(right)}`, err.message);
         }
     }
 
@@ -373,10 +419,7 @@ function evalBinaryFactor<T extends EvalValue>(
         res = (left.value as bigint) * (right.value as bigint);
     } else if (operator === '/' || operator === '%') {
         if (Number(right.value) === 0) {
-            evalError(
-                `${valToPreview(left)} ${operator} ${valToPreview(right)}`,
-                'Division by zero is not supported.'
-            );
+            evalError(`${valToPreview(left)} ${operator} ${valToPreview(right)}`, 'Division by zero is not supported.');
         }
         if (operator === '/') {
             // bigint | number actually
@@ -394,10 +437,7 @@ function evalBinaryFactor<T extends EvalValue>(
             res = roundInteger(ctx, res);
             checkIntegerOverflow(ctx, res);
         } catch (err: any) {
-            evalError(
-                `${valToPreview(left)} ${operator} ${valToPreview(right)}`,
-                err.message
-            );
+            evalError(`${valToPreview(left)} ${operator} ${valToPreview(right)}`, err.message);
         }
     }
 
@@ -412,10 +452,7 @@ function evalBinaryExpression(ctx: EvalContext, expr: BinaryExpression): EvalVal
     let left = evalAny(ctx, expr.left);
     let right = evalAny(ctx, expr.right);
 
-    if (
-        left.type === 'number' && right.type === 'integer' ||
-        left.type === 'integer' && right.type === 'number'
-    ) {
+    if ((left.type === 'number' && right.type === 'integer') || (left.type === 'integer' && right.type === 'number')) {
         if (left.type === 'integer') {
             left = integerToNumber(left);
         } else if (right.type === 'integer') {
@@ -477,7 +514,7 @@ function evalCallExpression(ctx: EvalContext, expr: CallExpression): EvalValue {
     }
 
     if (findRes) {
-        if ('expected' in findRes || 'type' in findRes && findRes.type === 'missing') {
+        if ('expected' in findRes || ('type' in findRes && findRes.type === 'missing')) {
             logFunctionMatchError(funcName, args, findRes);
         }
         func = findRes.func;
@@ -511,8 +548,7 @@ export function logFunctionMatchError(
 ): never {
     const argsType = args.map(arg => typeToString(arg.type)).join(', ');
     const prefix = `${funcName}(${argsToStr(args)})`;
-    const makeError: (msg: string, details: string) => never =
-        isOuterFunc ? evalOuterError : evalError;
+    const makeError: (msg: string, details: string) => never = isOuterFunc ? evalOuterError : evalError;
 
     if (findRes.type === 'few' && args.length === 0 && findRes.hasOverloads) {
         makeError(prefix, 'Function requires non empty argument list.');
@@ -528,7 +564,9 @@ export function logFunctionMatchError(
                     makeError(prefix, `Exactly ${findRes.def.args.length} argument(s) expected.`);
                 }
             } else {
-                const expectedArgs = findRes.def.args.map(arg => typeToString(typeof arg === 'string' ? arg : arg.type)).join(', ');
+                const expectedArgs = findRes.def.args
+                    .map(arg => typeToString(typeof arg === 'string' ? arg : arg.type))
+                    .join(', ');
                 makeError(prefix, `Invalid argument type: expected ${expectedArgs}, got ${argsType}.`);
             }
         }
@@ -547,8 +585,11 @@ function evalMethodExpression(ctx: EvalContext, expr: MethodExpression): EvalVal
 
     if (!methodByArgs.has(methodKey)) {
         const findRes = findBestMatchedFunc(methods, methodName, args);
-        if ('expected' in findRes || 'type' in findRes && findRes.type === 'missing') {
-            const argsType = args.slice(1).map(arg => typeToString(arg.type)).join(', ');
+        if ('expected' in findRes || ('type' in findRes && findRes.type === 'missing')) {
+            const argsType = args
+                .slice(1)
+                .map(arg => typeToString(arg.type))
+                .join(', ');
             const prefix = `${methodName}(${argsToStr(args.slice(1))})`;
 
             if (findRes.type === 'few' && args.length === 1) {

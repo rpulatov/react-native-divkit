@@ -1,4 +1,12 @@
-import type { EvalContext, EvalTypes, EvalTypesWithoutDatetime, EvalValue, EvalValueBase, IntegerValue, NumberValue } from './eval';
+import type {
+    EvalContext,
+    EvalTypes,
+    EvalTypesWithoutDatetime,
+    EvalValue,
+    EvalValueBase,
+    IntegerValue,
+    NumberValue
+} from './eval';
 import type { Node, Variable } from './ast';
 import type { VariablesMap } from './eval';
 import { walk } from './walk';
@@ -9,8 +17,7 @@ import { BOOLEAN, NUMBER } from './const';
 import type { TypedValue } from '../../typings/common';
 import type { MaybeMissing } from './json';
 
-export class FuncError extends Error {
-}
+export class FuncError extends Error {}
 
 export function valToInternal(val: EvalValue): EvalValue {
     if (val.type === 'url' || val.type === 'color') {
@@ -75,11 +82,7 @@ export function valToPreview(val: EvalValue): string {
     let res = valToString(val, false);
 
     if (val.type === 'string') {
-        res = "'" +
-            res
-                .replace(/\\/g, '\\\\')
-                .replace(/'/g, '\\\'') +
-            "'";
+        res = "'" + res.replace(/\\/g, '\\\\').replace(/'/g, "\\'") + "'";
     }
 
     return res;
@@ -169,13 +172,16 @@ export function safeConvertColor(color: string): ParsedColor {
 }
 
 export function stringifyColor(color: ParsedColor): string {
-    return `#${[color.a, color.r, color.g, color.b].map(it => {
-        if (it < 0 || it > 255) {
-            throw new Error('Value out of range 0..1.');
-        }
+    return `#${[color.a, color.r, color.g, color.b]
+        .map(it => {
+            if (it < 0 || it > 255) {
+                throw new Error('Value out of range 0..1.');
+            }
 
-        return padLeft(Math.round(it).toString(16), 2);
-    }).join('').toUpperCase()}`;
+            return padLeft(Math.round(it).toString(16), 2);
+        })
+        .join('')
+        .toUpperCase()}`;
 }
 
 export function transformColorValue(color: string): string {
@@ -200,11 +206,7 @@ const EVAL_TYPE_TO_JS_TYPE = {
     dict: 'object',
     datetime: 'never'
 };
-export function convertJsValueToDivKit(
-    ctx: EvalContext | undefined,
-    val: unknown,
-    evalType: EvalTypes
-): EvalValue {
+export function convertJsValueToDivKit(ctx: EvalContext | undefined, val: unknown, evalType: EvalTypes): EvalValue {
     if (evalType === 'function') {
         throw new Error('Cannot convert function');
     }
@@ -213,9 +215,9 @@ export function convertJsValueToDivKit(
 
     let type: string = typeof val;
     if (
-        jsType === 'array' && !Array.isArray(val) ||
-        jsType !== 'array' && type !== jsType ||
-        type === 'object' && val === null
+        (jsType === 'array' && !Array.isArray(val)) ||
+        (jsType !== 'array' && type !== jsType) ||
+        (type === 'object' && val === null)
     ) {
         if (type === 'object') {
             if (Array.isArray(val)) {

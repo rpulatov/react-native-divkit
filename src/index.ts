@@ -15,31 +15,14 @@
 
 // Main component
 export { DivKit } from './DivKit';
-export type {
-    DivKitProps,
-    StatCallback,
-    CustomActionCallback,
-    ErrorCallback
-} from './DivKit';
+export type { DivKitProps, StatCallback, CustomActionCallback, ErrorCallback } from './DivKit';
 
 // Types
-export type {
-    Action,
-    DivJson,
-    DivBase,
-    DivVariable,
-    Direction,
-    TemplateContext,
-    BooleanInt
-} from '../typings/common';
+export type { Action, DivJson, DivBase, DivVariable, Direction, TemplateContext, BooleanInt } from '../typings/common';
 
-export type {
-    DivBaseData
-} from './types/base';
+export type { DivBaseData } from './types/base';
 
-export type {
-    ComponentContext
-} from './types/componentContext';
+export type { ComponentContext } from './types/componentContext';
 
 // Variables
 export {
@@ -55,40 +38,19 @@ export {
     ArrayVariable
 } from './expressions/variable';
 
-export type {
-    VariableType,
-    VariableValue
-} from './expressions/variable';
+export type { VariableType, VariableValue } from './expressions/variable';
 
 // Context hooks (for advanced usage)
-export {
-    useDivKitContext,
-    DivKitContext
-} from './context/DivKitContext';
+export { useDivKitContext, DivKitContext } from './context/DivKitContext';
 
-export type {
-    DivKitContextValue
-} from './context/DivKitContext';
+export type { DivKitContextValue } from './context/DivKitContext';
 
 // Hooks (for custom components)
-export {
-    useDerivedFromVars,
-    useDerivedFromVarsSimple
-} from './hooks/useDerivedFromVars';
+export { useDerivedFromVars, useDerivedFromVarsSimple } from './hooks/useDerivedFromVars';
 
-export {
-    useVariable,
-    useVariableInstance,
-    useVariableSetter,
-    useVariableState
-} from './hooks/useVariable';
+export { useVariable, useVariableInstance, useVariableSetter, useVariableState } from './hooks/useVariable';
 
-export {
-    useAction,
-    useActions,
-    useActionHandler,
-    useHasActions
-} from './hooks/useAction';
+export { useAction, useActions, useActionHandler, useHasActions } from './hooks/useAction';
 
 // Utils (for advanced usage)
 export { wrapError } from './utils/wrapError';

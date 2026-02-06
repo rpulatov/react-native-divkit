@@ -3,9 +3,11 @@
 ## MVP Components Implemented
 
 ### 1. DivText (`text/DivText.tsx`)
+
 Text rendering component with variable substitution and styling.
 
 **Features:**
+
 - ✅ Text rendering with variable substitution
 - ✅ Font styling (size, weight, color, family)
 - ✅ Text alignment (horizontal, RTL support)
@@ -15,6 +17,7 @@ Text rendering component with variable substitution and styling.
 - ✅ Font feature settings (basic)
 
 **Deferred:**
+
 - Text ranges (nested styling)
 - Text images
 - Text gradients
@@ -23,9 +26,11 @@ Text rendering component with variable substitution and styling.
 - Selectable text with custom actions
 
 ### 2. DivContainer (`container/DivContainer.tsx`)
+
 Flex container component for layout management.
 
 **Features:**
+
 - ✅ Vertical/horizontal/overlap orientation
 - ✅ Content alignment (horizontal & vertical)
 - ✅ Item spacing (gap)
@@ -33,6 +38,7 @@ Flex container component for layout management.
 - ✅ RTL support
 
 **Deferred:**
+
 - Wrap layout mode
 - Separators (visual dividers)
 - Line separators (for wrap mode)
@@ -41,9 +47,11 @@ Flex container component for layout management.
 - Clip to bounds
 
 ### 3. DivImage (`image/DivImage.tsx`)
+
 Image component with network loading and scaling.
 
 **Features:**
+
 - ✅ Network image loading
 - ✅ Scaling modes (fill, fit, stretch, no_scale)
 - ✅ Placeholder color while loading
@@ -52,6 +60,7 @@ Image component with network loading and scaling.
 - ✅ Aspect ratio
 
 **Deferred:**
+
 - GIF support (requires react-native-gif)
 - Image preview (blur-up technique)
 - Tint color and tint modes
@@ -61,9 +70,11 @@ Image component with network loading and scaling.
 - react-native-fast-image integration
 
 ### 4. DivState (`state/DivState.tsx`)
+
 State management component for switching between different UI states.
 
 **Features:**
+
 - ✅ State selection by state_id
 - ✅ Default state
 - ✅ State switching via actions (set_state)
@@ -72,6 +83,7 @@ State management component for switching between different UI states.
 - ✅ Two-way binding with variables
 
 **Deferred:**
+
 - Transition animations (in/out/change)
 - Animation timing and interpolation
 - Clip to bounds
@@ -79,15 +91,18 @@ State management component for switching between different UI states.
 - Multiple concurrent state transitions
 
 ### 5. DivComponent (`DivComponent.tsx`)
+
 Universal component router that dispatches to appropriate component based on type.
 
 **Supported Types:**
+
 - `text` → DivText
 - `container` → DivContainer
 - `image` / `gif` → DivImage
 - `state` → DivState
 
 **Deferred Types:**
+
 - `gallery`, `pager`, `tabs`
 - `slider`, `indicator`
 - `input`, `select`, `switch`
@@ -97,9 +112,11 @@ Universal component router that dispatches to appropriate component based on typ
 ## Utility Components
 
 ### Outer (`utilities/Outer.tsx`)
+
 Base wrapper component providing common functionality for all components.
 
 **Features:**
+
 - Visibility handling (visible/invisible/gone)
 - Sizing (width/height with fixed/match_parent/wrap_content)
 - Padding and margins
@@ -110,6 +127,7 @@ Base wrapper component providing common functionality for all components.
 - Action handling (onPress)
 
 ### Unknown (`utilities/Unknown.tsx`)
+
 Fallback component for unsupported types.
 
 ## Architecture
@@ -131,6 +149,7 @@ DivComponent (router)
 ## Integration with Context System
 
 All components integrate with:
+
 - **DivKitContext**: Access to variables, actions, configuration
 - **StateContext**: State management and transitions
 - **ActionContext**: Action execution
@@ -139,6 +158,7 @@ All components integrate with:
 ## Integration with Hooks
 
 All components use reactive hooks:
+
 - `useDerivedFromVarsSimple`: Variable substitution
 - `useAction`, `useActionHandler`: Action execution
 - `useDivKitContext`, `useStateContext`: Context access
@@ -149,29 +169,29 @@ All components use reactive hooks:
 import { DivComponent } from 'react-native-divkit';
 
 const json = {
-  type: 'container',
-  orientation: 'vertical',
-  items: [
-    {
-      type: 'text',
-      text: 'Hello @{userName}!',
-      font_size: 24
-    },
-    {
-      type: 'image',
-      image_url: 'https://example.com/image.png',
-      scale: 'fit'
-    }
-  ]
+    type: 'container',
+    orientation: 'vertical',
+    items: [
+        {
+            type: 'text',
+            text: 'Hello @{userName}!',
+            font_size: 24
+        },
+        {
+            type: 'image',
+            image_url: 'https://example.com/image.png',
+            scale: 'fit'
+        }
+    ]
 };
 
 const componentContext = {
-  json,
-  variables: variablesMap,
-  // ... other context props
+    json,
+    variables: variablesMap
+    // ... other context props
 };
 
-<DivComponent componentContext={componentContext} />
+<DivComponent componentContext={componentContext} />;
 ```
 
 ## Next Steps (Phase 6)

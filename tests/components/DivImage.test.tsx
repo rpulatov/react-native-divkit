@@ -80,11 +80,7 @@ describe('DivImage', () => {
     const renderWithContext = (component: React.ReactElement) => {
         const contextValue = createDivKitContextValue();
         return {
-            result: (
-                <DivKitContext.Provider value={contextValue}>
-                    {component}
-                </DivKitContext.Provider>
-            ),
+            result: <DivKitContext.Provider value={contextValue}>{component}</DivKitContext.Provider>,
             contextValue
         };
     };

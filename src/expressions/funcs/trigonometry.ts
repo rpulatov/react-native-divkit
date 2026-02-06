@@ -12,14 +12,14 @@ function pi(): EvalValue {
 function toRadians(_ctx: EvalContext, degrees: NumberValue): EvalValue {
     return {
         type: NUMBER,
-        value: degrees.value / 180 * Math.PI
+        value: (degrees.value / 180) * Math.PI
     };
 }
 
 function toDegrees(_ctx: EvalContext, radians: NumberValue): EvalValue {
     return {
         type: NUMBER,
-        value: radians.value / Math.PI * 180
+        value: (radians.value / Math.PI) * 180
     };
 }
 

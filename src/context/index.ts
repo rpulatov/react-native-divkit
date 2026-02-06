@@ -3,18 +3,9 @@
  * Phase 2: Context System
  */
 
-export {
-    DivKitContext,
-    useDivKitContext,
-    type DivKitContextValue
-} from './DivKitContext';
+export { DivKitContext, useDivKitContext, type DivKitContextValue } from './DivKitContext';
 
-export {
-    ActionContext,
-    useActionContext,
-    useActionContextOptional,
-    type ActionContextValue
-} from './ActionContext';
+export { ActionContext, useActionContext, useActionContextOptional, type ActionContextValue } from './ActionContext';
 
 export {
     StateContext,

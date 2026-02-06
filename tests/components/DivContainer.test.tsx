@@ -97,9 +97,7 @@ describe('DivContainer', () => {
         return {
             result: (
                 <DivKitContext.Provider value={divKitContextValue}>
-                    <StateContext.Provider value={stateContextValue}>
-                        {component}
-                    </StateContext.Provider>
+                    <StateContext.Provider value={stateContextValue}>{component}</StateContext.Provider>
                 </DivKitContext.Provider>
             ),
             divKitContextValue,

@@ -44,15 +44,20 @@ export function copyToClipboard(
     logError: (error: WrappedError) => void,
     actionTyped: MaybeMissing<ActionCopyToClipboard>
 ): void {
-    if (!(
-        actionTyped.content && (actionTyped.content.type === 'text' || actionTyped.content.type === 'url') &&
-        typeof actionTyped.content.value === 'string'
-    )) {
-        logError(wrapError(new Error('Incorrect action'), {
-            additional: {
-                action: actionTyped
-            }
-        }));
+    if (
+        !(
+            actionTyped.content &&
+            (actionTyped.content.type === 'text' || actionTyped.content.type === 'url') &&
+            typeof actionTyped.content.value === 'string'
+        )
+    ) {
+        logError(
+            wrapError(new Error('Incorrect action'), {
+                additional: {
+                    action: actionTyped
+                }
+            })
+        );
         return;
     }
 
@@ -62,21 +67,25 @@ export function copyToClipboard(
     }
 
     if (!Clipboard) {
-        logError(wrapError(new Error('Clipboard is unavailable. Install @react-native-clipboard/clipboard'), {
-            additional: {
-                action: actionTyped
-            }
-        }));
+        logError(
+            wrapError(new Error('Clipboard is unavailable. Install @react-native-clipboard/clipboard'), {
+                additional: {
+                    action: actionTyped
+                }
+            })
+        );
         return;
     }
 
     try {
         Clipboard.setString(actionTyped.content.value);
     } catch (err) {
-        logError(wrapError(new Error('Failed to copy to the clipboard'), {
-            additional: {
-                originalError: String(err)
-            }
-        }));
+        logError(
+            wrapError(new Error('Failed to copy to the clipboard'), {
+                additional: {
+                    originalError: String(err)
+                }
+            })
+        );
     }
 }

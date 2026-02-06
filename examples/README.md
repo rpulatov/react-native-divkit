@@ -7,31 +7,41 @@ This directory contains example JSON files and sample apps demonstrating DivKit 
 Located in `sample-divs/`:
 
 ### 1. simple-text.json
+
 Basic text rendering with styling.
+
 - Single text component
 - Color, font size, alignment
 - Padding
 
 ### 2. container-layout.json
+
 Container layouts with nested components.
+
 - Vertical and horizontal containers
 - Multiple text items
 - Nested layouts
 
 ### 3. with-variables.json
+
 Variable substitution and reactivity.
+
 - String, color, and integer variables
 - Variable interpolation with `@{varName}` syntax
 - Dynamic text updates
 
 ### 4. state-switching.json
+
 State component with multiple states.
+
 - State container with 2 states
 - State switching capability
 - Different content per state
 
 ### 5. with-image.json
+
 Image rendering.
+
 - Network image loading
 - Image scaling modes
 - Fixed dimensions
@@ -43,14 +53,14 @@ import { DivKit } from 'react-native-divkit';
 import sampleJson from './sample-divs/simple-text.json';
 
 export default function App() {
-  return (
-    <DivKit
-      data={sampleJson}
-      onStat={(stat) => console.log('Stat:', stat)}
-      onCustomAction={(action) => console.log('Action:', action.url)}
-      onError={(error) => console.error('Error:', error)}
-    />
-  );
+    return (
+        <DivKit
+            data={sampleJson}
+            onStat={stat => console.log('Stat:', stat)}
+            onCustomAction={action => console.log('Action:', action.url)}
+            onError={error => console.error('Error:', error)}
+        />
+    );
 }
 ```
 
@@ -63,22 +73,23 @@ import { DivKit } from 'react-native-divkit';
 import { useDivKitContext } from 'react-native-divkit';
 
 function VariableController() {
-  const { setVariable } = useDivKitContext();
+    const { setVariable } = useDivKitContext();
 
-  return (
-    <Button
-      title="Update Counter"
-      onPress={() => {
-        setVariable('counter', Math.floor(Math.random() * 100));
-      }}
-    />
-  );
+    return (
+        <Button
+            title="Update Counter"
+            onPress={() => {
+                setVariable('counter', Math.floor(Math.random() * 100));
+            }}
+        />
+    );
 }
 ```
 
 ## MVP Scope
 
 These examples demonstrate the MVP functionality:
+
 - ✅ Text component
 - ✅ Container component (vertical/horizontal)
 - ✅ Image component
@@ -90,6 +101,7 @@ These examples demonstrate the MVP functionality:
 ## Deferred Features (Post-MVP)
 
 The following are not included in these examples:
+
 - Gallery, Pager, Tabs
 - Input, Select, Switch
 - Video, Lottie animations

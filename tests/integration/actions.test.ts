@@ -145,9 +145,24 @@ describe('Actions Integration', () => {
             variables.set('config', config);
 
             const setActions = [
-                { type: 'dict_set_value', variable_name: 'config', key: 'theme', value: { type: 'string', value: 'dark' } },
-                { type: 'dict_set_value', variable_name: 'config', key: 'fontSize', value: { type: 'integer', value: 14 } },
-                { type: 'dict_set_value', variable_name: 'config', key: 'showNotifications', value: { type: 'boolean', value: true } }
+                {
+                    type: 'dict_set_value',
+                    variable_name: 'config',
+                    key: 'theme',
+                    value: { type: 'string', value: 'dark' }
+                },
+                {
+                    type: 'dict_set_value',
+                    variable_name: 'config',
+                    key: 'fontSize',
+                    value: { type: 'integer', value: 14 }
+                },
+                {
+                    type: 'dict_set_value',
+                    variable_name: 'config',
+                    key: 'showNotifications',
+                    value: { type: 'boolean', value: true }
+                }
             ];
 
             for (const action of setActions) {
@@ -184,7 +199,7 @@ describe('Actions Integration', () => {
 
             const statesMap = new Map<string, (stateId: string) => Promise<void>>();
             let toggleState = 'off';
-            statesMap.set('toggle_button', async (stateId) => {
+            statesMap.set('toggle_button', async stateId => {
                 toggleState = stateId;
             });
 

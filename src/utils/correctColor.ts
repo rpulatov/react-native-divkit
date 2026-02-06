@@ -8,7 +8,7 @@ import { padLeft } from './padLeft';
  * @returns Color with opacity if it has correct format, or defaultColor elsewhere
  */
 export function correctColor(color: string | undefined, alpha = 1, defaultColor = 'transparent'): string {
-    color = (typeof color === 'string' && color || '').toLowerCase();
+    color = ((typeof color === 'string' && color) || '').toLowerCase();
 
     if (color.charAt(0) !== '#') {
         return defaultColor;
@@ -24,7 +24,7 @@ export function correctColor(color: string | undefined, alpha = 1, defaultColor 
 }
 
 export function correctColorWithAlpha(color: string | undefined, alpha: number, defaultColor = 'transparent'): string {
-    color = (typeof color === 'string' && color || '').toLowerCase();
+    color = ((typeof color === 'string' && color) || '').toLowerCase();
 
     if (color.charAt(0) !== '#') {
         return defaultColor;
@@ -48,16 +48,18 @@ export interface ParsedColor {
 
 export function stringifyColorToCss(color: ParsedColor): string {
     if (color.a === 255) {
-        return `#${[color.r, color.g, color.b].map(it => {
-            return padLeft(Math.round(it).toString(16), 2);
-        }).join('')}`;
+        return `#${[color.r, color.g, color.b]
+            .map(it => {
+                return padLeft(Math.round(it).toString(16), 2);
+            })
+            .join('')}`;
     }
 
     return `rgba(${color.r},${color.g},${color.b},${(color.a / 255).toFixed(2)})`;
 }
 
 export function parseColor(color: string): ParsedColor | null {
-    const colorMatch = (
+    const colorMatch =
         // #AARRGGBB
         color.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i) ||
         // #ARGB
@@ -65,8 +67,7 @@ export function parseColor(color: string): ParsedColor | null {
         // #RRGGBB
         color.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i) ||
         // #RGB
-        color.match(/^#([0-9a-f])([0-9a-f])([0-9a-f])$/i)
-    );
+        color.match(/^#([0-9a-f])([0-9a-f])([0-9a-f])$/i);
 
     if (colorMatch) {
         // with alpha part in color

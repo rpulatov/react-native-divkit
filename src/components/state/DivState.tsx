@@ -116,7 +116,7 @@ export function DivState({ componentContext }: DivStateProps) {
         if (!currentState?.div) return undefined;
 
         return componentContext.produceChildContext(currentState.div, {
-            path: currentStateId,
+            path: currentStateId
         });
     }, [currentState, currentStateId, componentContext]);
 
@@ -129,18 +129,12 @@ export function DivState({ componentContext }: DivStateProps) {
         // Import DivComponent dynamically to avoid circular dependency
         const DivComponent = require('../DivComponent').DivComponent;
 
-        return (
-            <DivComponent
-                componentContext={childContext}
-            />
-        );
+        return <DivComponent componentContext={childContext} />;
     };
 
     return (
         <Outer componentContext={componentContext}>
-            <View>
-                {renderContent()}
-            </View>
+            <View>{renderContent()}</View>
         </Outer>
     );
 }

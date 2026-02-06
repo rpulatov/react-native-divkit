@@ -35,30 +35,18 @@ export function DivText({ componentContext }: DivTextProps) {
     const { json, variables } = componentContext;
 
     // Reactive properties - use hooks for properties that may contain variables
-    const text = useDerivedFromVarsSimple<string>(
-        json.text || '',
-        variables || new Map()
-    );
+    const text = useDerivedFromVarsSimple<string>(json.text || '', variables || new Map());
 
-    const fontSize = useDerivedFromVarsSimple<number>(
-        json.font_size || 12,
-        variables || new Map()
-    );
+    const fontSize = useDerivedFromVarsSimple<number>(json.font_size || 12, variables || new Map());
 
-    const textColor = useDerivedFromVarsSimple<string>(
-        json.text_color || '#000000',
-        variables || new Map()
-    );
+    const textColor = useDerivedFromVarsSimple<string>(json.text_color || '#000000', variables || new Map());
 
     const textAlignmentHorizontal = useDerivedFromVarsSimple(
         json.text_alignment_horizontal || 'start',
         variables || new Map()
     );
 
-    const maxLines = useDerivedFromVarsSimple<number | undefined>(
-        json.max_lines,
-        variables || new Map()
-    );
+    const maxLines = useDerivedFromVarsSimple<number | undefined>(json.max_lines, variables || new Map());
 
     // Build text style
     const textStyle = useMemo((): TextStyle => {
@@ -77,10 +65,10 @@ export function DivText({ componentContext }: DivTextProps) {
         // Font weight
         if (json.font_weight) {
             const weightMap: Record<FontWeight, TextStyle['fontWeight']> = {
-                'light': '300',
-                'regular': '400',
-                'medium': '500',
-                'bold': '700'
+                light: '300',
+                regular: '400',
+                medium: '500',
+                bold: '700'
             };
             style.fontWeight = weightMap[json.font_weight] || '400';
         } else if (json.font_weight_value) {

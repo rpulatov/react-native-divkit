@@ -1,8 +1,21 @@
 // Some code based on the https://github.com/date-fns (MIT License)
 
-type FormatGetter = (opts: Intl.DateTimeFormatOptions & {
-    date?: Date;
-}, field: Intl.DateTimeFormatPartTypes | 'week' | 'weekyear' | 'extendedyear' | 'weekofmonth' | 'dayofyear' | 'dayofweekinmonth' | 'weekdaynumeric' | 'timezoneoffset' | 'fractionalSecond') => string | undefined;
+type FormatGetter = (
+    opts: Intl.DateTimeFormatOptions & {
+        date?: Date;
+    },
+    field:
+        | Intl.DateTimeFormatPartTypes
+        | 'week'
+        | 'weekyear'
+        | 'extendedyear'
+        | 'weekofmonth'
+        | 'dayofyear'
+        | 'dayofweekinmonth'
+        | 'weekdaynumeric'
+        | 'timezoneoffset'
+        | 'fractionalSecond'
+) => string | undefined;
 
 function formatNumber(num: string | undefined, len: number | undefined): string | undefined {
     if (!num || !len) {
@@ -22,14 +35,23 @@ const formatters: Record<string, (token: number, getter: FormatGetter) => string
         } else {
             era = 'long';
         }
-        return getter({
-            era
-        }, 'era');
+        return getter(
+            {
+                era
+            },
+            'era'
+        );
     },
     d(token, getter) {
-        return formatNumber(getter({
-            day: 'numeric'
-        }, 'day'), token > 1 ? token : 0);
+        return formatNumber(
+            getter(
+                {
+                    day: 'numeric'
+                },
+                'day'
+            ),
+            token > 1 ? token : 0
+        );
     },
     D(token, getter) {
         return formatNumber(getter({}, 'dayofyear'), token > 1 ? token : 0);
@@ -50,26 +72,47 @@ const formatters: Record<string, (token: number, getter: FormatGetter) => string
         } else {
             month = 'long';
         }
-        return getter({
-            month,
-            // to get a genitive case of month
-            day: 'numeric'
-        }, 'month');
+        return getter(
+            {
+                month,
+                // to get a genitive case of month
+                day: 'numeric'
+            },
+            'month'
+        );
     },
     y(token, getter) {
-        return formatNumber(getter({
-            year: token === 2 ? '2-digit' : 'numeric'
-        }, 'year'), token > 2 ? token : undefined);
+        return formatNumber(
+            getter(
+                {
+                    year: token === 2 ? '2-digit' : 'numeric'
+                },
+                'year'
+            ),
+            token > 2 ? token : undefined
+        );
     },
     Y(token, getter) {
-        return formatNumber(getter({
-            year: token === 2 ? '2-digit' : 'numeric'
-        }, 'weekyear'), token > 2 ? token : undefined);
+        return formatNumber(
+            getter(
+                {
+                    year: token === 2 ? '2-digit' : 'numeric'
+                },
+                'weekyear'
+            ),
+            token > 2 ? token : undefined
+        );
     },
     u(token, getter) {
-        return formatNumber(getter({
-            year: 'numeric'
-        }, 'extendedyear'), token > 1 ? token : undefined);
+        return formatNumber(
+            getter(
+                {
+                    year: 'numeric'
+                },
+                'extendedyear'
+            ),
+            token > 1 ? token : undefined
+        );
     },
     E(token, getter) {
         let weekday: Intl.DateTimeFormatOptions['weekday'];
@@ -80,9 +123,12 @@ const formatters: Record<string, (token: number, getter: FormatGetter) => string
         } else {
             weekday = 'long';
         }
-        return getter({
-            weekday
-        }, 'weekday');
+        return getter(
+            {
+                weekday
+            },
+            'weekday'
+        );
     },
     e(token, getter) {
         if (token > 2) {
@@ -97,11 +143,14 @@ const formatters: Record<string, (token: number, getter: FormatGetter) => string
         return formatNumber(getter({}, 'weekofmonth'), token > 1 ? token : undefined);
     },
     H(token, getter) {
-        const hours = getter({
-            hour: 'numeric',
-            hour12: false,
-            hourCycle: 'h23',
-        }, 'hour');
+        const hours = getter(
+            {
+                hour: 'numeric',
+                hour12: false,
+                hourCycle: 'h23'
+            },
+            'hour'
+        );
 
         if (!hours) {
             return;
@@ -112,18 +161,27 @@ const formatters: Record<string, (token: number, getter: FormatGetter) => string
         return formatNumber(fixed, token > 1 ? token : undefined);
     },
     h(token, getter) {
-        return formatNumber(getter({
-            hour: 'numeric',
-            hour12: true,
-            hourCycle: 'h12',
-        }, 'hour'), token > 1 ? token : undefined);
+        return formatNumber(
+            getter(
+                {
+                    hour: 'numeric',
+                    hour12: true,
+                    hourCycle: 'h12'
+                },
+                'hour'
+            ),
+            token > 1 ? token : undefined
+        );
     },
     K(token, getter) {
-        const hours = getter({
-            hour: 'numeric',
-            hour12: true,
-            hourCycle: 'h11',
-        }, 'hour');
+        const hours = getter(
+            {
+                hour: 'numeric',
+                hour12: true,
+                hourCycle: 'h11'
+            },
+            'hour'
+        );
 
         if (!hours) {
             return;
@@ -133,34 +191,58 @@ const formatters: Record<string, (token: number, getter: FormatGetter) => string
         return formatNumber(fixed, token > 1 ? token : undefined);
     },
     k(token, getter) {
-        return formatNumber(getter({
-            hour: 'numeric',
-            hour12: false,
-            hourCycle: 'h24',
-        }, 'hour'), token > 2 ? token : undefined);
+        return formatNumber(
+            getter(
+                {
+                    hour: 'numeric',
+                    hour12: false,
+                    hourCycle: 'h24'
+                },
+                'hour'
+            ),
+            token > 2 ? token : undefined
+        );
     },
     a(_token, getter) {
-        return getter({
-            hour: 'numeric',
-            hour12: true,
-            hourCycle: 'h11',
-            dayPeriod: undefined
-        }, 'dayPeriod');
+        return getter(
+            {
+                hour: 'numeric',
+                hour12: true,
+                hourCycle: 'h11',
+                dayPeriod: undefined
+            },
+            'dayPeriod'
+        );
     },
     m(token, getter) {
-        return formatNumber(getter({
-            minute: 'numeric'
-        }, 'minute'), token > 1 ? token : undefined);
+        return formatNumber(
+            getter(
+                {
+                    minute: 'numeric'
+                },
+                'minute'
+            ),
+            token > 1 ? token : undefined
+        );
     },
     s(token, getter) {
-        return formatNumber(getter({
-            second: 'numeric'
-        }, 'second'), token > 1 ? token : undefined);
+        return formatNumber(
+            getter(
+                {
+                    second: 'numeric'
+                },
+                'second'
+            ),
+            token > 1 ? token : undefined
+        );
     },
     S(token, getter) {
-        const res = getter({
-            fractionalSecondDigits: Math.min(3, token) as 1 | 2 | 3
-        } as any, 'fractionalSecond');
+        const res = getter(
+            {
+                fractionalSecondDigits: Math.min(3, token) as 1 | 2 | 3
+            } as any,
+            'fractionalSecond'
+        );
 
         if (res && token > 3) {
             return res.padEnd(token, '0');
@@ -168,9 +250,12 @@ const formatters: Record<string, (token: number, getter: FormatGetter) => string
         return res;
     },
     z(token, getter) {
-        return getter({
-            timeZoneName: token === 4 ? 'long' : 'short'
-        }, 'timeZoneName');
+        return getter(
+            {
+                timeZoneName: token === 4 ? 'long' : 'short'
+            },
+            'timeZoneName'
+        );
     },
     Z(_token, getter) {
         const offset = -Number(getter({}, 'timezoneoffset'));
@@ -178,11 +263,10 @@ const formatters: Record<string, (token: number, getter: FormatGetter) => string
         const fullOffset = Math.floor(timeOffset) * 100 + (timeOffset - Math.floor(timeOffset)) * 60;
 
         return (offset >= 0 ? '+' : '-') + formatNumber(String(fullOffset), 4);
-    },
+    }
 };
 
-const formattingTokensRegExp =
-    /(\w)\1*|''|'(''|[^'])+('|$)|./g;
+const formattingTokensRegExp = /(\w)\1*|''|'(''|[^'])+('|$)|./g;
 
 const escapedStringRegExp = /^'([^]*?)'?$/;
 const doubleQuoteRegExp = /''/g;
@@ -204,9 +288,7 @@ function getWeekFirstDay(date: Date, isUTC: boolean, weekStartDay: number): Date
     const weekDay = date[isUTC ? 'getUTCDay' : 'getDay']();
 
     // Monday logic
-    const offset = (weekDay < weekStartDay) ?
-        weekStartDay - weekDay - 7 :
-        weekStartDay - weekDay;
+    const offset = weekDay < weekStartDay ? weekStartDay - weekDay - 7 : weekStartDay - weekDay;
 
     return new Date(date.getTime() + msInDay * offset);
 }
@@ -223,7 +305,11 @@ function dayDiff(date0: Date, date1: Date): number {
     return Math.round((date0.getTime() - date1.getTime()) / msInDay);
 }
 
-function getIOSWeekYear(date: Date, isUTC: boolean, weekStartDay: number): {
+function getIOSWeekYear(
+    date: Date,
+    isUTC: boolean,
+    weekStartDay: number
+): {
     week: number;
     year: number;
 } {
@@ -240,7 +326,9 @@ function getIOSWeekYear(date: Date, isUTC: boolean, weekStartDay: number): {
     let year = date[isUTC ? 'getUTCFullYear' : 'getFullYear']();
     if (isBeforeFirstWeek) {
         --year;
-        firstWeekFirstDay[isUTC ? 'setUTCFullYear' : 'setFullYear'](firstWeekFirstDay[isUTC ? 'getUTCFullYear' : 'getFullYear']() - 1);
+        firstWeekFirstDay[isUTC ? 'setUTCFullYear' : 'setFullYear'](
+            firstWeekFirstDay[isUTC ? 'getUTCFullYear' : 'getFullYear']() - 1
+        );
         const dayOfYear = dayDiff(getWeekFirstDay(date, isUTC, weekStartDay), firstWeekFirstDay);
         week = Math.round(dayOfYear / 7) + 1;
     } else if (isAfterLastWeek) {
@@ -257,15 +345,19 @@ function getIOSWeekYear(date: Date, isUTC: boolean, weekStartDay: number): {
     };
 }
 
-export function formatDate(date: Date, format: string, {
-    locale,
-    isUTC,
-    weekStartDay = 0
-}: {
-    locale?: string;
-    isUTC?: boolean;
-    weekStartDay?: number;
-} = {}): string {
+export function formatDate(
+    date: Date,
+    format: string,
+    {
+        locale,
+        isUTC,
+        weekStartDay = 0
+    }: {
+        locale?: string;
+        isUTC?: boolean;
+        weekStartDay?: number;
+    } = {}
+): string {
     const getter: FormatGetter = (opts, field): string | undefined => {
         if (field === 'week') {
             const { week } = getIOSWeekYear(date, isUTC || false, weekStartDay);
@@ -357,8 +449,7 @@ export function formatDate(date: Date, format: string, {
         return undefined;
     };
 
-    return (format
-        .match(formattingTokensRegExp) || [])
+    return (format.match(formattingTokensRegExp) || [])
         .map(substring => {
             if (substring === "''") {
                 return "'";
@@ -374,9 +465,7 @@ export function formatDate(date: Date, format: string, {
             }
 
             if (firstCharacter.match(unescapedLatinCharacterRegExp)) {
-                throw new Error(
-                    `Format string contains an unescaped latin alphabet character "${firstCharacter}"`
-                );
+                throw new Error(`Format string contains an unescaped latin alphabet character "${firstCharacter}"`);
             }
 
             return substring;

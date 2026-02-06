@@ -1,10 +1,17 @@
-export type Node = BinaryExpression | LogicalExpression |
-    UnaryExpression |
-    StringLiteral | NumberLiteral | IntegerLiteral | BooleanLiteral |
-    TemplateLiteral |
-    ConditionalExpression | TryExpression |
-    CallExpression | MethodExpression |
-    Variable;
+export type Node =
+    | BinaryExpression
+    | LogicalExpression
+    | UnaryExpression
+    | StringLiteral
+    | NumberLiteral
+    | IntegerLiteral
+    | BooleanLiteral
+    | TemplateLiteral
+    | ConditionalExpression
+    | TryExpression
+    | CallExpression
+    | MethodExpression
+    | Variable;
 
 export type UnaryOperator = '!' | '+' | '-';
 
@@ -19,14 +26,14 @@ export type FactorOperator = '/' | '*' | '%';
 export type LogicalOperator = '&&' | '||';
 
 export interface BinaryExpression {
-    type: 'BinaryExpression',
+    type: 'BinaryExpression';
     operator: EqualityOperator | CompareOperator | SumOperator | FactorOperator;
     left: Node;
     right: Node;
 }
 
 export interface LogicalExpression {
-    type: 'LogicalExpression',
+    type: 'LogicalExpression';
     operator: LogicalOperator;
     left: Node;
     right: Node;

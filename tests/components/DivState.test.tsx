@@ -103,9 +103,7 @@ describe('DivState', () => {
         return {
             result: (
                 <DivKitContext.Provider value={divKitContextValue}>
-                    <StateContext.Provider value={stateContextValue}>
-                        {component}
-                    </StateContext.Provider>
+                    <StateContext.Provider value={stateContextValue}>{component}</StateContext.Provider>
                 </DivKitContext.Provider>
             ),
             divKitContextValue,
@@ -153,9 +151,7 @@ describe('DivState', () => {
     it('registers state with context', () => {
         const context = createMockContext({
             div_id: 'registered_state',
-            states: [
-                { state_id: 'state1', div: { type: 'text', text: 'Content' } }
-            ] as any[]
+            states: [{ state_id: 'state1', div: { type: 'text', text: 'Content' } }] as any[]
         });
 
         const registerStateMock = jest.fn(() => () => {});
@@ -168,9 +164,7 @@ describe('DivState', () => {
     it('handles state with single state', () => {
         const context = createMockContext({
             div_id: 'single_state',
-            states: [
-                { state_id: 'only', div: { type: 'text', text: 'Only State' } }
-            ] as any[]
+            states: [{ state_id: 'only', div: { type: 'text', text: 'Only State' } }] as any[]
         });
 
         const { result } = renderWithContext(<DivState componentContext={context} />);

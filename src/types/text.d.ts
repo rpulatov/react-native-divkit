@@ -57,7 +57,7 @@ export interface TextMaskParticles {
     density?: number;
 }
 
-export interface TextMaskSolid{
+export interface TextMaskSolid {
     type: 'solid';
     is_enabled?: boolean;
     color: string;

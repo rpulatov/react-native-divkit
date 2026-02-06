@@ -5,10 +5,13 @@ export interface WrappedError extends Error {
 
 export type LogError = (error: WrappedError) => void;
 
-export function wrapError(error: Error, params: {
-    level?: 'error' | 'warn';
-    additional?: Record<string, unknown>;
-} = {}): WrappedError {
+export function wrapError(
+    error: Error,
+    params: {
+        level?: 'error' | 'warn';
+        additional?: Record<string, unknown>;
+    } = {}
+): WrappedError {
     const wrapped = error as WrappedError;
 
     wrapped.level = params.level || 'error';

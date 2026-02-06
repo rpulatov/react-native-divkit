@@ -40,10 +40,7 @@ import { evalExpression } from './expressions/eval';
 /**
  * Callback for logging statistics
  */
-export type StatCallback = (stat: {
-    type: string;
-    action: Action;
-}) => void;
+export type StatCallback = (stat: { type: string; action: Action }) => void;
 
 /**
  * Callback for custom actions (actions with URLs)
@@ -104,13 +101,16 @@ export function DivKit({
     const statesMap = useRef<Map<string, StateSetter>>(new Map());
 
     // Error logging
-    const logError = useCallback((error: WrappedError) => {
-        if (onError) {
-            onError(error);
-        } else {
-            console.error('[DivKit Error]', error);
-        }
-    }, [onError]);
+    const logError = useCallback(
+        (error: WrappedError) => {
+            if (onError) {
+                onError(error);
+            } else {
+                console.error('[DivKit Error]', error);
+            }
+        },
+        [onError]
+    );
 
     // Parse JSON and apply templates
     const { rootDiv, initialVariables } = useMemo(() => {
@@ -132,15 +132,13 @@ export function DivKit({
         if (divData && typeof divData === 'object' && 'type' in divData) {
             try {
                 // Use recursive template application to handle nested templates
-                resolvedDiv = applyTemplatesRecursively(
-                    divData,
-                    templatesData,
-                    logError
-                );
+                resolvedDiv = applyTemplatesRecursively(divData, templatesData, logError);
             } catch (err) {
-                logError(wrapError(err as Error, {
-                    additional: { phase: 'template_resolution' }
-                }));
+                logError(
+                    wrapError(err as Error, {
+                        additional: { phase: 'template_resolution' }
+                    })
+                );
             }
         }
 
@@ -161,19 +159,17 @@ export function DivKit({
                     return;
                 }
 
-                const variable = createVariable(
-                    varData.name,
-                    varData.type as VariableType,
-                    varData.value
-                );
+                const variable = createVariable(varData.name, varData.type as VariableType, varData.value);
                 map.set(varData.name, variable);
             } catch (err) {
-                logError(wrapError(err as Error, {
-                    additional: {
-                        variable: varData.name,
-                        type: varData.type
-                    }
-                }));
+                logError(
+                    wrapError(err as Error, {
+                        additional: {
+                            variable: varData.name,
+                            type: varData.type
+                        }
+                    })
+                );
             }
         });
 
@@ -186,133 +182,152 @@ export function DivKit({
     }, []);
 
     // Variable management
-    const getVariable = useCallback((name: string): Variable | undefined => {
-        return variables.get(name);
-    }, [variables]);
+    const getVariable = useCallback(
+        (name: string): Variable | undefined => {
+            return variables.get(name);
+        },
+        [variables]
+    );
 
-    const setVariable = useCallback((name: string, value: unknown): void => {
-        const variable = variables.get(name);
-        if (!variable) {
-            logError(wrapError(new Error('Variable not found'), {
-                additional: { variable: name }
-            }));
-            return;
-        }
+    const setVariable = useCallback(
+        (name: string, value: unknown): void => {
+            const variable = variables.get(name);
+            if (!variable) {
+                logError(
+                    wrapError(new Error('Variable not found'), {
+                        additional: { variable: name }
+                    })
+                );
+                return;
+            }
 
-        try {
-            variable.setValue(value);
-        } catch (err) {
-            logError(wrapError(err as Error, {
-                additional: {
-                    variable: name,
-                    value
-                }
-            }));
-        }
-    }, [variables, logError]);
+            try {
+                variable.setValue(value);
+            } catch (err) {
+                logError(
+                    wrapError(err as Error, {
+                        additional: {
+                            variable: name,
+                            value
+                        }
+                    })
+                );
+            }
+        },
+        [variables, logError]
+    );
 
     // Action execution
-    const execAnyActions = useCallback(async (
-        actions: MaybeMissing<Action[]> | undefined,
-        opts?: {
-            componentContext?: ComponentContext;
-            processUrls?: boolean;
-        }
-    ): Promise<void> => {
-        if (!actions || !Array.isArray(actions)) {
-            return;
-        }
-
-        const processUrls = opts?.processUrls ?? true;
-        const componentContext = opts?.componentContext;
-
-        for (const action of actions) {
-            if (!action) continue;
-
-            // Log statistics
-            if (action.log_id && onStat) {
-                onStat({
-                    type: 'action',
-                    action: action as Action
-                });
+    const execAnyActions = useCallback(
+        async (
+            actions: MaybeMissing<Action[]> | undefined,
+            opts?: {
+                componentContext?: ComponentContext;
+                processUrls?: boolean;
+            }
+        ): Promise<void> => {
+            if (!actions || !Array.isArray(actions)) {
+                return;
             }
 
-            // Handle typed actions
-            if (action.typed) {
-                const typed = action.typed;
+            const processUrls = opts?.processUrls ?? true;
+            const componentContext = opts?.componentContext;
 
-                try {
-                    switch (typed.type) {
-                        case 'set_variable':
-                            if (typed.variable_name && typed.value) {
-                                const typedValue = typed.value;
-                                let value: unknown;
+            for (const action of actions) {
+                if (!action) continue;
 
-                                // Convert typed value to raw value
-                                if (typeof typedValue === 'object' && typedValue !== null && 'value' in typedValue) {
-                                    value = typedValue.value;
-                                } else {
-                                    value = typedValue;
+                // Log statistics
+                if (action.log_id && onStat) {
+                    onStat({
+                        type: 'action',
+                        action: action as Action
+                    });
+                }
+
+                // Handle typed actions
+                if (action.typed) {
+                    const typed = action.typed;
+
+                    try {
+                        switch (typed.type) {
+                            case 'set_variable':
+                                if (typed.variable_name && typed.value) {
+                                    const typedValue = typed.value;
+                                    let value: unknown;
+
+                                    // Convert typed value to raw value
+                                    if (
+                                        typeof typedValue === 'object' &&
+                                        typedValue !== null &&
+                                        'value' in typedValue
+                                    ) {
+                                        value = typedValue.value;
+                                    } else {
+                                        value = typedValue;
+                                    }
+
+                                    setVariable(typed.variable_name, value);
                                 }
+                                break;
 
-                                setVariable(typed.variable_name, value);
-                            }
-                            break;
-
-                        case 'set_state': {
-                            const setStateAction = typed as any;
-                            if (setStateAction.state_id && setStateAction.temporary_state_id) {
-                                const setter = statesMap.current.get(setStateAction.state_id);
-                                if (setter) {
-                                    await setter(String(setStateAction.temporary_state_id));
+                            case 'set_state': {
+                                const setStateAction = typed as any;
+                                if (setStateAction.state_id && setStateAction.temporary_state_id) {
+                                    const setter = statesMap.current.get(setStateAction.state_id);
+                                    if (setter) {
+                                        await setter(String(setStateAction.temporary_state_id));
+                                    }
                                 }
+                                break;
                             }
-                            break;
+
+                            case 'array_insert_value':
+                                arrayInsert(componentContext, variables, logError, typed as any);
+                                break;
+
+                            case 'array_remove_value':
+                                arrayRemove(componentContext, variables, logError, typed as any);
+                                break;
+
+                            case 'array_set_value':
+                                arraySet(componentContext, variables, logError, typed as any);
+                                break;
+
+                            case 'dict_set_value':
+                                dictSetValue(componentContext, variables, logError, typed as any);
+                                break;
+
+                            case 'update_structure':
+                                updateStructure(componentContext, variables, logError, typed as any);
+                                break;
+
+                            case 'copy_to_clipboard':
+                                copyToClipboard(logError, typed as any);
+                                break;
+
+                            // MVP: Other action types deferred (timer, animator, etc.)
+                            default:
+                                break;
                         }
-
-                        case 'array_insert_value':
-                            arrayInsert(componentContext, variables, logError, typed as any);
-                            break;
-
-                        case 'array_remove_value':
-                            arrayRemove(componentContext, variables, logError, typed as any);
-                            break;
-
-                        case 'array_set_value':
-                            arraySet(componentContext, variables, logError, typed as any);
-                            break;
-
-                        case 'dict_set_value':
-                            dictSetValue(componentContext, variables, logError, typed as any);
-                            break;
-
-                        case 'update_structure':
-                            updateStructure(componentContext, variables, logError, typed as any);
-                            break;
-
-                        case 'copy_to_clipboard':
-                            copyToClipboard(logError, typed as any);
-                            break;
-
-                        // MVP: Other action types deferred (timer, animator, etc.)
-                        default:
-                            break;
+                    } catch (err) {
+                        logError(
+                            wrapError(err as Error, {
+                                additional: {
+                                    action: typed.type
+                                }
+                            })
+                        );
                     }
-                } catch (err) {
-                    logError(wrapError(err as Error, {
-                        additional: {
-                            action: typed.type
-                        }
-                    }));
+                }
+
+                // Handle URL actions
+                if (processUrls && action.url && onCustomAction) {
+                    onCustomAction(action as Action & { url: string });
                 }
             }
-
-            // Handle URL actions
-            if (processUrls && action.url && onCustomAction) {
-                onCustomAction(action as Action & { url: string });
-            }
-        }
-    }, [variables, logError, onStat, onCustomAction, setVariable]);
+        },
+        [variables, logError, onStat, onCustomAction, setVariable]
+    );
 
     // Component registration
     const registerComponent = useCallback((_componentId: string, context: ComponentContext): void => {
@@ -324,89 +339,98 @@ export function DivKit({
     }, []);
 
     // State Context implementation
-    const stateContextValue = useMemo<StateContextValue>(() => ({
-        registerState: (componentId: string, setState: StateSetter): (() => void) => {
-            statesMap.current.set(componentId, setState);
-            return () => {
-                statesMap.current.delete(componentId);
-            };
-        },
+    const stateContextValue = useMemo<StateContextValue>(
+        () => ({
+            registerState: (componentId: string, setState: StateSetter): (() => void) => {
+                statesMap.current.set(componentId, setState);
+                return () => {
+                    statesMap.current.delete(componentId);
+                };
+            },
 
-        switchState: async (stateId: string): Promise<void> => {
-            const setter = statesMap.current.get(stateId);
-            if (setter) {
-                await setter(stateId);
+            switchState: async (stateId: string): Promise<void> => {
+                const setter = statesMap.current.get(stateId);
+                if (setter) {
+                    await setter(stateId);
+                }
+            },
+
+            getStateSetter: (componentId: string): StateSetter | undefined => {
+                return statesMap.current.get(componentId);
+            },
+
+            registerChild: (_componentId: string): void => {
+                // MVP: Simplified implementation
+                // Full transition tracking deferred
+            },
+
+            unregisterChild: (_componentId: string): void => {
+                // MVP: Simplified implementation
+            },
+
+            hasTransitionChange: (): boolean => {
+                // MVP: Always false (transitions deferred)
+                return false;
             }
-        },
-
-        getStateSetter: (componentId: string): StateSetter | undefined => {
-            return statesMap.current.get(componentId);
-        },
-
-        registerChild: (_componentId: string): void => {
-            // MVP: Simplified implementation
-            // Full transition tracking deferred
-        },
-
-        unregisterChild: (_componentId: string): void => {
-            // MVP: Simplified implementation
-        },
-
-        hasTransitionChange: (): boolean => {
-            // MVP: Always false (transitions deferred)
-            return false;
-        }
-    }), []);
+        }),
+        []
+    );
 
     // Action Context implementation
-    const actionContextValue = useMemo<ActionContextValue>(() => ({
-        hasAction: (): boolean => {
-            // MVP: Simplified - always return false
-            // Full action tracking deferred
-            return false;
-        }
-    }), []);
+    const actionContextValue = useMemo<ActionContextValue>(
+        () => ({
+            hasAction: (): boolean => {
+                // MVP: Simplified - always return false
+                // Full action tracking deferred
+                return false;
+            }
+        }),
+        []
+    );
 
     // DivKit Context implementation
-    const divKitContextValue = useMemo<DivKitContextValue>(() => ({
-        logStat: (type: string, action: MaybeMissing<Action>) => {
-            if (onStat && action && action.log_id) {
-                onStat({ type, action: action as Action });
-            }
-        },
+    const divKitContextValue = useMemo<DivKitContextValue>(
+        () => ({
+            logStat: (type: string, action: MaybeMissing<Action>) => {
+                if (onStat && action && action.log_id) {
+                    onStat({ type, action: action as Action });
+                }
+            },
 
-        execCustomAction: (action: Action & { url: string }) => {
-            if (onCustomAction) {
-                onCustomAction(action);
-            }
-        },
+            execCustomAction: (action: Action & { url: string }) => {
+                if (onCustomAction) {
+                    onCustomAction(action);
+                }
+            },
 
-        direction,
-        platform,
+            direction,
+            platform,
 
-        variables,
-        getVariable,
-        setVariable,
+            variables,
+            getVariable,
+            setVariable,
 
-        registerComponent,
-        unregisterComponent,
+            registerComponent,
+            unregisterComponent,
 
-        execAnyActions,
+            execAnyActions,
 
-        genId
-    }), [
-        onStat,
-        onCustomAction,
-        direction,
-        platform,
-        variables,
-        getVariable,
-        setVariable,
-        registerComponent,
-        unregisterComponent,
-        execAnyActions,
-        genId
-    ]);
+            genId
+        }),
+        [
+            onStat,
+            onCustomAction,
+            direction,
+            platform,
+            variables,
+            getVariable,
+            setVariable,
+            registerComponent,
+            unregisterComponent,
+            execAnyActions,
+            genId
+        ]
+    );
 
     // Create root component context
     const rootComponentContext = useMemo<ComponentContext<DivBaseData> | null>(() => {
@@ -443,13 +467,8 @@ export function DivKit({
                 return evalExpression(allVars, undefined, store, expr, opts);
             },
 
-            produceChildContext: (
-                div: MaybeMissing<DivBaseData>,
-                opts?: any
-            ): ComponentContext => {
-                const childPath = opts?.path !== undefined
-                    ? [...context.path, String(opts.path)]
-                    : context.path;
+            produceChildContext: (div: MaybeMissing<DivBaseData>, opts?: any): ComponentContext => {
+                const childPath = opts?.path !== undefined ? [...context.path, String(opts.path)] : context.path;
 
                 const childContext: ComponentContext = {
                     ...context,
@@ -515,11 +534,7 @@ export function DivKit({
 
     // Render
     if (!rootDiv || !rootComponentContext) {
-        return (
-            <View style={[styles.container, style]}>
-                {/* Empty state - could render error UI here */}
-            </View>
-        );
+        return <View style={[styles.container, style]}>{/* Empty state - could render error UI here */}</View>;
     }
 
     return (

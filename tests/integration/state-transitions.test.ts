@@ -187,11 +187,11 @@ describe('State Transitions Integration', () => {
                 child: 'child_initial'
             };
 
-            statesMap.set('parent', async (stateId) => {
+            statesMap.set('parent', async stateId => {
                 states.parent = stateId;
             });
 
-            statesMap.set('child', async (stateId) => {
+            statesMap.set('child', async stateId => {
                 states.child = stateId;
             });
 

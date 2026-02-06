@@ -28,10 +28,12 @@ export interface PagerRegisterData {
     destroy: () => void;
 }
 
-export type ComponentKey = string | {
-    index: number;
-    data: object;
-};
+export type ComponentKey =
+    | string
+    | {
+          index: number;
+          data: object;
+      };
 
 export interface ComponentContext<T extends DivBaseData = DivBaseData> {
     path: string[];
@@ -70,24 +72,27 @@ export interface ComponentContext<T extends DivBaseData = DivBaseData> {
         keepComplex?: boolean,
         maxDepth?: number
     ): Readable<MaybeMissing<T>>;
-    getJsonWithVars<T>(
-        jsonProp: T,
-        additionalVars?: Map<string, Variable>,
-        keepComplex?: boolean
-    ): MaybeMissing<T>;
-    evalExpression(store: Store | undefined, expr: Node, opts?: {
-        weekStartDay?: number;
-        storeUsedVars?: Set<string>;
-    }): ReturnType<typeof evalExpression>;
-    produceChildContext(div: MaybeMissing<DivBaseData>, opts?: {
-        path?: string | number | undefined;
-        isRootState?: boolean;
-        isTooltipRoot?: boolean;
-        fake?: number;
-        variables?: Map<string, Variable>;
-        id?: string;
-        key?: ComponentKey;
-    }): ComponentContext;
+    getJsonWithVars<T>(jsonProp: T, additionalVars?: Map<string, Variable>, keepComplex?: boolean): MaybeMissing<T>;
+    evalExpression(
+        store: Store | undefined,
+        expr: Node,
+        opts?: {
+            weekStartDay?: number;
+            storeUsedVars?: Set<string>;
+        }
+    ): ReturnType<typeof evalExpression>;
+    produceChildContext(
+        div: MaybeMissing<DivBaseData>,
+        opts?: {
+            path?: string | number | undefined;
+            isRootState?: boolean;
+            isTooltipRoot?: boolean;
+            fake?: number;
+            variables?: Map<string, Variable>;
+            id?: string;
+            key?: ComponentKey;
+        }
+    ): ComponentContext;
     dup(fakeReason: number): ComponentContext;
     getVariable(varName: string, type?: VariableType): Variable | undefined;
     getAnimator(name: string): MaybeMissing<Animator> | undefined;

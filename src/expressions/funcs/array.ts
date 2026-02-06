@@ -1,8 +1,28 @@
 import { parseColor } from '../../utils/correctColor';
 import { toBigInt } from '../bigint';
 import { ARRAY, BOOLEAN, COLOR, DICT, FUNCTION, INTEGER, NUMBER, STRING, URL } from '../const';
-import { logFunctionMatchError, type ArrayValue, type BooleanValue, type ColorValue, type EvalContext, type EvalTypes, type EvalValue, type FuncValue, type IntegerValue, type NumberValue, type StringValue, type UrlValue } from '../eval';
-import { checkIntegerOverflow, checkUrl, convertJsValueToDivKit, safeCheckUrl, transformColorValue, typeToString } from '../utils';
+import {
+    logFunctionMatchError,
+    type ArrayValue,
+    type BooleanValue,
+    type ColorValue,
+    type EvalContext,
+    type EvalTypes,
+    type EvalValue,
+    type FuncValue,
+    type IntegerValue,
+    type NumberValue,
+    type StringValue,
+    type UrlValue
+} from '../eval';
+import {
+    checkIntegerOverflow,
+    checkUrl,
+    convertJsValueToDivKit,
+    safeCheckUrl,
+    transformColorValue,
+    typeToString
+} from '../utils';
 import { findBestMatchedFuncList, registerFunc, registerMethod, type Func, type FuncMatch } from './funcs';
 
 function arrayGetter(jsType: string, runtimeType: string) {
@@ -14,9 +34,9 @@ function arrayGetter(jsType: string, runtimeType: string) {
 
         let type: string = typeof val;
         if (
-            jsType === 'array' && !Array.isArray(val) ||
-            jsType !== 'array' && type !== jsType ||
-            type === 'object' && val === null
+            (jsType === 'array' && !Array.isArray(val)) ||
+            (jsType !== 'array' && type !== jsType) ||
+            (type === 'object' && val === null)
         ) {
             if (type === 'object') {
                 if (Array.isArray(val)) {
@@ -144,57 +164,75 @@ function filter(ctx: EvalContext, array: ArrayValue, fn: FuncValue): EvalValue {
 
             if (typeof it === 'string') {
                 if (parseColor(it)) {
-                    argMatchers.push([{
-                        type: COLOR,
-                        value: it
-                    }]);
+                    argMatchers.push([
+                        {
+                            type: COLOR,
+                            value: it
+                        }
+                    ]);
                 }
                 if (safeCheckUrl(it)) {
-                    argMatchers.push([{
-                        type: URL,
-                        value: it
-                    }]);
+                    argMatchers.push([
+                        {
+                            type: URL,
+                            value: it
+                        }
+                    ]);
                 }
-                argMatchers.push([{
-                    type: STRING,
-                    value: it
-                }]);
+                argMatchers.push([
+                    {
+                        type: STRING,
+                        value: it
+                    }
+                ]);
             } else if (typeof it === 'number') {
                 if (Math.round(it) === it) {
                     checkIntegerOverflow(ctx, it);
-                    argMatchers.push([{
-                        type: INTEGER,
-                        value: toBigInt(it)
-                    }]);
+                    argMatchers.push([
+                        {
+                            type: INTEGER,
+                            value: toBigInt(it)
+                        }
+                    ]);
                 }
-                argMatchers.push([{
-                    type: NUMBER,
-                    value: it
-                }]);
+                argMatchers.push([
+                    {
+                        type: NUMBER,
+                        value: it
+                    }
+                ]);
             } else if (typeof it === 'bigint') {
                 checkIntegerOverflow(ctx, it);
-                argMatchers.push([{
-                    type: INTEGER,
-                    value: it
-                }]);
+                argMatchers.push([
+                    {
+                        type: INTEGER,
+                        value: it
+                    }
+                ]);
             } else if (Array.isArray(it)) {
-                argMatchers.push([{
-                    type: ARRAY,
-                    value: it
-                }]);
+                argMatchers.push([
+                    {
+                        type: ARRAY,
+                        value: it
+                    }
+                ]);
             } else if (typeof it === 'object') {
                 if (it === null) {
                     throw new Error('Incorrect value type: Null');
                 }
-                argMatchers.push([{
-                    type: DICT,
-                    value: it
-                }]);
+                argMatchers.push([
+                    {
+                        type: DICT,
+                        value: it
+                    }
+                ]);
             } else if (typeof it === 'boolean') {
-                argMatchers.push([{
-                    type: BOOLEAN,
-                    value: it ? 1 : 0
-                }]);
+                argMatchers.push([
+                    {
+                        type: BOOLEAN,
+                        value: it ? 1 : 0
+                    }
+                ]);
             } else {
                 throw new Error(`Incorrect value type: ${typeToString(typeof it)}`);
             }
@@ -218,11 +256,7 @@ function filter(ctx: EvalContext, array: ArrayValue, fn: FuncValue): EvalValue {
             }
 
             const argType = selectedFn.args[0];
-            const value = convertJsValueToDivKit(
-                ctx,
-                it,
-                typeof argType === 'string' ? argType : argType.type
-            );
+            const value = convertJsValueToDivKit(ctx, it, typeof argType === 'string' ? argType : argType.type);
             const res = selectedFn.cb(ctx, value);
 
             if (res.type !== BOOLEAN) {
@@ -235,169 +269,55 @@ function filter(ctx: EvalContext, array: ArrayValue, fn: FuncValue): EvalValue {
 }
 
 export function registerArray(): void {
-    registerFunc('getArrayString', [
-        ARRAY,
-        INTEGER
-    ], getArrayString);
-    registerFunc('getStringFromArray', [
-        ARRAY,
-        INTEGER
-    ], getArrayString);
+    registerFunc('getArrayString', [ARRAY, INTEGER], getArrayString);
+    registerFunc('getStringFromArray', [ARRAY, INTEGER], getArrayString);
 
-    registerFunc('getArrayNumber', [
-        ARRAY,
-        INTEGER
-    ], getArrayNumber);
-    registerFunc('getNumberFromArray', [
-        ARRAY,
-        INTEGER
-    ], getArrayNumber);
+    registerFunc('getArrayNumber', [ARRAY, INTEGER], getArrayNumber);
+    registerFunc('getNumberFromArray', [ARRAY, INTEGER], getArrayNumber);
 
-    registerFunc('getArrayInteger', [
-        ARRAY,
-        INTEGER
-    ], getArrayInteger);
-    registerFunc('getIntegerFromArray', [
-        ARRAY,
-        INTEGER
-    ], getArrayInteger);
+    registerFunc('getArrayInteger', [ARRAY, INTEGER], getArrayInteger);
+    registerFunc('getIntegerFromArray', [ARRAY, INTEGER], getArrayInteger);
 
-    registerFunc('getArrayBoolean', [
-        ARRAY,
-        INTEGER
-    ], getArrayBoolean);
-    registerFunc('getBooleanFromArray', [
-        ARRAY,
-        INTEGER
-    ], getArrayBoolean);
+    registerFunc('getArrayBoolean', [ARRAY, INTEGER], getArrayBoolean);
+    registerFunc('getBooleanFromArray', [ARRAY, INTEGER], getArrayBoolean);
 
-    registerFunc('getArrayColor', [
-        ARRAY,
-        INTEGER
-    ], getArrayColor);
-    registerFunc('getColorFromArray', [
-        ARRAY,
-        INTEGER
-    ], getArrayColor);
+    registerFunc('getArrayColor', [ARRAY, INTEGER], getArrayColor);
+    registerFunc('getColorFromArray', [ARRAY, INTEGER], getArrayColor);
 
-    registerFunc('getArrayUrl', [
-        ARRAY,
-        INTEGER
-    ], getArrayUrl);
-    registerFunc('getUrlFromArray', [
-        ARRAY,
-        INTEGER
-    ], getArrayUrl);
+    registerFunc('getArrayUrl', [ARRAY, INTEGER], getArrayUrl);
+    registerFunc('getUrlFromArray', [ARRAY, INTEGER], getArrayUrl);
 
-    registerFunc('getArrayFromArray', [
-        ARRAY,
-        INTEGER
-    ], getArrayArray);
+    registerFunc('getArrayFromArray', [ARRAY, INTEGER], getArrayArray);
 
-    registerFunc('getDictFromArray', [
-        ARRAY,
-        INTEGER
-    ], getArrayDict);
+    registerFunc('getDictFromArray', [ARRAY, INTEGER], getArrayDict);
 
-    registerFunc('getArrayOptString', [
-        ARRAY,
-        INTEGER,
-        STRING
-    ], getArrayOptString);
-    registerFunc('getOptStringFromArray', [
-        ARRAY,
-        INTEGER,
-        STRING
-    ], getArrayOptString);
+    registerFunc('getArrayOptString', [ARRAY, INTEGER, STRING], getArrayOptString);
+    registerFunc('getOptStringFromArray', [ARRAY, INTEGER, STRING], getArrayOptString);
 
-    registerFunc('getArrayOptNumber', [
-        ARRAY,
-        INTEGER,
-        NUMBER
-    ], getArrayOptNumber);
-    registerFunc('getOptNumberFromArray', [
-        ARRAY,
-        INTEGER,
-        NUMBER
-    ], getArrayOptNumber);
+    registerFunc('getArrayOptNumber', [ARRAY, INTEGER, NUMBER], getArrayOptNumber);
+    registerFunc('getOptNumberFromArray', [ARRAY, INTEGER, NUMBER], getArrayOptNumber);
 
-    registerFunc('getArrayOptInteger', [
-        ARRAY,
-        INTEGER,
-        INTEGER
-    ], getArrayOptInteger);
-    registerFunc('getOptIntegerFromArray', [
-        ARRAY,
-        INTEGER,
-        INTEGER
-    ], getArrayOptInteger);
+    registerFunc('getArrayOptInteger', [ARRAY, INTEGER, INTEGER], getArrayOptInteger);
+    registerFunc('getOptIntegerFromArray', [ARRAY, INTEGER, INTEGER], getArrayOptInteger);
 
-    registerFunc('getArrayOptBoolean', [
-        ARRAY,
-        INTEGER,
-        BOOLEAN
-    ], getArrayOptBoolean);
-    registerFunc('getOptBooleanFromArray', [
-        ARRAY,
-        INTEGER,
-        BOOLEAN
-    ], getArrayOptBoolean);
+    registerFunc('getArrayOptBoolean', [ARRAY, INTEGER, BOOLEAN], getArrayOptBoolean);
+    registerFunc('getOptBooleanFromArray', [ARRAY, INTEGER, BOOLEAN], getArrayOptBoolean);
 
-    registerFunc('getArrayOptColor', [
-        ARRAY,
-        INTEGER,
-        COLOR
-    ], getArrayOptColor);
-    registerFunc('getOptColorFromArray', [
-        ARRAY,
-        INTEGER,
-        COLOR
-    ], getArrayOptColor);
-    registerFunc('getArrayOptColor', [
-        ARRAY,
-        INTEGER,
-        STRING
-    ], getArrayOptColor);
-    registerFunc('getOptColorFromArray', [
-        ARRAY,
-        INTEGER,
-        STRING
-    ], getArrayOptColor);
+    registerFunc('getArrayOptColor', [ARRAY, INTEGER, COLOR], getArrayOptColor);
+    registerFunc('getOptColorFromArray', [ARRAY, INTEGER, COLOR], getArrayOptColor);
+    registerFunc('getArrayOptColor', [ARRAY, INTEGER, STRING], getArrayOptColor);
+    registerFunc('getOptColorFromArray', [ARRAY, INTEGER, STRING], getArrayOptColor);
 
-    registerFunc('getArrayOptUrl', [
-        ARRAY,
-        INTEGER,
-        URL
-    ], getArrayOptUrl);
-    registerFunc('getOptUrlFromArray', [
-        ARRAY,
-        INTEGER,
-        URL
-    ], getArrayOptUrl);
-    registerFunc('getArrayOptUrl', [
-        ARRAY,
-        INTEGER,
-        STRING
-    ], getArrayOptUrl);
-    registerFunc('getOptUrlFromArray', [
-        ARRAY,
-        INTEGER,
-        STRING
-    ], getArrayOptUrl);
+    registerFunc('getArrayOptUrl', [ARRAY, INTEGER, URL], getArrayOptUrl);
+    registerFunc('getOptUrlFromArray', [ARRAY, INTEGER, URL], getArrayOptUrl);
+    registerFunc('getArrayOptUrl', [ARRAY, INTEGER, STRING], getArrayOptUrl);
+    registerFunc('getOptUrlFromArray', [ARRAY, INTEGER, STRING], getArrayOptUrl);
 
-    registerFunc('getOptArrayFromArray', [
-        ARRAY,
-        INTEGER
-    ], getArrayOptArray);
+    registerFunc('getOptArrayFromArray', [ARRAY, INTEGER], getArrayOptArray);
 
-    registerFunc('getOptDictFromArray', [
-        ARRAY,
-        INTEGER
-    ], getArrayOptDict);
+    registerFunc('getOptDictFromArray', [ARRAY, INTEGER], getArrayOptDict);
 
-    registerFunc('len', [
-        ARRAY
-    ], len);
+    registerFunc('len', [ARRAY], len);
 
     registerMethod('getString', [ARRAY, INTEGER], getArrayString);
     registerMethod('getInteger', [ARRAY, INTEGER], getArrayInteger);

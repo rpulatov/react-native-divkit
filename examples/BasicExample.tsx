@@ -13,15 +13,7 @@
  */
 
 import React, { useState } from 'react';
-import {
-    View,
-    StyleSheet,
-    SafeAreaView,
-    ScrollView,
-    Button,
-    Text as RNText,
-    Alert
-} from 'react-native';
+import { View, StyleSheet, SafeAreaView, ScrollView, Button, Text as RNText, Alert } from 'react-native';
 import { DivKit } from '../src';
 import type { DivKitProps } from '../src';
 
@@ -48,16 +40,16 @@ export default function BasicExample() {
     const currentExample = examples[selectedExample];
 
     // Callbacks
-    const handleStat: DivKitProps['onStat'] = (stat) => {
+    const handleStat: DivKitProps['onStat'] = stat => {
         console.log('[DivKit Stat]', stat.type, stat.action);
     };
 
-    const handleCustomAction: DivKitProps['onCustomAction'] = (action) => {
+    const handleCustomAction: DivKitProps['onCustomAction'] = action => {
         console.log('[DivKit Custom Action]', action.url);
         Alert.alert('Custom Action', `URL: ${action.url}`);
     };
 
-    const handleError: DivKitProps['onError'] = (error) => {
+    const handleError: DivKitProps['onError'] = error => {
         console.error('[DivKit Error]', error);
         Alert.alert('DivKit Error', error.message || 'Unknown error');
     };
@@ -81,17 +73,11 @@ export default function BasicExample() {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <RNText style={styles.headerText}>DivKit Examples</RNText>
-                <RNText style={styles.subHeaderText}>
-                    Current: {currentExample.name}
-                </RNText>
+                <RNText style={styles.subHeaderText}>Current: {currentExample.name}</RNText>
             </View>
 
             {/* Example selector */}
-            <ScrollView
-                horizontal
-                style={styles.exampleSelector}
-                showsHorizontalScrollIndicator={false}
-            >
+            <ScrollView horizontal style={styles.exampleSelector} showsHorizontalScrollIndicator={false}>
                 {examples.map((example, index) => (
                     <Button
                         key={index}
@@ -129,9 +115,7 @@ export default function BasicExample() {
 
             {/* Info footer */}
             <View style={styles.footer}>
-                <RNText style={styles.footerText}>
-                    Open dev console to see logs
-                </RNText>
+                <RNText style={styles.footerText}>Open dev console to see logs</RNText>
             </View>
         </SafeAreaView>
     );

@@ -27,23 +27,21 @@ class ExpressionBinding {
      * @param variables
      * @param logError
      */
-    apply<T>(
-        {
-            variables,
-            customFunctions,
-            logError,
-            store,
-            weekStartDay,
-            keepComplex
-        }: {
-            variables: VariablesMap;
-            customFunctions: CustomFunctions | undefined;
-            logError: LogError;
-            store: Store | undefined;
-            weekStartDay: number;
-            keepComplex?: boolean;
-        }
-    ): {
+    apply<T>({
+        variables,
+        customFunctions,
+        logError,
+        store,
+        weekStartDay,
+        keepComplex
+    }: {
+        variables: VariablesMap;
+        customFunctions: CustomFunctions | undefined;
+        logError: LogError;
+        store: Store | undefined;
+        weekStartDay: number;
+        keepComplex?: boolean;
+    }): {
         result: T;
         usedVars?: Set<Variable>;
     } {
@@ -57,12 +55,14 @@ class ExpressionBinding {
             const result = res.result;
 
             if (result.type === 'error') {
-                logError(wrapError(new Error('Expression execution error'), {
-                    additional: {
-                        message: result.value,
-                        expression: this.expr
-                    }
-                }));
+                logError(
+                    wrapError(new Error('Expression execution error'), {
+                        additional: {
+                            message: result.value,
+                            expression: this.expr
+                        }
+                    })
+                );
                 return {
                     result: undefined as T,
                     usedVars: res.usedVars
@@ -130,11 +130,13 @@ class ExpressionBinding {
                 usedVars: res.usedVars
             };
         } catch (err) {
-            logError(wrapError(new Error('Expression execution error'), {
-                additional: {
-                    expression: this.expr
-                }
-            }));
+            logError(
+                wrapError(new Error('Expression execution error'), {
+                    additional: {
+                        expression: this.expr
+                    }
+                })
+            );
             return {
                 result: undefined as T,
                 usedVars: res?.usedVars
@@ -165,17 +167,15 @@ class VariableBinding {
     }
 }
 
-export type MaybeMissing<T> = T | (
-    T extends (infer U)[] ?
-        MaybeMissing<U>[] :
-        (
-            T extends object ?
-                {
-                    [P in keyof T]?: MaybeMissing<T[P]>;
-                } :
-                T | undefined
-        )
-);
+export type MaybeMissing<T> =
+    | T
+    | (T extends (infer U)[]
+          ? MaybeMissing<U>[]
+          : T extends object
+            ? {
+                  [P in keyof T]?: MaybeMissing<T[P]>;
+              }
+            : T | undefined);
 
 function hasExpressions(str: string): boolean {
     return str.indexOf('@{') > -1 || str.indexOf('\\') > -1;
@@ -197,20 +197,24 @@ function prepareVarsObj<T>(
 
                 if (process.env.ENABLE_EXPRESSIONS || process.env.ENABLE_EXPRESSIONS === undefined) {
                     try {
-                        const ast = cacheGet(jsonProp) || parse(jsonProp, {
-                            startRule: 'JsonStringContents'
-                        });
+                        const ast =
+                            cacheGet(jsonProp) ||
+                            parse(jsonProp, {
+                                startRule: 'JsonStringContents'
+                            });
                         cacheSet(jsonProp, ast);
                         const propVars = gatherVarsFromAst(ast);
                         store.vars.push(...propVars);
 
                         return new ExpressionBinding(ast, jsonProp);
                     } catch (err) {
-                        logError(wrapError(new Error('Unable to parse expression'), {
-                            additional: {
-                                expression: jsonProp
-                            }
-                        }));
+                        logError(
+                            wrapError(new Error('Unable to parse expression'), {
+                                additional: {
+                                    expression: jsonProp
+                                }
+                            })
+                        );
                         return undefined;
                     }
                 } else {
@@ -222,11 +226,13 @@ function prepareVarsObj<T>(
                     try {
                         return simpleUnescapeString(jsonProp);
                     } catch (err: any) {
-                        logError(wrapError(err as Error, {
-                            additional: {
-                                expression: jsonProp
-                            }
-                        }));
+                        logError(
+                            wrapError(err as Error, {
+                                additional: {
+                                    expression: jsonProp
+                                }
+                            })
+                        );
                         return undefined;
                     }
                 }
@@ -265,7 +271,8 @@ function applyVars<T>(
         ) {
             return jsonProp.apply<T>(opts);
         } else if (
-            (!process.env.ENABLE_EXPRESSIONS && process.env.ENABLE_EXPRESSIONS !== undefined) &&
+            !process.env.ENABLE_EXPRESSIONS &&
+            process.env.ENABLE_EXPRESSIONS !== undefined &&
             jsonProp instanceof VariableBinding
         ) {
             return {

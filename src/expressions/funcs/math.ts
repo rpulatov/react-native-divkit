@@ -329,53 +329,113 @@ export function registerMath(): void {
     registerFunc('mod', [INTEGER, INTEGER], modInteger);
     registerFunc('mod', [NUMBER, NUMBER], modNumber);
 
-    registerFunc('mul', [{
-        type: INTEGER,
-        isVararg: true
-    }], mulInteger);
-    registerFunc('mul', [{
-        type: NUMBER,
-        isVararg: true
-    }], mulNumber);
+    registerFunc(
+        'mul',
+        [
+            {
+                type: INTEGER,
+                isVararg: true
+            }
+        ],
+        mulInteger
+    );
+    registerFunc(
+        'mul',
+        [
+            {
+                type: NUMBER,
+                isVararg: true
+            }
+        ],
+        mulNumber
+    );
 
-    registerFunc('sub', [{
-        type: INTEGER,
-        isVararg: true
-    }], subInteger);
-    registerFunc('sub', [{
-        type: NUMBER,
-        isVararg: true
-    }], subNumber);
+    registerFunc(
+        'sub',
+        [
+            {
+                type: INTEGER,
+                isVararg: true
+            }
+        ],
+        subInteger
+    );
+    registerFunc(
+        'sub',
+        [
+            {
+                type: NUMBER,
+                isVararg: true
+            }
+        ],
+        subNumber
+    );
 
-    registerFunc('sum', [{
-        type: INTEGER,
-        isVararg: true
-    }], sumInteger);
-    registerFunc('sum', [{
-        type: NUMBER,
-        isVararg: true
-    }], sumNumber);
+    registerFunc(
+        'sum',
+        [
+            {
+                type: INTEGER,
+                isVararg: true
+            }
+        ],
+        sumInteger
+    );
+    registerFunc(
+        'sum',
+        [
+            {
+                type: NUMBER,
+                isVararg: true
+            }
+        ],
+        sumNumber
+    );
 
     registerFunc('abs', [INTEGER], absInteger);
     registerFunc('abs', [NUMBER], absNumber);
 
-    registerFunc('max', [{
-        type: INTEGER,
-        isVararg: true
-    }], maxInt);
-    registerFunc('max', [{
-        type: NUMBER,
-        isVararg: true
-    }], maxNum);
+    registerFunc(
+        'max',
+        [
+            {
+                type: INTEGER,
+                isVararg: true
+            }
+        ],
+        maxInt
+    );
+    registerFunc(
+        'max',
+        [
+            {
+                type: NUMBER,
+                isVararg: true
+            }
+        ],
+        maxNum
+    );
 
-    registerFunc('min', [{
-        type: INTEGER,
-        isVararg: true
-    }], minInt);
-    registerFunc('min', [{
-        type: NUMBER,
-        isVararg: true
-    }], minNum);
+    registerFunc(
+        'min',
+        [
+            {
+                type: INTEGER,
+                isVararg: true
+            }
+        ],
+        minInt
+    );
+    registerFunc(
+        'min',
+        [
+            {
+                type: NUMBER,
+                isVararg: true
+            }
+        ],
+        minNum
+    );
 
     registerFunc('maxNumber', [], maxNumber);
     registerFunc('minNumber', [], minNumber);

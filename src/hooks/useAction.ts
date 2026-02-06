@@ -145,8 +145,6 @@ export function useActionHandler(
  * }
  * ```
  */
-export function useHasActions(
-    actions: MaybeMissing<Action[]> | undefined
-): boolean {
+export function useHasActions(actions: MaybeMissing<Action[]> | undefined): boolean {
     return Boolean(actions && actions.length > 0);
 }

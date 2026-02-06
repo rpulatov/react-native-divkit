@@ -50,10 +50,7 @@ export function DivContainer({ componentContext }: DivContainerProps) {
         variables || new Map()
     );
 
-    const itemSpacing = useDerivedFromVarsSimple<number>(
-        json.item_spacing || 0,
-        variables || new Map()
-    );
+    const itemSpacing = useDerivedFromVarsSimple<number>(json.item_spacing || 0, variables || new Map());
 
     // Build container style
     const containerStyle = useMemo((): ViewStyle => {
@@ -120,19 +117,14 @@ export function DivContainer({ componentContext }: DivContainerProps) {
 
         return json.items.map((item, index) => {
             const childContext = componentContext.produceChildContext(item, {
-                path: index,
+                path: index
             });
 
             if (!childContext) {
                 return null;
             }
 
-            const child = (
-                <DivComponent
-                    key={item.id || `item-${index}`}
-                    componentContext={childContext}
-                />
-            );
+            const child = <DivComponent key={item.id || `item-${index}`} componentContext={childContext} />;
 
             // Wrap in positioned View for overlap mode
             if (orientation === 'overlap' && childWrapperStyle) {
@@ -149,9 +141,7 @@ export function DivContainer({ componentContext }: DivContainerProps) {
 
     return (
         <Outer componentContext={componentContext}>
-            <View style={containerStyle}>
-                {renderChildren()}
-            </View>
+            <View style={containerStyle}>{renderChildren()}</View>
         </Outer>
     );
 }

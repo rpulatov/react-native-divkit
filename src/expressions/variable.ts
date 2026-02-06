@@ -110,11 +110,7 @@ export class IntegerVariable extends Variable<bigint, 'integer', bigint | number
 
 export class NumberVariable extends Variable<number, 'number'> {
     protected convertValue(value: unknown) {
-        if (
-            typeof value !== 'number' ||
-            Number.isNaN(value) ||
-            !isFinite(value)
-        ) {
+        if (typeof value !== 'number' || Number.isNaN(value) || !isFinite(value)) {
             throw new Error('Incorrect variable value');
         }
 
@@ -250,11 +246,7 @@ export const TYPE_TO_CLASS: Record<VariableType, new (name: string, value: any) 
     array: ArrayVariable
 };
 
-export function createVariable(
-    name: string,
-    type: VariableType,
-    value: unknown
-): Variable {
+export function createVariable(name: string, type: VariableType, value: unknown): Variable {
     if (!(type in TYPE_TO_CLASS)) {
         throw new Error('Unsupported variable type');
     }
@@ -263,8 +255,7 @@ export function createVariable(
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-function
-function noop(): void {
-}
+function noop(): void {}
 
 function constSubscribe<ValueType>(this: Variable<ValueType>, cb: Subscriber<ValueType>): Unsubscriber {
     cb(this.value);
@@ -333,11 +324,7 @@ for (const type in CONST_TYPE_TO_CLASS) {
     Class.prototype.setValue = constSetter;
 }
 
-export function createConstVariable(
-    name: string,
-    type: VariableType | 'datetime',
-    value: unknown
-): Variable {
+export function createConstVariable(name: string, type: VariableType | 'datetime', value: unknown): Variable {
     if (!(type in CONST_TYPE_TO_CLASS)) {
         throw new Error('Unsupported variable type');
     }
@@ -387,10 +374,7 @@ export function variableValueFromString(val: string, type: VariableType): Variab
         }
     } else if (type === 'number') {
         const converted = Number(val);
-        if (
-            Number.isNaN(converted) ||
-            !isFinite(converted)
-        ) {
+        if (Number.isNaN(converted) || !isFinite(converted)) {
             throw new Error('Incorrect variable value');
         }
 

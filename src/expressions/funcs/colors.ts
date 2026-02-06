@@ -4,9 +4,7 @@ import { registerFunc } from './funcs';
 import { COLOR, NUMBER, STRING } from '../const';
 import { safeConvertColor, stringifyColor } from '../utils';
 
-function colorGetter(
-    field: keyof ParsedColor
-): (_ctx: EvalContext, color: StringValue | ColorValue) => EvalValue {
+function colorGetter(field: keyof ParsedColor): (_ctx: EvalContext, color: StringValue | ColorValue) => EvalValue {
     return (_vars, color) => {
         const parsed = safeConvertColor(color.value);
 

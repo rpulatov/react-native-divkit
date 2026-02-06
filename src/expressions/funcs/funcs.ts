@@ -3,10 +3,12 @@ import type { EvalTypes, EvalValue } from '../eval';
 import type { EvalContext } from '../eval';
 import { integerToNumber } from '../utils';
 
-export type FuncArg = EvalTypes | {
-    type: EvalTypes;
-    isVararg?: boolean;
-}
+export type FuncArg =
+    | EvalTypes
+    | {
+          type: EvalTypes;
+          isVararg?: boolean;
+      };
 
 export interface Func {
     name?: string;
@@ -19,27 +21,31 @@ export const funcByArgs: Map<string, Func> = new Map();
 export const methods: Map<string, Func[]> = new Map();
 export const methodByArgs: Map<string, Func> = new Map();
 
-export type FuncMatchError = {
-    type: 'mismatch';
-    expected: EvalTypes;
-    found: EvalTypes;
-    def: Func;
-    hasOverloads: boolean;
-} | {
-    type: 'few';
-    expected: number;
-    found: number;
-    def: Func;
-    hasOverloads: boolean;
-} | {
-    type: 'many';
-    expected: number;
-    found: number;
-    def: Func;
-    hasOverloads: boolean;
-} | {
-    type: 'missing';
-};
+export type FuncMatchError =
+    | {
+          type: 'mismatch';
+          expected: EvalTypes;
+          found: EvalTypes;
+          def: Func;
+          hasOverloads: boolean;
+      }
+    | {
+          type: 'few';
+          expected: number;
+          found: number;
+          def: Func;
+          hasOverloads: boolean;
+      }
+    | {
+          type: 'many';
+          expected: number;
+          found: number;
+          def: Func;
+          hasOverloads: boolean;
+      }
+    | {
+          type: 'missing';
+      };
 
 export interface FuncMatchFound {
     func: Func;
@@ -51,35 +57,19 @@ export type FuncMatch = FuncMatchFound | FuncMatchError;
 // no args
 export function registerFunc(name: string, args: [], cb: (ctx?: EvalContext) => EvalValue): void;
 // one specific arg
-export function registerFunc<
-    A0 extends EvalTypes
->(
+export function registerFunc<A0 extends EvalTypes>(
     name: string,
     args: [A0],
-    cb: (
-        ctx: EvalContext,
-        arg0: Extract<EvalValue, { type: A0 }>
-    ) => EvalValue
+    cb: (ctx: EvalContext, arg0: Extract<EvalValue, { type: A0 }>) => EvalValue
 ): void;
 // two specific args
-export function registerFunc<
-    A0 extends EvalTypes,
-    A1 extends EvalTypes
->(
+export function registerFunc<A0 extends EvalTypes, A1 extends EvalTypes>(
     name: string,
     args: [A0, A1],
-    cb: (
-        ctx: EvalContext,
-        arg0: Extract<EvalValue, { type: A0 }>,
-        arg1: Extract<EvalValue, { type: A1 }>
-    ) => EvalValue
+    cb: (ctx: EvalContext, arg0: Extract<EvalValue, { type: A0 }>, arg1: Extract<EvalValue, { type: A1 }>) => EvalValue
 ): void;
 // three specific args
-export function registerFunc<
-    A0 extends EvalTypes,
-    A1 extends EvalTypes,
-    A2 extends EvalTypes
->(
+export function registerFunc<A0 extends EvalTypes, A1 extends EvalTypes, A2 extends EvalTypes>(
     name: string,
     args: [A0, A1, A2],
     cb: (
@@ -90,11 +80,7 @@ export function registerFunc<
     ) => EvalValue
 ): void;
 // any args
-export function registerFunc(
-    name: string,
-    args: FuncArg[],
-    cb: (ctx: EvalContext, ...args: any[]) => EvalValue
-): void;
+export function registerFunc(name: string, args: FuncArg[], cb: (ctx: EvalContext, ...args: any[]) => EvalValue): void;
 
 export function registerFunc(
     name: string,
@@ -113,12 +99,17 @@ export function registerFunc(
     }
     arr.push(desc);
 
-    const funcKey = name + ':' + args.map(it => {
-        if (typeof it === 'object') {
-            return it.type;
-        }
-        return it;
-    }).join('#');
+    const funcKey =
+        name +
+        ':' +
+        args
+            .map(it => {
+                if (typeof it === 'object') {
+                    return it.type;
+                }
+                return it;
+            })
+            .join('#');
 
     funcByArgs.set(funcKey, desc);
 }
@@ -126,35 +117,19 @@ export function registerFunc(
 // no args
 export function registerMethod(name: string, args: [], cb: (ctx?: EvalContext) => EvalValue): void;
 // one specific arg
-export function registerMethod<
-    A0 extends EvalTypes
->(
+export function registerMethod<A0 extends EvalTypes>(
     name: string,
     args: [A0],
-    cb: (
-        ctx: EvalContext,
-        arg0: Extract<EvalValue, { type: A0 }>
-    ) => EvalValue
+    cb: (ctx: EvalContext, arg0: Extract<EvalValue, { type: A0 }>) => EvalValue
 ): void;
 // two specific args
-export function registerMethod<
-    A0 extends EvalTypes,
-    A1 extends EvalTypes
->(
+export function registerMethod<A0 extends EvalTypes, A1 extends EvalTypes>(
     name: string,
     args: [A0, A1],
-    cb: (
-        ctx: EvalContext,
-        arg0: Extract<EvalValue, { type: A0 }>,
-        arg1: Extract<EvalValue, { type: A1 }>
-    ) => EvalValue
+    cb: (ctx: EvalContext, arg0: Extract<EvalValue, { type: A0 }>, arg1: Extract<EvalValue, { type: A1 }>) => EvalValue
 ): void;
 // three specific args
-export function registerMethod<
-    A0 extends EvalTypes,
-    A1 extends EvalTypes,
-    A2 extends EvalTypes
->(
+export function registerMethod<A0 extends EvalTypes, A1 extends EvalTypes, A2 extends EvalTypes>(
     name: string,
     args: [A0, A1, A2],
     cb: (
@@ -188,20 +163,31 @@ export function registerMethod(
     }
     arr.push(desc);
 
-    const funcKey = name + ':' + args.map(it => {
-        if (typeof it === 'object') {
-            return it.type;
-        }
-        return it;
-    }).join('#');
+    const funcKey =
+        name +
+        ':' +
+        args
+            .map(it => {
+                if (typeof it === 'object') {
+                    return it.type;
+                }
+                return it;
+            })
+            .join('#');
 
     methodByArgs.set(funcKey, desc);
 }
 
-function matchFuncArgs(func: Func, args: EvalValue[], hasOverloads: boolean): {
-    type: 'match';
-    conversions: number;
-} | FuncMatchError {
+function matchFuncArgs(
+    func: Func,
+    args: EvalValue[],
+    hasOverloads: boolean
+):
+    | {
+          type: 'match';
+          conversions: number;
+      }
+    | FuncMatchError {
     const minArgs = func.args.length;
     let maxArgs = func.args.length;
     let conversions = 0;
@@ -319,5 +305,5 @@ export function convertArgs(func: Func, args: EvalValue[]): EvalValue[] {
 }
 
 export function funcToKey(funcName: string, func: Func): string {
-    return funcName + ':' + func.args.map(arg => typeof arg === 'string' ? arg : arg.type).join('#');
+    return funcName + ':' + func.args.map(arg => (typeof arg === 'string' ? arg : arg.type)).join('#');
 }

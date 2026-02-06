@@ -31,14 +31,8 @@ export function Outer<T extends DivBaseData = DivBaseData>({
 
     // Only use reactive hooks for truly dynamic properties (visibility, alpha)
     // For MVP, other properties are read directly from JSON (can be enhanced later)
-    const visibility = useDerivedFromVarsSimple<Visibility>(
-        json.visibility || 'visible',
-        variables || new Map()
-    );
-    const alpha = useDerivedFromVarsSimple<number>(
-        json.alpha !== undefined ? json.alpha : 1,
-        variables || new Map()
-    );
+    const visibility = useDerivedFromVarsSimple<Visibility>(json.visibility || 'visible', variables || new Map());
+    const alpha = useDerivedFromVarsSimple<number>(json.alpha !== undefined ? json.alpha : 1, variables || new Map());
 
     // Extract properties directly from JSON for MVP (non-reactive)
     const paddings = json.paddings;
@@ -225,18 +219,11 @@ export function Outer<T extends DivBaseData = DivBaseData>({
     // Render with or without Pressable based on actions
     if (hasActions) {
         return (
-            <Pressable
-                onPress={handlePress}
-                style={finalStyle}
-            >
+            <Pressable onPress={handlePress} style={finalStyle}>
                 {children}
             </Pressable>
         );
     }
 
-    return (
-        <View style={finalStyle}>
-            {children}
-        </View>
-    );
+    return <View style={finalStyle}>{children}</View>;
 }

@@ -26,7 +26,6 @@ function toString(
     };
 }
 
-
 function toNumber(_ctx: EvalContext, arg: IntegerValue | StringValue): EvalValue {
     const num = Number(arg.value);
 
@@ -42,7 +41,6 @@ function toNumber(_ctx: EvalContext, arg: IntegerValue | StringValue): EvalValue
         value: num
     };
 }
-
 
 function toIntegerNumber(_ctx: EvalContext, arg: NumberValue): EvalValue {
     if (arg.value > MAX_INT || arg.value < MIN_INT) {
@@ -78,7 +76,6 @@ function toIntegerBoolean(_ctx: EvalContext, arg: BooleanValue): EvalValue {
         value: toBigInt(arg.value ? 1 : 0)
     };
 }
-
 
 function toBooleanInteger(_ctx: EvalContext, arg: IntegerValue): EvalValue {
     const intVal = Number(arg.value);
@@ -250,10 +247,10 @@ function decimalFormat(
     const pattern = format.value;
     const patternWithoutGroupping = pattern.replace(/,/g, '');
     if (
-        !/^((#+)|(#*0+))(\.0*#*)?$/.test(patternWithoutGroupping) &&
-        !/^#*0*\.((0*#*)|(#+))$/.test(patternWithoutGroupping) ||
+        (!/^((#+)|(#*0+))(\.0*#*)?$/.test(patternWithoutGroupping) &&
+            !/^#*0*\.((0*#*)|(#+))$/.test(patternWithoutGroupping)) ||
         /,.*,/.test(pattern) ||
-        pattern.indexOf(',') > pattern.indexOf('.') && pattern.indexOf('.') > -1
+        (pattern.indexOf(',') > pattern.indexOf('.') && pattern.indexOf('.') > -1)
     ) {
         throw new Error('Incorrect format pattern.');
     }
@@ -269,7 +266,7 @@ function decimalFormat(
     const groupIndex = rawInteger.indexOf(',');
     const digitsInGroup = groupIndex > -1 ? rawInteger.length - groupIndex - 1 : -1;
 
-    if (groupIndex > -1 && digitsInGroup < 1 || rawFraction.indexOf(',') > -1) {
+    if ((groupIndex > -1 && digitsInGroup < 1) || rawFraction.indexOf(',') > -1) {
         throw new Error('Incorrect format pattern.');
     }
 

@@ -67,9 +67,11 @@ export function customFunctionWrap(fn: DivFunction): Func {
         }),
         cb(ctx, ...args) {
             if (!ast) {
-                ast = cacheGet(fn.body) || parse(fn.body, {
-                    startRule: 'JsonStringContents'
-                });
+                ast =
+                    cacheGet(fn.body) ||
+                    parse(fn.body, {
+                        startRule: 'JsonStringContents'
+                    });
                 cacheSet(fn.body, ast!);
             }
 
@@ -99,7 +101,7 @@ export function customFunctionWrap(fn: DivFunction): Func {
             }
 
             return result;
-        },
+        }
     };
 }
 

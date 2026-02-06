@@ -14,39 +14,47 @@ export function dictSetValue(
     const { variable_name: name, key, value } = actionTyped;
 
     if (typeof key !== 'string') {
-        logError(wrapError(new Error('Incorrect dict_set_value action'), {
-            additional: {
-                name
-            }
-        }));
+        logError(
+            wrapError(new Error('Incorrect dict_set_value action'), {
+                additional: {
+                    name
+                }
+            })
+        );
         return;
     }
 
     if (!name) {
-        logError(wrapError(new Error(`Incorrect ${actionTyped.type} action`), {
-            additional: {
-                name
-            }
-        }));
+        logError(
+            wrapError(new Error(`Incorrect ${actionTyped.type} action`), {
+                additional: {
+                    name
+                }
+            })
+        );
         return;
     }
 
     if (value && !value.type) {
-        logError(wrapError(new Error('Incorrect value type'), {
-            additional: {
-                name
-            }
-        }));
+        logError(
+            wrapError(new Error('Incorrect value type'), {
+                additional: {
+                    name
+                }
+            })
+        );
     }
 
     const variableInstance = componentContext?.getVariable(name) || variables.get(name);
 
     if (!variableInstance) {
-        logError(wrapError(new Error('Cannot find variable'), {
-            additional: {
-                name
-            }
-        }));
+        logError(
+            wrapError(new Error('Cannot find variable'), {
+                additional: {
+                    name
+                }
+            })
+        );
         return;
     }
 
@@ -61,11 +69,13 @@ export function dictSetValue(
         }
         variableInstance.setValue(newDict);
     } else {
-        logError(wrapError(new Error('Trying to set value into the non-dict'), {
-            additional: {
-                name,
-                type
-            }
-        }));
+        logError(
+            wrapError(new Error('Trying to set value into the non-dict'), {
+                additional: {
+                    name,
+                    type
+                }
+            })
+        );
     }
 }

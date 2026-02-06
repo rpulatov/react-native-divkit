@@ -23,15 +23,15 @@ The main entry point for rendering DivKit layouts.
 import { DivKit } from 'react-native-divkit';
 
 <DivKit
-  data={divKitJson}
-  onStat={handleStat}
-  onCustomAction={handleCustomAction}
-  onError={handleError}
-  direction="ltr"
-  platform="touch"
-  style={{ flex: 1 }}
-  id="my-divkit"
-/>
+    data={divKitJson}
+    onStat={handleStat}
+    onCustomAction={handleCustomAction}
+    onError={handleError}
+    direction="ltr"
+    platform="touch"
+    style={{ flex: 1 }}
+    id="my-divkit"
+/>;
 ```
 
 ---
@@ -40,30 +40,30 @@ import { DivKit } from 'react-native-divkit';
 
 ### `DivKitProps`
 
-| Prop | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `data` | `Partial<DivJson>` | Yes | - | DivKit JSON data to render |
-| `onStat` | `StatCallback` | No | - | Callback for statistics/analytics |
-| `onCustomAction` | `CustomActionCallback` | No | - | Callback for custom URL actions |
-| `onError` | `ErrorCallback` | No | - | Callback for error handling |
-| `direction` | `'ltr' \| 'rtl'` | No | `'ltr'` | Text direction |
-| `platform` | `'desktop' \| 'touch'` | No | `'touch'` | Platform type |
-| `style` | `ViewStyle` | No | - | Custom style for root container |
-| `id` | `string` | No | `'root'` | Component ID for debugging |
+| Prop             | Type                   | Required | Default   | Description                       |
+| ---------------- | ---------------------- | -------- | --------- | --------------------------------- |
+| `data`           | `Partial<DivJson>`     | Yes      | -         | DivKit JSON data to render        |
+| `onStat`         | `StatCallback`         | No       | -         | Callback for statistics/analytics |
+| `onCustomAction` | `CustomActionCallback` | No       | -         | Callback for custom URL actions   |
+| `onError`        | `ErrorCallback`        | No       | -         | Callback for error handling       |
+| `direction`      | `'ltr' \| 'rtl'`       | No       | `'ltr'`   | Text direction                    |
+| `platform`       | `'desktop' \| 'touch'` | No       | `'touch'` | Platform type                     |
+| `style`          | `ViewStyle`            | No       | -         | Custom style for root container   |
+| `id`             | `string`               | No       | `'root'`  | Component ID for debugging        |
 
 ### `data` - DivJson Structure
 
 ```typescript
 interface DivJson {
-  card: {
-    log_id: string;
-    states: Array<{
-      state_id: number | string;
-      div: DivBaseData;
-    }>;
-    variables?: DivVariable[];
-  };
-  templates?: Record<string, any>;
+    card: {
+        log_id: string;
+        states: Array<{
+            state_id: number | string;
+            div: DivBaseData;
+        }>;
+        variables?: DivVariable[];
+    };
+    templates?: Record<string, any>;
 }
 ```
 
@@ -71,21 +71,25 @@ interface DivJson {
 
 ```json
 {
-  "card": {
-    "log_id": "my_card",
-    "states": [{
-      "state_id": 0,
-      "div": {
-        "type": "text",
-        "text": "Hello, @{name}!"
-      }
-    }],
-    "variables": [{
-      "type": "string",
-      "name": "name",
-      "value": "World"
-    }]
-  }
+    "card": {
+        "log_id": "my_card",
+        "states": [
+            {
+                "state_id": 0,
+                "div": {
+                    "type": "text",
+                    "text": "Hello, @{name}!"
+                }
+            }
+        ],
+        "variables": [
+            {
+                "type": "string",
+                "name": "name",
+                "value": "World"
+            }
+        ]
+    }
 }
 ```
 
@@ -98,20 +102,17 @@ interface DivJson {
 Called when actions are executed (for analytics/logging).
 
 ```typescript
-type StatCallback = (stat: {
-  type: string;
-  action: Action;
-}) => void;
+type StatCallback = (stat: { type: string; action: Action }) => void;
 ```
 
 **Example:**
 
 ```tsx
-const handleStat = (stat) => {
-  analytics.track(stat.type, {
-    action_id: stat.action.log_id,
-    url: stat.action.url
-  });
+const handleStat = stat => {
+    analytics.track(stat.type, {
+        action_id: stat.action.log_id,
+        url: stat.action.url
+    });
 };
 ```
 
@@ -126,18 +127,18 @@ type CustomActionCallback = (action: Action & { url: string }) => void;
 **Example:**
 
 ```tsx
-const handleCustomAction = (action) => {
-  const url = new URL(action.url);
+const handleCustomAction = action => {
+    const url = new URL(action.url);
 
-  switch (url.protocol) {
-    case 'divkit:':
-      // Handle DivKit-specific actions
-      break;
-    case 'deeplink:':
-      // Navigate using deep linking
-      navigation.navigate(url.pathname);
-      break;
-  }
+    switch (url.protocol) {
+        case 'divkit:':
+            // Handle DivKit-specific actions
+            break;
+        case 'deeplink:':
+            // Navigate using deep linking
+            navigation.navigate(url.pathname);
+            break;
+    }
 };
 ```
 
@@ -149,18 +150,18 @@ Called when errors occur during rendering or action execution.
 type ErrorCallback = (error: WrappedError) => void;
 
 interface WrappedError {
-  message: string;
-  stack?: string;
-  additional?: Record<string, unknown>;
+    message: string;
+    stack?: string;
+    additional?: Record<string, unknown>;
 }
 ```
 
 **Example:**
 
 ```tsx
-const handleError = (error) => {
-  console.error('[DivKit]', error.message);
-  Sentry.captureException(error);
+const handleError = error => {
+    console.error('[DivKit]', error.message);
+    Sentry.captureException(error);
 };
 ```
 
@@ -172,11 +173,11 @@ const handleError = (error) => {
 
 ```typescript
 interface Action {
-  log_id: string;
-  url?: string;
-  typed?: TypedAction;
-  log_url?: string;
-  payload?: Record<string, unknown>;
+    log_id: string;
+    url?: string;
+    typed?: TypedAction;
+    log_url?: string;
+    payload?: Record<string, unknown>;
 }
 ```
 
@@ -184,22 +185,22 @@ interface Action {
 
 ```typescript
 type TypedAction =
-  | { type: 'set_variable'; variable_name: string; value: TypedValue }
-  | { type: 'set_state'; state_id: string; temporary_state_id: string }
-  | { type: 'array_insert_value'; variable_name: string; index: number; value: unknown }
-  | { type: 'array_remove_value'; variable_name: string; index: number }
-  | { type: 'array_set_value'; variable_name: string; index: number; value: unknown }
-  | { type: 'dict_set_value'; variable_name: string; key: string; value: unknown }
-  | { type: 'copy_to_clipboard'; text: string };
+    | { type: 'set_variable'; variable_name: string; value: TypedValue }
+    | { type: 'set_state'; state_id: string; temporary_state_id: string }
+    | { type: 'array_insert_value'; variable_name: string; index: number; value: unknown }
+    | { type: 'array_remove_value'; variable_name: string; index: number }
+    | { type: 'array_set_value'; variable_name: string; index: number; value: unknown }
+    | { type: 'dict_set_value'; variable_name: string; key: string; value: unknown }
+    | { type: 'copy_to_clipboard'; text: string };
 ```
 
 ### `DivVariable`
 
 ```typescript
 interface DivVariable {
-  type: 'string' | 'integer' | 'number' | 'boolean' | 'color' | 'url' | 'dict' | 'array';
-  name: string;
-  value: unknown;
+    type: 'string' | 'integer' | 'number' | 'boolean' | 'color' | 'url' | 'dict' | 'array';
+    name: string;
+    value: unknown;
 }
 ```
 
@@ -209,18 +210,18 @@ Base interface for all div components.
 
 ```typescript
 interface DivBaseData {
-  type: string;
-  id?: string;
-  visibility?: 'visible' | 'invisible' | 'gone';
-  alpha?: number;
-  background?: Background[];
-  border?: Border;
-  paddings?: EdgeInsets;
-  margins?: EdgeInsets;
-  width?: Size;
-  height?: Size;
-  actions?: Action[];
-  // ... component-specific properties
+    type: string;
+    id?: string;
+    visibility?: 'visible' | 'invisible' | 'gone';
+    alpha?: number;
+    background?: Background[];
+    border?: Border;
+    paddings?: EdgeInsets;
+    margins?: EdgeInsets;
+    width?: Size;
+    height?: Size;
+    actions?: Action[];
+    // ... component-specific properties
 }
 ```
 
@@ -250,28 +251,28 @@ function MyComponent() {
 
 ```typescript
 interface DivKitContextValue {
-  // Variable management
-  variables: Map<string, Variable>;
-  getVariable: (name: string) => Variable | undefined;
-  setVariable: (name: string, value: unknown) => void;
+    // Variable management
+    variables: Map<string, Variable>;
+    getVariable: (name: string) => Variable | undefined;
+    setVariable: (name: string, value: unknown) => void;
 
-  // Action execution
-  execAnyActions: (actions: Action[]) => Promise<void>;
+    // Action execution
+    execAnyActions: (actions: Action[]) => Promise<void>;
 
-  // Callbacks
-  logStat: (type: string, action: Action) => void;
-  execCustomAction: (action: Action & { url: string }) => void;
+    // Callbacks
+    logStat: (type: string, action: Action) => void;
+    execCustomAction: (action: Action & { url: string }) => void;
 
-  // Configuration
-  direction: 'ltr' | 'rtl';
-  platform: 'desktop' | 'touch';
+    // Configuration
+    direction: 'ltr' | 'rtl';
+    platform: 'desktop' | 'touch';
 
-  // Component registration
-  registerComponent: (id: string, context: ComponentContext) => void;
-  unregisterComponent: (id: string) => void;
+    // Component registration
+    registerComponent: (id: string, context: ComponentContext) => void;
+    unregisterComponent: (id: string) => void;
 
-  // ID generation
-  genId: (key: string) => string;
+    // ID generation
+    genId: (key: string) => string;
 }
 ```
 
@@ -364,16 +365,16 @@ function ActionableComponent({ actions }) {
 
 ### Variable Types
 
-| Type | TypeScript Type | Example Value |
-|------|-----------------|---------------|
-| `string` | `string` | `"Hello"` |
-| `integer` | `number` | `42` |
-| `number` | `number` | `3.14` |
-| `boolean` | `boolean` | `true` |
-| `color` | `string` | `"#FF5500"` |
-| `url` | `string` | `"https://..."` |
-| `dict` | `Record<string, unknown>` | `{ key: "value" }` |
-| `array` | `unknown[]` | `[1, 2, 3]` |
+| Type      | TypeScript Type           | Example Value      |
+| --------- | ------------------------- | ------------------ |
+| `string`  | `string`                  | `"Hello"`          |
+| `integer` | `number`                  | `42`               |
+| `number`  | `number`                  | `3.14`             |
+| `boolean` | `boolean`                 | `true`             |
+| `color`   | `string`                  | `"#FF5500"`        |
+| `url`     | `string`                  | `"https://..."`    |
+| `dict`    | `Record<string, unknown>` | `{ key: "value" }` |
+| `array`   | `unknown[]`               | `[1, 2, 3]`        |
 
 ### `createVariable`
 
@@ -385,8 +386,8 @@ import { createVariable } from 'react-native-divkit';
 const myVar = createVariable('counter', 'integer', 0);
 
 // Subscribe to changes
-myVar.subscribe((value) => {
-  console.log('Counter changed:', value);
+myVar.subscribe(value => {
+    console.log('Counter changed:', value);
 });
 
 // Update value
@@ -400,12 +401,12 @@ const current = myVar.getValue();
 
 ```typescript
 class Variable<T> {
-  readonly name: string;
-  readonly type: VariableType;
+    readonly name: string;
+    readonly type: VariableType;
 
-  getValue(): T;
-  setValue(value: T): void;
-  subscribe(callback: (value: T) => void): () => void;
+    getValue(): T;
+    setValue(value: T): void;
+    subscribe(callback: (value: T) => void): () => void;
 }
 ```
 
@@ -443,8 +444,8 @@ Convert DivKit color format to React Native format.
 ```typescript
 import { correctColor } from 'react-native-divkit';
 
-const color = correctColor('#FF5500');    // "#FF5500"
-const rgba = correctColor('#80FF5500');   // "rgba(255, 85, 0, 0.5)"
+const color = correctColor('#FF5500'); // "#FF5500"
+const rgba = correctColor('#80FF5500'); // "rgba(255, 85, 0, 0.5)"
 ```
 
 ### `wrapError`
@@ -455,12 +456,12 @@ Wrap errors with additional context.
 import { wrapError } from 'react-native-divkit';
 
 try {
-  // ...
+    // ...
 } catch (err) {
-  const wrapped = wrapError(err, {
-    additional: { component: 'DivText', prop: 'text' }
-  });
-  onError(wrapped);
+    const wrapped = wrapError(err, {
+        additional: { component: 'DivText', prop: 'text' }
+    });
+    onError(wrapped);
 }
 ```
 
@@ -474,13 +475,13 @@ Text rendering component.
 
 ```json
 {
-  "type": "text",
-  "text": "Hello World",
-  "font_size": 16,
-  "font_weight": "bold",
-  "text_color": "#000000",
-  "text_alignment_horizontal": "center",
-  "max_lines": 2
+    "type": "text",
+    "text": "Hello World",
+    "font_size": 16,
+    "font_weight": "bold",
+    "text_color": "#000000",
+    "text_alignment_horizontal": "center",
+    "max_lines": 2
 }
 ```
 
@@ -490,11 +491,13 @@ Flex layout container.
 
 ```json
 {
-  "type": "container",
-  "orientation": "vertical",
-  "items": [/* child divs */],
-  "content_alignment_horizontal": "center",
-  "content_alignment_vertical": "top"
+    "type": "container",
+    "orientation": "vertical",
+    "items": [
+        /* child divs */
+    ],
+    "content_alignment_horizontal": "center",
+    "content_alignment_vertical": "top"
 }
 ```
 
@@ -504,11 +507,11 @@ Image component.
 
 ```json
 {
-  "type": "image",
-  "image_url": "https://example.com/image.png",
-  "scale": "fill",
-  "width": { "type": "fixed", "value": 200 },
-  "height": { "type": "fixed", "value": 150 }
+    "type": "image",
+    "image_url": "https://example.com/image.png",
+    "scale": "fill",
+    "width": { "type": "fixed", "value": 200 },
+    "height": { "type": "fixed", "value": 150 }
 }
 ```
 
@@ -518,13 +521,23 @@ Conditional rendering with states.
 
 ```json
 {
-  "type": "state",
-  "id": "my_state",
-  "default_state_id": "state1",
-  "states": [
-    { "state_id": "state1", "div": {/* ... */} },
-    { "state_id": "state2", "div": {/* ... */} }
-  ]
+    "type": "state",
+    "id": "my_state",
+    "default_state_id": "state1",
+    "states": [
+        {
+            "state_id": "state1",
+            "div": {
+                /* ... */
+            }
+        },
+        {
+            "state_id": "state2",
+            "div": {
+                /* ... */
+            }
+        }
+    ]
 }
 ```
 

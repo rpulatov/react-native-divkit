@@ -1,6 +1,17 @@
 import { toBigInt } from '../bigint';
 import { ARRAY, BOOLEAN, COLOR, DICT, INTEGER, NUMBER, STRING, URL } from '../const';
-import type { ArrayValue, BooleanValue, DictValue, EvalContext, EvalTypes, EvalTypesWithoutDatetime, EvalValue, IntegerValue, NumberValue, StringValue } from '../eval';
+import type {
+    ArrayValue,
+    BooleanValue,
+    DictValue,
+    EvalContext,
+    EvalTypes,
+    EvalTypesWithoutDatetime,
+    EvalValue,
+    IntegerValue,
+    NumberValue,
+    StringValue
+} from '../eval';
 import { checkUrl, convertJsValueToDivKit, transformColorValue } from '../utils';
 import { registerFunc, registerMethod } from './funcs';
 
@@ -27,7 +38,10 @@ function dictGetter(evalType: EvalTypesWithoutDatetime) {
             throw new Error('Non empty argument list is required.');
         }
 
-        const val = getProp(dict.value, path.map(it => it.value));
+        const val = getProp(
+            dict.value,
+            path.map(it => it.value)
+        );
 
         return convertJsValueToDivKit(ctx, val, evalType);
     };

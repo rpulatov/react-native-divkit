@@ -72,8 +72,7 @@ describe('Variable System', () => {
         });
 
         it('throws on unsupported type', () => {
-            expect(() => createVariable('test', 'unknown' as any, 'value'))
-                .toThrow('Unsupported variable type');
+            expect(() => createVariable('test', 'unknown' as any, 'value')).toThrow('Unsupported variable type');
         });
     });
 
@@ -96,8 +95,7 @@ describe('Variable System', () => {
         });
 
         it('throws on non-string value', () => {
-            expect(() => new StringVariable('str', 123 as any))
-                .toThrow('Incorrect variable value');
+            expect(() => new StringVariable('str', 123 as any)).toThrow('Incorrect variable value');
         });
 
         it('supports subscription', () => {
@@ -120,13 +118,11 @@ describe('Variable System', () => {
         });
 
         it('throws on NaN', () => {
-            expect(() => new NumberVariable('num', NaN))
-                .toThrow('Incorrect variable value');
+            expect(() => new NumberVariable('num', NaN)).toThrow('Incorrect variable value');
         });
 
         it('throws on Infinity', () => {
-            expect(() => new NumberVariable('num', Infinity))
-                .toThrow('Incorrect variable value');
+            expect(() => new NumberVariable('num', Infinity)).toThrow('Incorrect variable value');
         });
 
         it('parses from string', () => {
@@ -206,8 +202,7 @@ describe('Variable System', () => {
 
         it('throws on invalid string', () => {
             const variable = new BooleanVariable('bool', true);
-            expect(() => variable.set('invalid'))
-                .toThrow('Incorrect variable value');
+            expect(() => variable.set('invalid')).toThrow('Incorrect variable value');
         });
     });
 
@@ -218,8 +213,7 @@ describe('Variable System', () => {
         });
 
         it('throws on invalid color', () => {
-            expect(() => new ColorVariable('color', 'not-a-color'))
-                .toThrow('Incorrect variable value');
+            expect(() => new ColorVariable('color', 'not-a-color')).toThrow('Incorrect variable value');
         });
     });
 
@@ -245,13 +239,11 @@ describe('Variable System', () => {
 
         it('throws on invalid JSON', () => {
             const variable = new DictVariable('dict', {});
-            expect(() => variable.set('not-json'))
-                .toThrow('Incorrect dict value');
+            expect(() => variable.set('not-json')).toThrow('Incorrect dict value');
         });
 
         it('throws on null', () => {
-            expect(() => new DictVariable('dict', null as any))
-                .toThrow('Incorrect variable value');
+            expect(() => new DictVariable('dict', null as any)).toThrow('Incorrect variable value');
         });
     });
 
@@ -269,8 +261,7 @@ describe('Variable System', () => {
         });
 
         it('throws on non-array', () => {
-            expect(() => new ArrayVariable('arr', 'not-array' as any))
-                .toThrow('Incorrect variable value');
+            expect(() => new ArrayVariable('arr', 'not-array' as any)).toThrow('Incorrect variable value');
         });
     });
 
@@ -278,8 +269,7 @@ describe('Variable System', () => {
         it('creates const variable that cannot be changed', () => {
             const variable = createConstVariable('const', 'string', 'immutable');
             expect(variable.getValue()).toBe('immutable');
-            expect(() => variable.setValue('changed'))
-                .toThrow('Cannot change the value of this type of variable');
+            expect(() => variable.setValue('changed')).toThrow('Cannot change the value of this type of variable');
         });
 
         it('supports subscribe without store', () => {
@@ -383,13 +373,11 @@ describe('Variable System', () => {
         });
 
         it('throws on invalid number', () => {
-            expect(() => variableValueFromString('not-a-number', 'number'))
-                .toThrow('Incorrect variable value');
+            expect(() => variableValueFromString('not-a-number', 'number')).toThrow('Incorrect variable value');
         });
 
         it('throws on invalid boolean', () => {
-            expect(() => variableValueFromString('maybe', 'boolean'))
-                .toThrow('Incorrect variable value');
+            expect(() => variableValueFromString('maybe', 'boolean')).toThrow('Incorrect variable value');
         });
     });
 });

@@ -25,10 +25,7 @@ function substring(_ctx: EvalContext, str: StringValue, start: IntegerValue, end
         throw new Error('Indexes should be in ascending order.');
     }
 
-    if (
-        start.value < 0 || start.value > str.value.length ||
-        end.value < 0 || end.value > str.value.length
-    ) {
+    if (start.value < 0 || start.value > str.value.length || end.value < 0 || end.value > str.value.length) {
         throw new Error('Indexes are out of bounds.');
     }
 
@@ -103,16 +100,13 @@ function toLowerCase(_ctx: EvalContext, str: StringValue): EvalValue {
     };
 }
 
-function calcPad(
-    ctx: EvalContext,
-    val: StringValue | IntegerValue,
-    len: IntegerValue,
-    pad: StringValue
-): string {
+function calcPad(ctx: EvalContext, val: StringValue | IntegerValue, len: IntegerValue, pad: StringValue): string {
     if (!pad.value.length) {
-        ctx.warnings.push(wrapError(new Error('String for padding is empty.'), {
-            level: 'warn'
-        }));
+        ctx.warnings.push(
+            wrapError(new Error('String for padding is empty.'), {
+                level: 'warn'
+            })
+        );
         return '';
     }
 
@@ -129,12 +123,7 @@ function calcPad(
     return part;
 }
 
-function padStart(
-    ctx: EvalContext,
-    val: StringValue | IntegerValue,
-    len: IntegerValue,
-    pad: StringValue
-): EvalValue {
+function padStart(ctx: EvalContext, val: StringValue | IntegerValue, len: IntegerValue, pad: StringValue): EvalValue {
     const prefix = calcPad(ctx, val, len, pad);
 
     return {
@@ -143,12 +132,7 @@ function padStart(
     };
 }
 
-function padEnd(
-    ctx: EvalContext,
-    val: StringValue | IntegerValue,
-    len: IntegerValue,
-    pad: StringValue
-): EvalValue {
+function padEnd(ctx: EvalContext, val: StringValue | IntegerValue, len: IntegerValue, pad: StringValue): EvalValue {
     const suffix = calcPad(ctx, val, len, pad);
 
     return {

@@ -13,15 +13,15 @@ DivKit is a server-driven UI framework that allows you to define UI layouts in J
 
 **MVP Version 0.1.0-alpha**
 
-| Feature | Status |
-|---------|--------|
-| Text component | ✅ Complete |
+| Feature             | Status      |
+| ------------------- | ----------- |
+| Text component      | ✅ Complete |
 | Container component | ✅ Complete |
-| Image component | ✅ Complete |
-| State component | ✅ Complete |
-| Variable system | ✅ Complete |
-| Expression engine | ✅ Complete |
-| Action handlers | ✅ Complete |
+| Image component     | ✅ Complete |
+| State component     | ✅ Complete |
+| Variable system     | ✅ Complete |
+| Expression engine   | ✅ Complete |
+| Action handlers     | ✅ Complete |
 | Template resolution | ✅ Complete |
 
 ## Installation
@@ -51,35 +51,39 @@ npm install @react-native-clipboard/clipboard
 import { DivKit } from 'react-native-divkit';
 
 const divKitJson = {
-  card: {
-    log_id: 'hello_world',
-    states: [{
-      state_id: 0,
-      div: {
-        type: 'text',
-        text: 'Hello, @{name}!',
-        font_size: 24,
-        text_color: '#000000',
-        text_alignment_horizontal: 'center'
-      }
-    }],
-    variables: [{
-      type: 'string',
-      name: 'name',
-      value: 'World'
-    }]
-  }
+    card: {
+        log_id: 'hello_world',
+        states: [
+            {
+                state_id: 0,
+                div: {
+                    type: 'text',
+                    text: 'Hello, @{name}!',
+                    font_size: 24,
+                    text_color: '#000000',
+                    text_alignment_horizontal: 'center'
+                }
+            }
+        ],
+        variables: [
+            {
+                type: 'string',
+                name: 'name',
+                value: 'World'
+            }
+        ]
+    }
 };
 
 export default function App() {
-  return (
-    <DivKit
-      data={divKitJson}
-      onStat={(stat) => console.log('Stat:', stat.type, stat.action.log_id)}
-      onCustomAction={(action) => console.log('Custom action:', action.url)}
-      onError={(error) => console.error('Error:', error.message)}
-    />
-  );
+    return (
+        <DivKit
+            data={divKitJson}
+            onStat={stat => console.log('Stat:', stat.type, stat.action.log_id)}
+            onCustomAction={action => console.log('Custom action:', action.url)}
+            onError={error => console.error('Error:', error.message)}
+        />
+    );
 }
 ```
 
@@ -89,13 +93,13 @@ export default function App() {
 
 ```json
 {
-  "type": "text",
-  "text": "Hello World",
-  "font_size": 16,
-  "font_weight": "bold",
-  "text_color": "#000000",
-  "text_alignment_horizontal": "center",
-  "max_lines": 2
+    "type": "text",
+    "text": "Hello World",
+    "font_size": 16,
+    "font_weight": "bold",
+    "text_color": "#000000",
+    "text_alignment_horizontal": "center",
+    "max_lines": 2
 }
 ```
 
@@ -103,13 +107,13 @@ export default function App() {
 
 ```json
 {
-  "type": "container",
-  "orientation": "vertical",
-  "items": [
-    { "type": "text", "text": "Item 1" },
-    { "type": "text", "text": "Item 2" }
-  ],
-  "content_alignment_horizontal": "center"
+    "type": "container",
+    "orientation": "vertical",
+    "items": [
+        { "type": "text", "text": "Item 1" },
+        { "type": "text", "text": "Item 2" }
+    ],
+    "content_alignment_horizontal": "center"
 }
 ```
 
@@ -117,11 +121,11 @@ export default function App() {
 
 ```json
 {
-  "type": "image",
-  "image_url": "https://example.com/image.png",
-  "scale": "fill",
-  "width": { "type": "fixed", "value": 200 },
-  "height": { "type": "fixed", "value": 150 }
+    "type": "image",
+    "image_url": "https://example.com/image.png",
+    "scale": "fill",
+    "width": { "type": "fixed", "value": 200 },
+    "height": { "type": "fixed", "value": 150 }
 }
 ```
 
@@ -129,19 +133,19 @@ export default function App() {
 
 ```json
 {
-  "type": "state",
-  "id": "my_state",
-  "default_state_id": "state1",
-  "states": [
-    {
-      "state_id": "state1",
-      "div": { "type": "text", "text": "State 1" }
-    },
-    {
-      "state_id": "state2",
-      "div": { "type": "text", "text": "State 2" }
-    }
-  ]
+    "type": "state",
+    "id": "my_state",
+    "default_state_id": "state1",
+    "states": [
+        {
+            "state_id": "state1",
+            "div": { "type": "text", "text": "State 1" }
+        },
+        {
+            "state_id": "state2",
+            "div": { "type": "text", "text": "State 2" }
+        }
+    ]
 }
 ```
 
@@ -151,14 +155,14 @@ Define variables in your JSON:
 
 ```json
 {
-  "card": {
-    "variables": [
-      { "type": "string", "name": "userName", "value": "World" },
-      { "type": "integer", "name": "counter", "value": 0 },
-      { "type": "color", "name": "textColor", "value": "#FF0000" },
-      { "type": "boolean", "name": "isActive", "value": true }
-    ]
-  }
+    "card": {
+        "variables": [
+            { "type": "string", "name": "userName", "value": "World" },
+            { "type": "integer", "name": "counter", "value": 0 },
+            { "type": "color", "name": "textColor", "value": "#FF0000" },
+            { "type": "boolean", "name": "isActive", "value": true }
+        ]
+    }
 }
 ```
 
@@ -166,24 +170,24 @@ Use variables in expressions:
 
 ```json
 {
-  "type": "text",
-  "text": "Hello, @{userName}!",
-  "text_color": "@{textColor}"
+    "type": "text",
+    "text": "Hello, @{userName}!",
+    "text_color": "@{textColor}"
 }
 ```
 
 ### Variable Types
 
-| Type | Description | Example |
-|------|-------------|---------|
-| `string` | Text value | `"Hello"` |
-| `integer` | Whole number | `42` |
-| `number` | Decimal number | `3.14` |
-| `boolean` | True/false | `true` |
-| `color` | Color value | `"#FF5500"` |
-| `url` | URL string | `"https://..."` |
-| `dict` | Key-value object | `{"key": "value"}` |
-| `array` | List of values | `[1, 2, 3]` |
+| Type      | Description      | Example            |
+| --------- | ---------------- | ------------------ |
+| `string`  | Text value       | `"Hello"`          |
+| `integer` | Whole number     | `42`               |
+| `number`  | Decimal number   | `3.14`             |
+| `boolean` | True/false       | `true`             |
+| `color`   | Color value      | `"#FF5500"`        |
+| `url`     | URL string       | `"https://..."`    |
+| `dict`    | Key-value object | `{"key": "value"}` |
+| `array`   | List of values   | `[1, 2, 3]`        |
 
 ## Actions
 
@@ -191,12 +195,14 @@ Actions are triggered by user interaction:
 
 ```json
 {
-  "type": "text",
-  "text": "Tap me",
-  "actions": [{
-    "log_id": "button_tap",
-    "url": "divkit://custom_action"
-  }]
+    "type": "text",
+    "text": "Tap me",
+    "actions": [
+        {
+            "log_id": "button_tap",
+            "url": "divkit://custom_action"
+        }
+    ]
 }
 ```
 
@@ -206,11 +212,11 @@ Actions are triggered by user interaction:
 
 ```json
 {
-  "typed": {
-    "type": "set_variable",
-    "variable_name": "counter",
-    "value": { "type": "integer", "value": 10 }
-  }
+    "typed": {
+        "type": "set_variable",
+        "variable_name": "counter",
+        "value": { "type": "integer", "value": 10 }
+    }
 }
 ```
 
@@ -218,51 +224,43 @@ Actions are triggered by user interaction:
 
 ```json
 {
-  "typed": {
-    "type": "set_state",
-    "state_id": "my_state",
-    "temporary_state_id": "state2"
-  }
+    "typed": {
+        "type": "set_state",
+        "state_id": "my_state",
+        "temporary_state_id": "state2"
+    }
 }
 ```
 
 ## Props
 
-| Prop | Type | Required | Description |
-|------|------|----------|-------------|
-| `data` | `DivJson` | Yes | DivKit JSON data |
-| `onStat` | `(stat) => void` | No | Statistics callback |
-| `onCustomAction` | `(action) => void` | No | Custom action handler |
-| `onError` | `(error) => void` | No | Error handler |
-| `direction` | `'ltr' \| 'rtl'` | No | Text direction (default: `'ltr'`) |
-| `platform` | `'desktop' \| 'touch'` | No | Platform type (default: `'touch'`) |
-| `style` | `ViewStyle` | No | Container style |
+| Prop             | Type                   | Required | Description                        |
+| ---------------- | ---------------------- | -------- | ---------------------------------- |
+| `data`           | `DivJson`              | Yes      | DivKit JSON data                   |
+| `onStat`         | `(stat) => void`       | No       | Statistics callback                |
+| `onCustomAction` | `(action) => void`     | No       | Custom action handler              |
+| `onError`        | `(error) => void`      | No       | Error handler                      |
+| `direction`      | `'ltr' \| 'rtl'`       | No       | Text direction (default: `'ltr'`)  |
+| `platform`       | `'desktop' \| 'touch'` | No       | Platform type (default: `'touch'`) |
+| `style`          | `ViewStyle`            | No       | Container style                    |
 
 ## Hooks
 
 For advanced usage, you can use hooks directly:
 
 ```tsx
-import {
-  useDivKitContext,
-  useVariable,
-  useVariableState,
-  useAction
-} from 'react-native-divkit';
+import { useDivKitContext, useVariable, useVariableState, useAction } from 'react-native-divkit';
 
 function MyComponent() {
-  const { setVariable } = useDivKitContext();
-  const counter = useVariable('counter');
+    const { setVariable } = useDivKitContext();
+    const counter = useVariable('counter');
 
-  return (
-    <View>
-      <Text>Count: {counter}</Text>
-      <Button
-        onPress={() => setVariable('counter', counter + 1)}
-        title="Increment"
-      />
-    </View>
-  );
+    return (
+        <View>
+            <Text>Count: {counter}</Text>
+            <Button onPress={() => setVariable('counter', counter + 1)} title="Increment" />
+        </View>
+    );
 }
 ```
 
@@ -297,13 +295,13 @@ The following features are planned for future versions:
 
 This library is based on DivKit Web (TypeScript + Svelte):
 
-| Component | Reuse |
-|-----------|-------|
-| Expression engine | 100% copied |
-| Type definitions | 100% copied |
-| Utilities | ~90% adapted |
-| Components | ~20% (rewritten for RN) |
-| Context system | New (React-specific) |
+| Component         | Reuse                   |
+| ----------------- | ----------------------- |
+| Expression engine | 100% copied             |
+| Type definitions  | 100% copied             |
+| Utilities         | ~90% adapted            |
+| Components        | ~20% (rewritten for RN) |
+| Context system    | New (React-specific)    |
 
 ## Development
 

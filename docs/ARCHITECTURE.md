@@ -138,6 +138,7 @@ Output: "Hello, World!"
 ```
 
 **Key Files:**
+
 - `expressions.peggy` - PEG grammar definition
 - `eval.ts` - Expression evaluator (20KB)
 - `variable.ts` - Variable class definitions
@@ -150,16 +151,21 @@ Variables are reactive values that trigger re-renders when changed.
 
 ```typescript
 class Variable<T> {
-  private value: T;
-  private observable: Observable<T>;
+    private value: T;
+    private observable: Observable<T>;
 
-  getValue(): T { return this.value; }
-  setValue(newValue: T): void { /* notify subscribers */ }
-  subscribe(callback: (value: T) => void): () => void;
+    getValue(): T {
+        return this.value;
+    }
+    setValue(newValue: T): void {
+        /* notify subscribers */
+    }
+    subscribe(callback: (value: T) => void): () => void;
 }
 ```
 
 **Key Files:**
+
 - `stores/createObservable.ts` - Observable pattern
 - `expressions/variable.ts` - Variable classes
 
@@ -275,22 +281,21 @@ All components follow this pattern:
 
 ```tsx
 function DivXxx({ componentContext }: { componentContext: ComponentContext }) {
-  const { json, variables } = componentContext;
+    const { json, variables } = componentContext;
 
-  // 1. Evaluate expressions
-  const derivedValue = useDerivedFromVars(json.some_prop, variables);
+    // 1. Evaluate expressions
+    const derivedValue = useDerivedFromVars(json.some_prop, variables);
 
-  // 2. Create styles
-  const styles = useMemo(() => ({
-    // React Native styles
-  }), [derivedValue]);
+    // 2. Create styles
+    const styles = useMemo(
+        () => ({
+            // React Native styles
+        }),
+        [derivedValue]
+    );
 
-  // 3. Render with Outer wrapper
-  return (
-    <Outer componentContext={componentContext}>
-      {/* Component-specific content */}
-    </Outer>
-  );
+    // 3. Render with Outer wrapper
+    return <Outer componentContext={componentContext}>{/* Component-specific content */}</Outer>;
 }
 ```
 
@@ -300,7 +305,7 @@ The `Outer` component handles common functionality:
 
 ```tsx
 <Outer componentContext={context}>
-  {/* Handles:
+    {/* Handles:
     - visibility (gone → null, invisible → opacity: 0)
     - background
     - borders
@@ -365,15 +370,15 @@ Primary = Literal | Variable | FunctionCall | "(" Expression ")"
 
 Located in `expressions/funcs/`:
 
-| Category | Functions |
-|----------|-----------|
-| Math | `abs`, `ceil`, `floor`, `round`, `max`, `min`, `sqrt`, `pow` |
-| String | `len`, `contains`, `substring`, `replace`, `trim`, `toUpperCase`, `toLowerCase` |
-| Array | `len`, `getArrayValue`, `containsValue` |
-| Dict | `getDictValue`, `containsKey` |
-| Color | `setColorAlpha`, `argb`, `rgb` |
-| Type | `toString`, `toNumber`, `toBoolean` |
-| DateTime | `formatDate`, `parseDate`, `now` |
+| Category | Functions                                                                       |
+| -------- | ------------------------------------------------------------------------------- |
+| Math     | `abs`, `ceil`, `floor`, `round`, `max`, `min`, `sqrt`, `pow`                    |
+| String   | `len`, `contains`, `substring`, `replace`, `trim`, `toUpperCase`, `toLowerCase` |
+| Array    | `len`, `getArrayValue`, `containsValue`                                         |
+| Dict     | `getDictValue`, `containsKey`                                                   |
+| Color    | `setColorAlpha`, `argb`, `rgb`                                                  |
+| Type     | `toString`, `toNumber`, `toBoolean`                                             |
+| DateTime | `formatDate`, `parseDate`, `now`                                                |
 
 ---
 
@@ -382,15 +387,7 @@ Located in `expressions/funcs/`:
 ### Variable Types
 
 ```typescript
-type VariableType =
-  | 'string'
-  | 'integer'
-  | 'number'
-  | 'boolean'
-  | 'color'
-  | 'url'
-  | 'dict'
-  | 'array';
+type VariableType = 'string' | 'integer' | 'number' | 'boolean' | 'color' | 'url' | 'dict' | 'array';
 ```
 
 ### Observable Pattern
@@ -399,19 +396,19 @@ Replaced Svelte stores with a custom Observable:
 
 ```typescript
 class Observable<T> {
-  private value: T;
-  private subscribers = new Set<(value: T) => void>();
+    private value: T;
+    private subscribers = new Set<(value: T) => void>();
 
-  subscribe(callback: (value: T) => void): () => void {
-    this.subscribers.add(callback);
-    callback(this.value); // Immediate call
-    return () => this.subscribers.delete(callback);
-  }
+    subscribe(callback: (value: T) => void): () => void {
+        this.subscribers.add(callback);
+        callback(this.value); // Immediate call
+        return () => this.subscribers.delete(callback);
+    }
 
-  set(newValue: T): void {
-    this.value = newValue;
-    this.subscribers.forEach(cb => cb(newValue));
-  }
+    set(newValue: T): void {
+        this.value = newValue;
+        this.subscribers.forEach(cb => cb(newValue));
+    }
 }
 ```
 
@@ -419,13 +416,13 @@ class Observable<T> {
 
 ```typescript
 class Variable<T> {
-  readonly name: string;
-  readonly type: VariableType;
-  private observable: Observable<T>;
+    readonly name: string;
+    readonly type: VariableType;
+    private observable: Observable<T>;
 
-  subscribe(callback: (value: T) => void): () => void;
-  getValue(): T;
-  setValue(value: T): void;
+    subscribe(callback: (value: T) => void): () => void;
+    getValue(): T;
+    setValue(value: T): void;
 }
 ```
 
@@ -437,28 +434,28 @@ class Variable<T> {
 
 ```typescript
 type ActionType =
-  | 'set_variable'      // Update variable value
-  | 'set_state'         // Switch state
-  | 'array_insert_value'// Insert into array
-  | 'array_remove_value'// Remove from array
-  | 'array_set_value'   // Set array element
-  | 'dict_set_value'    // Set dict key
-  | 'copy_to_clipboard' // Copy text
-  | 'update_structure'; // Patch JSON structure
+    | 'set_variable' // Update variable value
+    | 'set_state' // Switch state
+    | 'array_insert_value' // Insert into array
+    | 'array_remove_value' // Remove from array
+    | 'array_set_value' // Set array element
+    | 'dict_set_value' // Set dict key
+    | 'copy_to_clipboard' // Copy text
+    | 'update_structure'; // Patch JSON structure
 ```
 
 ### Action Handler Pattern
 
 ```typescript
 function handleAction(
-  componentContext: ComponentContext | undefined,
-  variables: Map<string, Variable>,
-  logError: (error: WrappedError) => void,
-  action: TypedAction
+    componentContext: ComponentContext | undefined,
+    variables: Map<string, Variable>,
+    logError: (error: WrappedError) => void,
+    action: TypedAction
 ): void {
-  // Validate inputs
-  // Execute action logic
-  // Handle errors
+    // Validate inputs
+    // Execute action logic
+    // Handle errors
 }
 ```
 
@@ -495,26 +492,26 @@ Main context for the entire DivKit tree:
 
 ```typescript
 interface DivKitContextValue {
-  // Variable management
-  variables: Map<string, Variable>;
-  getVariable: (name: string) => Variable | undefined;
-  setVariable: (name: string, value: unknown) => void;
+    // Variable management
+    variables: Map<string, Variable>;
+    getVariable: (name: string) => Variable | undefined;
+    setVariable: (name: string, value: unknown) => void;
 
-  // Action execution
-  execAnyActions: (actions: Action[]) => Promise<void>;
+    // Action execution
+    execAnyActions: (actions: Action[]) => Promise<void>;
 
-  // Callbacks
-  logStat: (type: string, action: Action) => void;
-  execCustomAction: (action: Action & { url: string }) => void;
+    // Callbacks
+    logStat: (type: string, action: Action) => void;
+    execCustomAction: (action: Action & { url: string }) => void;
 
-  // Configuration
-  direction: 'ltr' | 'rtl';
-  platform: 'desktop' | 'touch';
+    // Configuration
+    direction: 'ltr' | 'rtl';
+    platform: 'desktop' | 'touch';
 
-  // Component management
-  registerComponent: (id: string, context: ComponentContext) => void;
-  unregisterComponent: (id: string) => void;
-  genId: (key: string) => string;
+    // Component management
+    registerComponent: (id: string, context: ComponentContext) => void;
+    unregisterComponent: (id: string) => void;
+    genId: (key: string) => string;
 }
 ```
 
@@ -524,9 +521,9 @@ Manages state components:
 
 ```typescript
 interface StateContextValue {
-  registerState: (componentId: string, setState: StateSetter) => () => void;
-  switchState: (stateId: string) => Promise<void>;
-  getStateSetter: (componentId: string) => StateSetter | undefined;
+    registerState: (componentId: string, setState: StateSetter) => () => void;
+    switchState: (stateId: string) => Promise<void>;
+    getStateSetter: (componentId: string) => StateSetter | undefined;
 }
 ```
 
@@ -536,18 +533,18 @@ Per-component context (passed down the tree):
 
 ```typescript
 interface ComponentContext<T = DivBaseData> {
-  path: string[];
-  json: T;
-  origJson: T;
-  variables: Map<string, Variable>;
-  id: string;
-  parent?: ComponentContext;
+    path: string[];
+    json: T;
+    origJson: T;
+    variables: Map<string, Variable>;
+    id: string;
+    parent?: ComponentContext;
 
-  // Methods
-  logError: (error: WrappedError) => void;
-  execAnyActions: (actions: Action[]) => Promise<void>;
-  produceChildContext: (div: DivBaseData, opts?) => ComponentContext;
-  getVariable: (name: string) => Variable | undefined;
+    // Methods
+    logError: (error: WrappedError) => void;
+    execAnyActions: (actions: Action[]) => Promise<void>;
+    produceChildContext: (div: DivBaseData, opts?) => ComponentContext;
+    getVariable: (name: string) => Variable | undefined;
 }
 ```
 
@@ -573,12 +570,8 @@ const { json: resolvedDiv } = applyTemplate(divData, {}, templates, logError);
 const variables = new Map<string, Variable>();
 
 card.variables?.forEach(varData => {
-  const variable = createVariable(
-    varData.name,
-    varData.type,
-    varData.value
-  );
-  variables.set(varData.name, variable);
+    const variable = createVariable(varData.name, varData.type, varData.value);
+    variables.set(varData.name, variable);
 });
 ```
 
@@ -586,11 +579,11 @@ card.variables?.forEach(varData => {
 
 ```typescript
 const rootComponentContext: ComponentContext = {
-  path: [],
-  json: resolvedDiv,
-  variables,
-  id: genId('root'),
-  // ... methods
+    path: [],
+    json: resolvedDiv,
+    variables,
+    id: genId('root')
+    // ... methods
 };
 ```
 
@@ -598,11 +591,11 @@ const rootComponentContext: ComponentContext = {
 
 ```tsx
 <DivKitContext.Provider value={contextValue}>
-  <StateContext.Provider value={stateContextValue}>
-    <View style={styles.container}>
-      <DivComponent componentContext={rootComponentContext} />
-    </View>
-  </StateContext.Provider>
+    <StateContext.Provider value={stateContextValue}>
+        <View style={styles.container}>
+            <DivComponent componentContext={rootComponentContext} />
+        </View>
+    </StateContext.Provider>
 </DivKitContext.Provider>
 ```
 
@@ -613,6 +606,7 @@ const rootComponentContext: ComponentContext = {
 ### Why Observable instead of Svelte Stores?
 
 Svelte stores require Svelte runtime. We created a minimal Observable class that:
+
 - Has the same subscription API
 - Works with React's useEffect
 - Has no external dependencies
@@ -620,6 +614,7 @@ Svelte stores require Svelte runtime. We created a minimal Observable class that
 ### Why Hooks instead of HOCs?
 
 React hooks provide:
+
 - Better composability
 - Cleaner code
 - Better TypeScript support
@@ -628,6 +623,7 @@ React hooks provide:
 ### Why ComponentContext pattern?
 
 The ComponentContext pattern:
+
 - Mirrors Web implementation structure
 - Enables easy child context creation
 - Preserves path information for debugging
@@ -636,6 +632,7 @@ The ComponentContext pattern:
 ### Why PEG.js for expressions?
 
 PEG.js (Peggy):
+
 - Same grammar as Web version
 - Generates efficient parser
 - Easy to extend
@@ -644,6 +641,7 @@ PEG.js (Peggy):
 ### Why not Redux/MobX?
 
 Simple Observable pattern:
+
 - Minimal overhead
 - Direct compatibility with Web
 - Sufficient for variable updates

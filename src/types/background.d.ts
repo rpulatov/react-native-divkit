@@ -67,5 +67,9 @@ export interface RadialBackground {
     center_y?: RadialGradientCenter;
 }
 
-export type Background = GradientBackground | ImageBackground |
-    SolidBackground | RadialBackground | NinePatchImageBackground;
+export type Background =
+    | GradientBackground
+    | ImageBackground
+    | SolidBackground
+    | RadialBackground
+    | NinePatchImageBackground;
