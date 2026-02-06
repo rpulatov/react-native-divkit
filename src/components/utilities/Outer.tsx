@@ -76,7 +76,10 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             if (widthVal.type === 'fixed') {
                 styles.width = (widthVal as FixedSize).value;
             } else if (widthVal.type === 'match_parent') {
-                styles.width = '100%';
+                // Use alignSelf: 'stretch' instead of width: '100%' so that
+                // margins are subtracted from the available space rather than
+                // added on top of 100%, which would cause overflow.
+                styles.alignSelf = 'stretch';
                 styles.flexGrow = (widthVal as MatchParentSize).weight || 1;
             } else if (widthVal.type === 'wrap_content') {
                 styles.alignSelf = 'flex-start';
@@ -84,7 +87,7 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             }
         } else {
             // Default: match_parent
-            styles.width = '100%';
+            styles.alignSelf = 'stretch';
             styles.flexGrow = 1;
         }
 
