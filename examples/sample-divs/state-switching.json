@@ -1,0 +1,87 @@
+{
+  "card": {
+    "log_id": "state_switching_card",
+    "states": [
+      {
+        "state_id": 0,
+        "div": {
+          "type": "state",
+          "id": "main_state",
+          "default_state_id": "state_1",
+          "states": [
+            {
+              "state_id": "state_1",
+              "div": {
+                "type": "container",
+                "orientation": "vertical",
+                "items": [
+                  {
+                    "type": "text",
+                    "text": "State 1",
+                    "font_size": 24,
+                    "text_color": "#FF0000",
+                    "text_alignment_horizontal": "center",
+                    "paddings": {
+                      "left": 16,
+                      "right": 16,
+                      "top": 16,
+                      "bottom": 16
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "text": "This is the first state",
+                    "font_size": 16,
+                    "text_color": "#000000",
+                    "text_alignment_horizontal": "center",
+                    "paddings": {
+                      "left": 16,
+                      "right": 16,
+                      "top": 8,
+                      "bottom": 16
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "state_id": "state_2",
+              "div": {
+                "type": "container",
+                "orientation": "vertical",
+                "items": [
+                  {
+                    "type": "text",
+                    "text": "State 2",
+                    "font_size": 24,
+                    "text_color": "#0000FF",
+                    "text_alignment_horizontal": "center",
+                    "paddings": {
+                      "left": 16,
+                      "right": 16,
+                      "top": 16,
+                      "bottom": 16
+                    }
+                  },
+                  {
+                    "type": "text",
+                    "text": "This is the second state",
+                    "font_size": 16,
+                    "text_color": "#000000",
+                    "text_alignment_horizontal": "center",
+                    "paddings": {
+                      "left": 16,
+                      "right": 16,
+                      "top": 8,
+                      "bottom": 16
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+.idea/
+.vscode/
+*.tsbuildinfo
+coverage/
+.env
+.github/copilot-instructions.md
+CLAUDE.md

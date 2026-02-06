@@ -1,0 +1,24 @@
+{
+  "card": {
+    "log_id": "simple_text_card",
+    "states": [
+      {
+        "state_id": 0,
+        "div": {
+          "type": "text",
+          "text": "Hello from DivKit!",
+          "font_size": 20,
+          "text_color": "#FF0000",
+          "text_alignment_horizontal": "center",
+          "text_alignment_vertical": "center",
+          "paddings": {
+            "left": 16,
+            "right": 16,
+            "top": 16,
+            "bottom": 16
+          }
+        }
+      }
+    ]
+  }
+}

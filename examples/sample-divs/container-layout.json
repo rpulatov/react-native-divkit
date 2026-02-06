@@ -1,0 +1,70 @@
+{
+  "card": {
+    "log_id": "container_layout_card",
+    "states": [
+      {
+        "state_id": 0,
+        "div": {
+          "type": "container",
+          "orientation": "vertical",
+          "items": [
+            {
+              "type": "text",
+              "text": "First Item",
+              "font_size": 18,
+              "text_color": "#000000",
+              "paddings": {
+                "left": 16,
+                "right": 16,
+                "top": 8,
+                "bottom": 8
+              }
+            },
+            {
+              "type": "text",
+              "text": "Second Item",
+              "font_size": 18,
+              "text_color": "#0000FF",
+              "paddings": {
+                "left": 16,
+                "right": 16,
+                "top": 8,
+                "bottom": 8
+              }
+            },
+            {
+              "type": "container",
+              "orientation": "horizontal",
+              "items": [
+                {
+                  "type": "text",
+                  "text": "Left",
+                  "font_size": 16,
+                  "text_color": "#00FF00",
+                  "paddings": {
+                    "left": 16,
+                    "right": 8,
+                    "top": 8,
+                    "bottom": 8
+                  }
+                },
+                {
+                  "type": "text",
+                  "text": "Right",
+                  "font_size": 16,
+                  "text_color": "#FF00FF",
+                  "paddings": {
+                    "left": 8,
+                    "right": 16,
+                    "top": 8,
+                    "bottom": 8
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

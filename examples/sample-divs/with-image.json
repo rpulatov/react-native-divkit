@@ -1,0 +1,57 @@
+{
+  "card": {
+    "log_id": "image_card",
+    "states": [
+      {
+        "state_id": 0,
+        "div": {
+          "type": "container",
+          "orientation": "vertical",
+          "items": [
+            {
+              "type": "text",
+              "text": "Image Example",
+              "font_size": 24,
+              "text_color": "#000000",
+              "text_alignment_horizontal": "center",
+              "paddings": {
+                "left": 16,
+                "right": 16,
+                "top": 16,
+                "bottom": 16
+              }
+            },
+            {
+              "type": "image",
+              "image_url": "https://via.placeholder.com/300x200",
+              "width": {
+                "type": "fixed",
+                "value": 300
+              },
+              "height": {
+                "type": "fixed",
+                "value": 200
+              },
+              "scale": "fit",
+              "content_alignment_horizontal": "center",
+              "content_alignment_vertical": "center"
+            },
+            {
+              "type": "text",
+              "text": "Placeholder Image",
+              "font_size": 14,
+              "text_color": "#666666",
+              "text_alignment_horizontal": "center",
+              "paddings": {
+                "left": 16,
+                "right": 16,
+                "top": 8,
+                "bottom": 16
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
