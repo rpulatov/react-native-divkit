@@ -640,6 +640,10 @@ function evalVariable(ctx: EvalContext, expr: Variable): EvalValue {
     const variable = ctx.variables.get(varName);
 
     if (variable) {
+        if (!ctx.storeUsedVars) {
+            ctx.storeUsedVars = new Set();
+        }
+        ctx.storeUsedVars.add(variable);
         return variableToValue(variable);
     }
 

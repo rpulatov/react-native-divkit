@@ -36,6 +36,7 @@ import { dictSetValue } from './actions/dict';
 import { copyToClipboard } from './actions/copyToClipboard';
 import { updateStructure } from './actions/updateStructure';
 import { evalExpression } from './expressions/eval';
+import { parse } from './expressions/expressions';
 
 /**
  * Callback for logging statistics
@@ -264,6 +265,28 @@ export function DivKit({
                                         value = typedValue.value;
                                     } else {
                                         value = typedValue;
+                                    }
+
+                                    // Evaluate expression if value is a string with @{...}
+                                    if (typeof value === 'string' && value.includes('@{')) {
+                                        try {
+                                            const ast = parse(value, { startRule: 'JsonStringContents' });
+
+                                            const res = evalExpression(variables, undefined, undefined, ast);
+
+                                            if (res.result.type !== 'error') {
+                                                value = res.result.value;
+                                            }
+                                        } catch (err) {
+                                            logError(
+                                                wrapError(err as Error, {
+                                                    additional: {
+                                                        phase: 'set_variable_expression',
+                                                        expression: value
+                                                    }
+                                                })
+                                            );
+                                        }
                                     }
 
                                     setVariable(typed.variable_name, value);
