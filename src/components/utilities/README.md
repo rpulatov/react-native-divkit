@@ -14,7 +14,7 @@ Base wrapper component for all DivKit components. Handles common properties like
 - ✅ Width/Height sizing (`fixed`, `match_parent`, `wrap_content`)
 - ✅ Padding and margins (with RTL support)
 - ✅ Opacity/alpha
-- ✅ Background (solid colors for MVP)
+- ✅ Background (solid colors, radial gradients using `react-native-svg`)
 - ✅ Borders (width, color, style, radius)
 - ✅ Shadows
 - ✅ Actions (tap handlers)
@@ -114,7 +114,7 @@ The current implementation is MVP-focused and includes only essential features:
 
 **Deferred (Post-MVP):**
 
-- Complex backgrounds (images, gradients)
+- Complex backgrounds (images, linear gradients, nine-patch)
 - Advanced animations and transitions
 - Extensions
 - Custom focus handling
@@ -130,7 +130,7 @@ The current implementation is MVP-focused and includes only essential features:
 
 ### Future Enhancements
 
-1. **Advanced Backgrounds** - Add support for images, gradients, nine-patch
+1. **Advanced Backgrounds** - Add support for images, linear gradients, nine-patch
 2. **Animations** - Implement action animations and transitions
 3. **Focus** - Add keyboard focus and custom focus styles
 4. **Accessibility** - Enhanced accessibility support
@@ -142,6 +142,7 @@ The current implementation is MVP-focused and includes only essential features:
 ## Related Files
 
 - [Outer.tsx](./Outer.tsx) - Main wrapper component
+- [Background.tsx](./Background.tsx) - Background rendering component (solid, gradients)
 - [Unknown.tsx](./Unknown.tsx) - Fallback component
 - [Web Outer.svelte](../../../web/divkit/src/components/utilities/Outer.svelte) - Reference implementation
 

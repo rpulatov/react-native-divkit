@@ -8,6 +8,7 @@ import type { MaybeMissing } from '../../expressions/json';
 import { useDerivedFromVarsSimple } from '../../hooks/useDerivedFromVars';
 import { useActionHandler, useHasActions } from '../../hooks/useAction';
 import { useDivKitContext } from '../../context/DivKitContext';
+import { Background } from './Background';
 
 export interface OuterProps<T extends DivBaseData = DivBaseData> {
     componentContext: ComponentContext<T>;
@@ -145,15 +146,8 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             }
         }
 
-        // Background (MVP: only solid colors)
-        if (background && Array.isArray(background)) {
-            const bg = background as any[];
-            const solidBg = bg.find((b: any) => b?.type === 'solid');
-            if (solidBg && solidBg.color) {
-                styles.backgroundColor = solidBg.color;
-            }
-        }
-
+        // Background handled by Background component
+        
         // Border
         if (border) {
             const b = border as any;
@@ -216,14 +210,31 @@ export function Outer<T extends DivBaseData = DivBaseData>({
         return StyleSheet.flatten([containerStyle, customStyle]);
     }, [containerStyle, customStyle]);
 
+    const borderStyle = useMemo(() => {
+        const s = finalStyle || {};
+        const res: ViewStyle = {};
+        if (s.borderRadius) res.borderRadius = s.borderRadius;
+        if (s.borderTopLeftRadius) res.borderTopLeftRadius = s.borderTopLeftRadius;
+        if (s.borderTopRightRadius) res.borderTopRightRadius = s.borderTopRightRadius;
+        if (s.borderBottomLeftRadius) res.borderBottomLeftRadius = s.borderBottomLeftRadius;
+        if (s.borderBottomRightRadius) res.borderBottomRightRadius = s.borderBottomRightRadius;
+        return res;
+    }, [finalStyle]);
+
     // Render with or without Pressable based on actions
     if (hasActions) {
         return (
             <Pressable onPress={handlePress} style={finalStyle}>
+                <Background layers={background as any} style={borderStyle} />
                 {children}
             </Pressable>
         );
     }
 
-    return <View style={finalStyle}>{children}</View>;
+    return (
+        <View style={finalStyle}>
+            <Background layers={background as any} style={borderStyle} />
+            {children}
+        </View>
+    );
 }
