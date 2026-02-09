@@ -32,3 +32,11 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Install example dependencies
+        run: npm ci
+        working-directory: examples/NewExample
+
+      - name: Test example
+        run: npm test
+        working-directory: examples/NewExample
