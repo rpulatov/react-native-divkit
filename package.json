@@ -40,6 +40,8 @@
     "react-native-svg": "^15.15.2"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@testing-library/react-native": "^12.0.0",
     "@types/jest": "^29.0.0",
     "@types/react": "^19.2.13",
@@ -50,8 +52,12 @@
     "react": "19.2.4",
     "react-native": "0.83.1",
     "react-test-renderer": "^19.2.0",
+    "semantic-release": "^25.0.3",
     "ts-jest": "^29.0.0",
     "typescript": "^5.8.3"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "repository": {
     "type": "git",
