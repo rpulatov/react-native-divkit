@@ -582,14 +582,14 @@ export function DivKit({
             registerPager: (): any => {
                 // MVP: Pagers deferred
                 return {
-                    update: () => {},
-                    destroy: () => {}
+                    update() { /* noop */ },
+                    destroy() { /* noop */ }
                 };
             },
 
             listenPager: (): (() => void) => {
                 // MVP: Pagers deferred
-                return () => {};
+                return () => { /* noop */ };
             },
 
             destroy: (): void => {

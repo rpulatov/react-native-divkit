@@ -127,6 +127,7 @@ export function DivState({ componentContext }: DivStateProps) {
         }
 
         // Import DivComponent dynamically to avoid circular dependency
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
         const DivComponent = require('../DivComponent').DivComponent;
 
         return <DivComponent componentContext={childContext} />;

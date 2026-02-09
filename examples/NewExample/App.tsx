@@ -398,9 +398,9 @@ const withVariablesJson = {
       },
     ],
     variables: [
-      { type: 'string', name: 'userName', value: 'World' },
-      { type: 'color', name: 'textColor', value: '#007AFF' },
-      { type: 'integer', name: 'counter', value: 0 },
+      { type: 'string' as const, name: 'userName', value: 'World' },
+      { type: 'color' as const, name: 'textColor', value: '#007AFF' },
+      { type: 'integer' as const, name: 'counter', value: 0 },
     ],
   },
 };
@@ -590,7 +590,7 @@ const withActionsJson = {
         },
       },
     ],
-    variables: [{ type: 'integer', name: 'counter', value: 0 }],
+    variables: [{ type: 'integer' as const, name: 'counter', value: 0 }],
   },
 };
 
@@ -645,14 +645,14 @@ function AppContent() {
   }, []);
 
   // Callbacks
-  const handleStat: DivKitProps['onStat'] = useCallback(
+  const handleStat = useCallback<NonNullable<DivKitProps['onStat']>>(
     stat => {
       addLog(`Stat: ${stat.type} - ${stat.action.log_id}`);
     },
     [addLog],
   );
 
-  const handleCustomAction: DivKitProps['onCustomAction'] = useCallback(
+  const handleCustomAction = useCallback<NonNullable<DivKitProps['onCustomAction']>>(
     action => {
       addLog(`Custom Action: ${action.url}`);
       Alert.alert('Custom Action', `URL: ${action.url}`);
@@ -660,7 +660,7 @@ function AppContent() {
     [addLog],
   );
 
-  const handleError: DivKitProps['onError'] = useCallback(
+  const handleError = useCallback<NonNullable<DivKitProps['onError']>>(
     error => {
       addLog(`Error: ${error.message}`);
       console.error('[DivKit Error]', error);

@@ -111,7 +111,7 @@ export function useDerivedFromVars<T>(jsonProp: T, options: UseDerivedFromVarsOp
     const [value, setValue] = useState<MaybeMissing<T>>(() => getComputedValue().result);
 
     // Track used variables for subscription
-    const usedVarsRef = useRef<Set<Variable>>();
+    const usedVarsRef = useRef<Set<Variable> | undefined>(undefined);
 
     // Subscribe to used variables and update when they change
     useEffect(() => {
@@ -129,7 +129,7 @@ export function useDerivedFromVars<T>(jsonProp: T, options: UseDerivedFromVarsOp
         const unsubscribers: Unsubscriber[] = [];
 
         if (usedVars) {
-            usedVars.forEach(variable => {
+            usedVars.forEach((variable: Variable) => {
                 const unsubscribe = variable.subscribe(() => {
                     // Variable changed - recompute value
                     const { result: newResult, usedVars: newUsedVars } = getComputedValue();

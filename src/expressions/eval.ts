@@ -205,8 +205,9 @@ function evalUnary(ctx: EvalContext, expr: UnaryExpression): EvalValue {
             } else {
                 evalError(`${expr.operator}${valToPreview(val)}`, 'A Boolean is expected after a unary not.');
             }
+        // eslint-disable-next-line no-fallthrough
         case '+':
-        case '-':
+        case '-': {
             const mul = expr.operator === '+' ? 1 : -1;
 
             if (val.type === INTEGER) {
@@ -229,6 +230,7 @@ function evalUnary(ctx: EvalContext, expr: UnaryExpression): EvalValue {
                     `A Number is expected after a unary ${expr.operator === '+' ? 'plus' : 'minus'}.`
                 );
             }
+        }
     }
 }
 

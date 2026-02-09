@@ -34,7 +34,7 @@ const RadialGradientLayer = ({ layer }: { layer: RadialBackground }) => {
     // Colors
     // If colors array provided, distribute evenly
     // If color_map provided, use it
-    let stops: JSX.Element[] = [];
+    let stops: React.ReactElement[] = [];
 
     if (layer.colors) {
         stops = layer.colors.map((color, index) => (
