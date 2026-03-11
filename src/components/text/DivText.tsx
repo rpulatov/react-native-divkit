@@ -31,7 +31,7 @@ export interface DivTextProps {
  * Based on Web Text.svelte
  */
 export function DivText({ componentContext }: DivTextProps) {
-    const { direction } = useDivKitContext();
+    const { direction, typefaceProvider } = useDivKitContext();
     const { json, variables } = componentContext;
 
     // Reactive properties - use hooks for properties that may contain variables
@@ -92,9 +92,13 @@ export function DivText({ componentContext }: DivTextProps) {
             style.fontWeight = String(weight) as TextStyle['fontWeight'];
         }
 
-        // Font family
-        if (json.font_family) {
-            style.fontFamily = json.font_family;
+        // Font family - use typefaceProvider to map font name (like Web TextRange.svelte)
+        // If font_family is missing, provider receives empty string and can return global fallback.
+        const sourceFontFamily = typeof json.font_family === 'string' ? json.font_family : '';
+        const fontWeight = style.fontWeight ? Number(style.fontWeight) : 400;
+        const mappedFamily = typefaceProvider(sourceFontFamily, { fontWeight });
+        if (mappedFamily) {
+            style.fontFamily = mappedFamily;
         }
 
         // Line height
@@ -150,6 +154,7 @@ export function DivText({ componentContext }: DivTextProps) {
         json.font_weight,
         json.font_weight_value,
         json.font_family,
+        typefaceProvider,
         json.line_height,
         json.letter_spacing,
         json.underline,

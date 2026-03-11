@@ -24,7 +24,7 @@ import type { Action, DivJson, DivVariable, Direction } from '../typings/common'
 import type { DivBaseData } from './types/base';
 import type { ComponentContext } from './types/componentContext';
 import type { MaybeMissing } from './expressions/json';
-import { DivKitContext, type DivKitContextValue } from './context/DivKitContext';
+import { DivKitContext, type DivKitContextValue, type TypefaceProvider } from './context/DivKitContext';
 import { ActionContext, type ActionContextValue } from './context/ActionContext';
 import { StateContext, type StateContextValue, type StateSetter } from './context/StateContext';
 import { DivComponent } from './components/DivComponent';
@@ -84,6 +84,24 @@ export interface DivKitProps {
 
     /** Global variables controller for sharing variables across DivKit instances */
     globalVariablesController?: GlobalVariablesController;
+
+    /**
+     * Custom font provider for mapping font_family names to platform-specific fonts.
+     * Called even when font_family is omitted (in that case receives an empty string).
+     * Default: returns empty string (uses system default font)
+     *
+     * @example
+     * ```tsx
+     * <DivKit
+    *   typefaceProvider={(fontFamily, opts) => {
+    *     if (!fontFamily) return 'MyDefaultText-Regular';
+     *     if (fontFamily === 'display') return 'MyCustomDisplay-Bold';
+     *     return '';
+     *   }}
+     * />
+     * ```
+     */
+    typefaceProvider?: TypefaceProvider;
 }
 
 /**
@@ -100,7 +118,8 @@ export function DivKit({
     platform = 'touch',
     style,
     id = 'root',
-    globalVariablesController
+    globalVariablesController,
+    typefaceProvider = _fontFamily => ''
 }: DivKitProps) {
     const componentIdCounter = useRef(0);
     const componentsMap = useRef<Map<string, ComponentContext>>(new Map());
@@ -474,6 +493,8 @@ export function DivKit({
             direction,
             platform,
 
+            typefaceProvider,
+
             variables,
             getVariable,
             setVariable,
@@ -490,6 +511,7 @@ export function DivKit({
             onCustomAction,
             direction,
             platform,
+            typefaceProvider,
             variables,
             getVariable,
             setVariable,
