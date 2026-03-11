@@ -46,7 +46,7 @@ export { createGlobalVariablesController, GlobalVariablesController } from './ex
 // Context hooks (for advanced usage)
 export { useDivKitContext, DivKitContext } from './context/DivKitContext';
 
-export type { DivKitContextValue } from './context/DivKitContext';
+export type { DivKitContextValue, TypefaceProvider } from './context/DivKitContext';
 
 // Hooks (for custom components)
 export { useDerivedFromVars, useDerivedFromVarsSimple } from './hooks/useDerivedFromVars';

@@ -652,7 +652,9 @@ function AppContent() {
     [addLog],
   );
 
-  const handleCustomAction = useCallback<NonNullable<DivKitProps['onCustomAction']>>(
+  const handleCustomAction = useCallback<
+    NonNullable<DivKitProps['onCustomAction']>
+  >(
     action => {
       addLog(`Custom Action: ${action.url}`);
       Alert.alert('Custom Action', `URL: ${action.url}`);
@@ -729,6 +731,15 @@ function AppContent() {
           platform="touch"
           style={styles.divKit}
           globalVariablesController={globalController}
+          typefaceProvider={(fontFamily, opts) => {
+            if (fontFamily === 'display') return '';
+            if (fontFamily === 'text') {
+              return opts?.fontWeight && opts.fontWeight >= 700
+                ? 'MyCustomText-Bold'
+                : 'MyCustomText-Regular';
+            }
+            return '';
+          }}
         />
       </ScrollView>
 
