@@ -9,3 +9,4 @@ export { arrayInsert, arrayRemove, arraySet } from './array';
 export { dictSetValue } from './dict';
 export { copyToClipboard, initClipboard } from './copyToClipboard';
 export { updateStructure } from './updateStructure';
+export { applySetStateAction } from './setState';
