@@ -36,6 +36,7 @@ import { arrayInsert, arrayRemove, arraySet } from './actions/array';
 import { dictSetValue } from './actions/dict';
 import { copyToClipboard } from './actions/copyToClipboard';
 import { updateStructure } from './actions/updateStructure';
+import { applySetStateAction, type ActionSetStateCompat } from './actions/setState';
 import { evalExpression } from './expressions/eval';
 import { parse } from './expressions/expressions';
 
@@ -358,13 +359,7 @@ export function DivKit({
                                 break;
 
                             case 'set_state': {
-                                const setStateAction = typed as any;
-                                if (setStateAction.state_id && setStateAction.temporary_state_id) {
-                                    const setter = statesMap.current.get(setStateAction.state_id);
-                                    if (setter) {
-                                        await setter(String(setStateAction.temporary_state_id));
-                                    }
-                                }
+                                await applySetStateAction(typed as ActionSetStateCompat, statesMap.current);
                                 break;
                             }
 
