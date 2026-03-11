@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/rpulatov/react-native-divkit/compare/v1.0.0...v1.1.0) (2026-03-11)
+
+
+### Bug Fixes
+
+* Исправлены тесты приложения примера и добавлены в CI ([fe0ae6f](https://github.com/rpulatov/react-native-divkit/commit/fe0ae6fa1f90861cda2935a873553c457c317a91))
+
+
+### Features
+
+* добавить поддержку пользовательского провайдера шрифтов в DivKit ([bfb4afc](https://github.com/rpulatov/react-native-divkit/commit/bfb4afcb2717a03ae025f585fdd5941283a9c4f4))
+
 # 1.0.0 (2026-02-09)
 
 
