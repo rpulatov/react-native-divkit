@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/rpulatov/react-native-divkit/compare/v1.1.0...v1.2.0) (2026-03-11)
+
+
+### Features
+
+* добавить поддержку действия set_state с указанием вложенности состояния ([6e06345](https://github.com/rpulatov/react-native-divkit/commit/6e06345ce6363930087d2b257c642900bcd34eb2))
+
 # [1.1.0](https://github.com/rpulatov/react-native-divkit/compare/v1.0.0...v1.1.0) (2026-03-11)
 
 
