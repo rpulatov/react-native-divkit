@@ -1,0 +1,95 @@
+{
+  "card": {
+    "log_id": "container_layout",
+    "states": [
+      {
+        "state_id": 0,
+        "div": {
+          "type": "container",
+          "orientation": "vertical",
+          "background": [
+            {
+              "type": "solid",
+              "color": "#bbfec3"
+            }
+          ],
+          "paddings": {
+            "top": 16,
+            "bottom": 16,
+            "left": 16,
+            "right": 16
+          },
+          "items": [
+            {
+              "type": "text",
+              "text": "Header",
+              "font_size": 20,
+              "font_weight": "bold",
+              "text_color": "#333333",
+              "margins": {
+                "bottom": 12
+              },
+              "background": [
+                {
+                  "type": "solid",
+                  "color": "#1a74a8"
+                }
+              ]
+            },
+            {
+              "type": "container",
+              "orientation": "horizontal",
+              "background": [
+                {
+                  "type": "solid",
+                  "color": "#12415c"
+                }
+              ],
+              "items": [
+                {
+                  "type": "text",
+                  "text": "Left",
+                  "text_color": "#007AFF",
+                  "width": {
+                    "type": "fixed",
+                    "value": 100
+                  },
+                  "background": [
+                    {
+                      "type": "solid",
+                      "color": "#29aaf5"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "Right",
+                  "text_color": "#FF3B30",
+                  "width": {
+                    "type": "fixed",
+                    "value": 100
+                  },
+                  "background": [
+                    {
+                      "type": "solid",
+                      "color": "#341aa8"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "text": "Footer",
+              "font_size": 14,
+              "text_color": "#999999",
+              "margins": {
+                "top": 12
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

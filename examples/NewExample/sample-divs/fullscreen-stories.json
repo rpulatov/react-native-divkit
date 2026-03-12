@@ -1,0 +1,153 @@
+{
+    "card": {
+        "log_id": "div2_sample_card",
+        "states": [
+            {
+                "state_id": 0,
+                "div": {
+                    "type": "container",
+                    "orientation": "vertical",
+                    "paddings": {
+                        "left": 20,
+                        "right": 20
+                    },
+                    "background": [
+                        {
+                            "type": "radial_gradient",
+                            "colors": [
+                                "#000000",
+                                "#555555"
+                            ]
+                        }
+                    ],
+                    "items": [
+                        {
+                            "text": "Все удобно",
+                            "type": "text",
+                            "width": {
+                                "type": "wrap_content",
+                                "constrained": true
+                            },
+                            "margins": {
+                                "bottom": 30
+                            },
+                            "font_size": 36,
+                            "text_color": "#ffffff",
+                            "alignment_vertical": "center",
+                            "alignment_horizontal": "left"
+                        },
+                        {
+                            "type": "container",
+                            "items": [
+                                {
+                                    "type": "_template_list_item",
+                                    "list_text": "Авторская кухня от лучших шефов",
+                                    "list_color": "#fff50a",
+                                    "list_text_size": 24,
+                                    "list_font_weight": "medium",
+                                    "alignment_vertical": "center",
+                                    "alignment_horizontal": "left"
+                                },
+                                {
+                                    "type": "_template_list_item",
+                                    "list_text": "Свежие морепродукты и локальные продукты",
+                                    "list_color": "#fff50a",
+                                    "list_text_size": 24,
+                                    "list_font_weight": "medium",
+                                    "alignment_vertical": "center",
+                                    "alignment_horizontal": "left"
+                                },
+                                {
+                                    "type": "_template_list_item",
+                                    "list_text": "Вид на море, горы и виноградники",
+                                    "list_color": "#fff50a",
+                                    "list_text_size": 24,
+                                    "list_font_weight": "medium",
+                                    "alignment_vertical": "center",
+                                    "alignment_horizontal": "left"
+                                },
+                                {
+                                    "type": "_template_list_item",
+                                    "list_text": "Рестораны для особых вечеров и путешествий",
+                                    "list_color": "#fff50a",
+                                    "list_text_size": 24,
+                                    "list_font_weight": "medium",
+                                    "alignment_vertical": "center",
+                                    "alignment_horizontal": "left"
+                                }
+                            ],
+                            "width": {
+                                "type": "match_parent"
+                            },
+                            "height": {
+                                "type": "wrap_content"
+                            },
+                            "alignment_vertical": "center",
+                            "alignment_horizontal": "left",
+                            "content_alignment_vertical": "center",
+                            "content_alignment_horizontal": "left"
+                        },
+                        {
+                            "text": "Вкус, атмосфера и гостеприимство",
+                            "type": "text",
+                            "width": {
+                                "type": "match_parent"
+                            },
+                            "margins": {
+                                "top": 20
+                            },
+                            "font_size": 26,
+                            "text_color": "#ffffff",
+                            "alignment_vertical": "center",
+                            "alignment_horizontal": "center"
+                        }
+                    ],
+                    "visibility_action": {
+                        "log_id": "visible"
+                    },
+                    "content_alignment_vertical": "center",
+                    "content_alignment_horizontal": "center"
+                }
+            }
+        ]
+    },
+    "templates": {
+        "_template_list_item": {
+            "type": "container",
+            "items": [
+                {
+                    "type": "image",
+                    "width": {
+                        "type": "fixed",
+                        "unit": "sp",
+                        "value": 24
+                    },
+                    "height": {
+                        "type": "fixed",
+                        "unit": "sp",
+                        "value": 24
+                    },
+                    "margins": {
+                        "top": 2,
+                        "right": 12,
+                        "bottom": 2
+                    },
+                    "image_url": "https://yastatic.net/s3/home/div/div_fullscreens/hyphen.4.png",
+                    "$tint_color": "list_color"
+                },
+                {
+                    "type": "text",
+                    "$text": "list_text",
+                    "width": {
+                        "type": "match_parent"
+                    },
+                    "$font_size": "list_text_size",
+                    "$text_color": "list_color",
+                    "line_height": 32,
+                    "$font_weight": "list_font_weight"
+                }
+            ],
+            "orientation": "horizontal"
+        }
+    }
+}

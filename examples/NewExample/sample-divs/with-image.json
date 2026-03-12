@@ -1,0 +1,49 @@
+{
+  "card": {
+    "log_id": "with_image",
+    "states": [
+      {
+        "state_id": 0,
+        "div": {
+          "type": "container",
+          "orientation": "vertical",
+          "content_alignment_horizontal": "center",
+          "paddings": {
+            "top": 16,
+            "bottom": 16,
+            "left": 16,
+            "right": 16
+          },
+          "items": [
+            {
+              "type": "image",
+              "image_url": "https://picsum.photos/300/200",
+              "width": {
+                "type": "fixed",
+                "value": 300
+              },
+              "height": {
+                "type": "fixed",
+                "value": 200
+              },
+              "scale": "fill",
+              "border": {
+                "corner_radius": 12
+              }
+            },
+            {
+              "type": "text",
+              "text": "Random Image from Picsum",
+              "font_size": 14,
+              "text_color": "#666666",
+              "text_alignment_horizontal": "center",
+              "margins": {
+                "top": 12
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,113 @@
+{
+  "card": {
+    "log_id": "state_switching",
+    "states": [
+      {
+        "state_id": 0,
+        "div": {
+          "type": "state",
+          "id": "my_state",
+          "default_state_id": "state1",
+          "states": [
+            {
+              "state_id": "state1",
+              "div": {
+                "type": "container",
+                "orientation": "vertical",
+                "background": [
+                  {
+                    "type": "solid",
+                    "color": "#E3F2FD"
+                  }
+                ],
+                "paddings": {
+                  "top": 24,
+                  "bottom": 24,
+                  "left": 16,
+                  "right": 16
+                },
+                "items": [
+                  {
+                    "type": "text",
+                    "text": "State 1 - Blue",
+                    "font_size": 18,
+                    "text_color": "#1976D2",
+                    "text_alignment_horizontal": "center"
+                  },
+                  {
+                    "type": "text",
+                    "text": "Tap to switch",
+                    "font_size": 14,
+                    "text_color": "#666666",
+                    "text_alignment_horizontal": "center",
+                    "margins": {
+                      "top": 8
+                    }
+                  }
+                ],
+                "actions": [
+                  {
+                    "log_id": "switch_to_state2",
+                    "typed": {
+                      "type": "set_state",
+                      "state_id": "my_state",
+                      "temporary_state_id": "state2"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "state_id": "state2",
+              "div": {
+                "type": "container",
+                "orientation": "vertical",
+                "background": [
+                  {
+                    "type": "solid",
+                    "color": "#FFEBEE"
+                  }
+                ],
+                "paddings": {
+                  "top": 24,
+                  "bottom": 24,
+                  "left": 16,
+                  "right": 16
+                },
+                "items": [
+                  {
+                    "type": "text",
+                    "text": "State 2 - Red",
+                    "font_size": 18,
+                    "text_color": "#D32F2F",
+                    "text_alignment_horizontal": "center"
+                  },
+                  {
+                    "type": "text",
+                    "text": "Tap to switch back",
+                    "font_size": 14,
+                    "text_color": "#666666",
+                    "text_alignment_horizontal": "center",
+                    "margins": {
+                      "top": 8
+                    }
+                  }
+                ],
+                "actions": [
+                  {
+                    "log_id": "switch_to_state1",
+                    "typed": {
+                      "type": "set_state",
+                      "state_id": "my_state",
+                      "temporary_state_id": "state1"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
