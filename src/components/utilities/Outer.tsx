@@ -11,6 +11,27 @@ import { useDivKitContext } from '../../context/DivKitContext';
 import { useLayoutParams } from '../../context/LayoutParamsContext';
 import { Background } from './Background';
 
+function resolveAlignSelf(
+    alignment: string | undefined,
+    dir: string
+): 'flex-start' | 'center' | 'flex-end' | undefined {
+    if (!alignment) return undefined;
+    switch (alignment) {
+        case 'center':
+            return 'center';
+        case 'left':
+            return dir === 'rtl' ? 'flex-end' : 'flex-start';
+        case 'right':
+            return dir === 'rtl' ? 'flex-start' : 'flex-end';
+        case 'start':
+            return 'flex-start';
+        case 'end':
+            return 'flex-end';
+        default:
+            return undefined;
+    }
+}
+
 export interface OuterProps<T extends DivBaseData = DivBaseData> {
     componentContext: ComponentContext<T>;
     children: ReactNode;
@@ -44,6 +65,8 @@ export function Outer<T extends DivBaseData = DivBaseData>({
     const border = useDerivedFromVarsSimple(json.border, variables || new Map());
     const width = useDerivedFromVarsSimple(json.width, variables || new Map());
     const height = useDerivedFromVarsSimple(json.height, variables || new Map());
+    const alignmentHorizontal = useDerivedFromVarsSimple(json.alignment_horizontal, variables || new Map());
+    const alignmentVertical = useDerivedFromVarsSimple(json.alignment_vertical, variables || new Map());
 
     // Actions - use type assertion for now (will be refined in component implementations)
     const jsonAny = json as any;
@@ -82,7 +105,8 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                     styles.flexShrink = 1;
                 }
             } else if (widthVal.type === 'wrap_content') {
-                styles.alignSelf = 'flex-start';
+                const hAlign = resolveAlignSelf(alignmentHorizontal as string | undefined, direction);
+                styles.alignSelf = hAlign || 'flex-start';
             }
         } else {
             // Default: match_parent
@@ -217,7 +241,7 @@ export function Outer<T extends DivBaseData = DivBaseData>({
         }
 
         return styles;
-    }, [visibility, alpha, width, height, paddings, margins, background, border, direction, layoutParams]);
+    }, [visibility, alpha, width, height, paddings, margins, background, border, direction, layoutParams, alignmentHorizontal, alignmentVertical]);
 
     const finalStyle = useMemo(() => {
         return StyleSheet.flatten([containerStyle, customStyle]);
