@@ -1,0 +1,63 @@
+{
+  "card": {
+    "log_id": "with_variables",
+    "states": [
+      {
+        "state_id": 0,
+        "div": {
+          "type": "container",
+          "orientation": "vertical",
+          "paddings": {
+            "top": "@{safeAreaTop}",
+            "bottom": 16,
+            "left": 16,
+            "right": 16
+          },
+          "items": [
+            {
+              "type": "text",
+              "text": "Global safeAreaTop @{safeAreaTop}",
+              "font_size": 16,
+              "text_color": "#666666",
+              "margins": {
+                "bottom": 8
+              }
+            },
+            {
+              "type": "text",
+              "text": "Hello, @{userName}!",
+              "font_size": 20,
+              "text_color": "@{textColor}"
+            },
+            {
+              "type": "text",
+              "text": "Counter: @{counter}",
+              "font_size": 16,
+              "text_color": "#666666",
+              "margins": {
+                "top": 8
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "variables": [
+      {
+        "type": "string",
+        "name": "userName",
+        "value": "World"
+      },
+      {
+        "type": "color",
+        "name": "textColor",
+        "value": "#007AFF"
+      },
+      {
+        "type": "integer",
+        "name": "counter",
+        "value": 0
+      }
+    ]
+  }
+}
