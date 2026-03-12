@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/rpulatov/react-native-divkit/compare/v1.2.0...v1.2.1) (2026-03-12)
+
+
+### Bug Fixes
+
+* Исправить центровку элементов через alignmentHorizontal и alignmentVertical ([6f89d35](https://github.com/rpulatov/react-native-divkit/commit/6f89d3575030a9542cd02a7cfb71cff78d3865e7))
+
 # [1.2.0](https://github.com/rpulatov/react-native-divkit/compare/v1.1.0...v1.2.0) (2026-03-11)
 
 
