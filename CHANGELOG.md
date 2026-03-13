@@ -1,3 +1,11 @@
+# [1.5.0](https://github.com/rpulatov/react-native-divkit/compare/v1.4.0...v1.5.0) (2026-03-13)
+
+
+### Features
+
+* Добавить обработку div-action schema ([d632f6d](https://github.com/rpulatov/react-native-divkit/commit/d632f6d44697a050ad3ebd275d8c4ba4c863b8b7))
+* Добавить поддержку min/max размеров для компонентов с типами MatchParentSize и WrapContentSize ([d35e110](https://github.com/rpulatov/react-native-divkit/commit/d35e1109903ab39a1ac4b73bf6f9d0819a325e52))
+
 # [1.4.0](https://github.com/rpulatov/react-native-divkit/compare/v1.3.0...v1.4.0) (2026-03-13)
 
 
