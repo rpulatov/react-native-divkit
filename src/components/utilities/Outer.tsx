@@ -306,6 +306,10 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                 }
             }
 
+            if (b.corner_radius !== undefined || b.corners_radius) {
+                styles.overflow = 'hidden';
+            }
+
             if (b.has_shadow) {
                 const shadow = b.shadow;
                 if (shadow) {
