@@ -293,7 +293,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
             resizeMode="cover"
             source={
               {
-                "uri": "https://roby.market/downloads/mobile/krym-energy-main/stories/1.png",
+                "uri": "mock://images/story-cover",
               }
             }
             style={
@@ -375,7 +375,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
                 }
               }
             >
-              рекомендовано
+              демо
             </Text>
           </View>
           <View
@@ -403,7 +403,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
                 resizeMode="contain"
                 source={
                   {
-                    "uri": "https://roby.market/downloads/mobile/krym-energy-main/stories/prorest.png",
+                    "uri": "mock://images/story-badge",
                   }
                 }
                 style={
@@ -498,7 +498,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
                     }
                   }
                 >
-                  Simfero
+                  Demo Place
                 </Text>
               </View>
               <View
@@ -523,9 +523,9 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
                     }
                   }
                 >
-                  Ресторан Simfero — это место, где вы можете насладиться вкусной едой, красивым видом на город и живой музыкой.
+                  Это демонстрационный текст карточки.
 
-В ресторане есть несколько зон, включая зону для курения кальяна и зону, свободную от курения. Также есть отдельный зал для проведения мероприятий.
+Контент используется только для snapshot-тестов и не содержит бизнес-данных.
                 </Text>
               </View>
             </View>
@@ -543,28 +543,32 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
               }
             }
           >
-            <View
+            <Pressable
+              onPress={[Function]}
+              onPressIn={[Function]}
+              onPressOut={[Function]}
               ref={null}
               style={
                 {
-                  "alignItems": "flex-start",
                   "alignSelf": "flex-end",
-                  "flexDirection": "column",
-                  "justifyContent": "flex-start",
                   "marginBottom": 15,
                   "marginRight": 15,
                   "marginTop": "auto",
                 }
               }
             >
-              <View
+              <Animated.View
                 ref={null}
                 style={
                   {
-                    "alignItems": "flex-end",
-                    "alignSelf": "flex-start",
-                    "flexDirection": "row",
-                    "justifyContent": "center",
+                    "alignItems": "flex-start",
+                    "flexDirection": "column",
+                    "justifyContent": "flex-start",
+                    "opacity": {
+                      "_value": 1,
+                      "interpolate": [MockFunction],
+                      "setValue": [MockFunction],
+                    },
                   }
                 }
               >
@@ -572,10 +576,10 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
                   ref={null}
                   style={
                     {
-                      "alignSelf": "flex-end",
-                      "height": 30,
-                      "marginRight": 9,
-                      "width": 30,
+                      "alignItems": "flex-end",
+                      "alignSelf": "flex-start",
+                      "flexDirection": "row",
+                      "justifyContent": "center",
                     }
                   }
                 >
@@ -583,47 +587,119 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
                     ref={null}
                     style={
                       {
-                        "overflow": "hidden",
+                        "alignSelf": "flex-end",
+                        "height": 30,
+                        "marginRight": 9,
+                        "width": 30,
                       }
                     }
                   >
-                    <Image
-                      onError={[Function]}
-                      onLoadEnd={[Function]}
-                      ref={null}
-                      resizeMode="cover"
-                      source={
-                        {
-                          "uri": "https://roby.market/downloads/mobile/krym-energy-main/stories/ya.png",
-                        }
-                      }
-                      style={
-                        {
-                          "height": "100%",
-                          "width": "100%",
-                        }
-                      }
-                    />
                     <View
                       ref={null}
                       style={
                         {
-                          "alignItems": "center",
-                          "backgroundColor": "transparent",
-                          "bottom": 0,
-                          "justifyContent": "center",
-                          "left": 0,
-                          "position": "absolute",
-                          "right": 0,
-                          "top": 0,
+                          "overflow": "hidden",
                         }
                       }
                     >
-                      <ActivityIndicator
-                        color="#999999"
+                      <Image
+                        onError={[Function]}
+                        onLoadEnd={[Function]}
                         ref={null}
-                        size="small"
+                        resizeMode="cover"
+                        source={
+                          {
+                            "uri": "mock://images/map-icon",
+                          }
+                        }
+                        style={
+                          {
+                            "height": "100%",
+                            "width": "100%",
+                          }
+                        }
                       />
+                      <View
+                        ref={null}
+                        style={
+                          {
+                            "alignItems": "center",
+                            "backgroundColor": "transparent",
+                            "bottom": 0,
+                            "justifyContent": "center",
+                            "left": 0,
+                            "position": "absolute",
+                            "right": 0,
+                            "top": 0,
+                          }
+                        }
+                      >
+                        <ActivityIndicator
+                          color="#999999"
+                          ref={null}
+                          size="small"
+                        />
+                      </View>
+                    </View>
+                  </View>
+                  <View
+                    ref={null}
+                    style={
+                      {
+                        "alignItems": "flex-start",
+                        "alignSelf": "flex-end",
+                        "flexDirection": "column",
+                        "justifyContent": "flex-start",
+                      }
+                    }
+                  >
+                    <View
+                      ref={null}
+                      style={
+                        {
+                          "alignSelf": "flex-start",
+                          "justifyContent": "flex-start",
+                        }
+                      }
+                    >
+                      <Text
+                        allowFontScaling={true}
+                        ref={null}
+                        style={
+                          {
+                            "color": "#1e9bfe",
+                            "fontSize": 16,
+                            "fontWeight": "700",
+                            "textAlign": "left",
+                          }
+                        }
+                      >
+                        Demo Maps
+                      </Text>
+                    </View>
+                    <View
+                      ref={null}
+                      style={
+                        {
+                          "alignSelf": "flex-start",
+                          "justifyContent": "flex-start",
+                        }
+                      }
+                    >
+                      <Text
+                        allowFontScaling={true}
+                        ref={null}
+                        style={
+                          {
+                            "color": "#1e9bfe",
+                            "fontSize": 11,
+                            "fontWeight": "400",
+                            "textAlign": "left",
+                          }
+                        }
+                      >
+                        mock://maps
+                      </Text>
                     </View>
                   </View>
                 </View>
@@ -632,103 +708,43 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
                   style={
                     {
                       "alignItems": "flex-start",
-                      "alignSelf": "flex-end",
+                      "alignSelf": "stretch",
                       "flexDirection": "column",
+                      "height": 1,
                       "justifyContent": "flex-start",
+                      "marginTop": 4,
                     }
                   }
                 >
                   <View
-                    ref={null}
-                    style={
-                      {
-                        "alignSelf": "flex-start",
-                        "justifyContent": "flex-start",
-                      }
-                    }
-                  >
-                    <Text
-                      allowFontScaling={true}
-                      ref={null}
-                      style={
-                        {
-                          "color": "#1e9bfe",
-                          "fontSize": 16,
-                          "fontWeight": "700",
-                          "textAlign": "left",
-                        }
-                      }
-                    >
-                      Яндекс
-                    </Text>
-                  </View>
-                  <View
-                    ref={null}
-                    style={
-                      {
-                        "alignSelf": "flex-start",
-                        "justifyContent": "flex-start",
-                      }
-                    }
-                  >
-                    <Text
-                      allowFontScaling={true}
-                      ref={null}
-                      style={
-                        {
-                          "color": "#1e9bfe",
-                          "fontSize": 11,
-                          "fontWeight": "400",
-                          "textAlign": "left",
-                        }
-                      }
-                    >
-                      https://yandex.ru
-                    </Text>
-                  </View>
-                </View>
-              </View>
-              <View
-                ref={null}
-                style={
-                  {
-                    "alignItems": "flex-start",
-                    "alignSelf": "stretch",
-                    "flexDirection": "column",
-                    "height": 1,
-                    "justifyContent": "flex-start",
-                    "marginTop": 4,
-                  }
-                }
-              >
-                <View
-                  pointerEvents="none"
-                  ref={null}
-                  style={
-                    [
-                      undefined,
-                      {},
-                      {
-                        "overflow": "hidden",
-                        "zIndex": -1,
-                      },
-                    ]
-                  }
-                >
-                  <View
+                    pointerEvents="none"
                     ref={null}
                     style={
                       [
                         undefined,
+                        {},
                         {
-                          "backgroundColor": "#1E9BFE",
+                          "overflow": "hidden",
+                          "zIndex": -1,
                         },
                       ]
                     }
-                  />
+                  >
+                    <View
+                      ref={null}
+                      style={
+                        [
+                          undefined,
+                          {
+                            "backgroundColor": "#1E9BFE",
+                          },
+                        ]
+                      }
+                    />
+                  </View>
                 </View>
-              </View>
-            </View>
+              </Animated.View>
+            </Pressable>
           </View>
         </View>
       </View>
@@ -1063,7 +1079,7 @@ Fade, scale, and a combination of fade and scale animations are supported.
 </View>
 `;
 
-exports[`DivKit Snapshot Tests Full JSON fixtures test.json (overlap template) renders correctly 1`] = `
+exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template) renders correctly 1`] = `
 <View
   ref={null}
   style={
@@ -1163,7 +1179,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures test.json (overlap template) r
                 resizeMode="cover"
                 source={
                   {
-                    "uri": "https://roby.market/downloads/mobile/krym-energy-main/best.png",
+                    "uri": "mock://images/widget-cover",
                   }
                 }
                 style={
@@ -1244,7 +1260,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures test.json (overlap template) r
                   }
                 }
               >
-                Лучшие заведения Крыма
+                Демо подборка мест
               </Text>
             </View>
             <View
@@ -1275,7 +1291,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures test.json (overlap template) r
                   resizeMode="cover"
                   source={
                     {
-                      "uri": "https://roby.market/downloads/mobile/krym-energy-main/prorestW.png",
+                      "uri": "mock://images/widget-badge",
                     }
                   }
                   style={

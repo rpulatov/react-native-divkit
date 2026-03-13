@@ -1,9 +1,27 @@
 import { renderDivKit, makeCard } from './helpers';
 
 // Sample JSON fixtures
-import testJson from '../../examples/NewExample/sample-divs/test.json';
-import storyJson from '../../examples/NewExample/sample-divs/story.json';
-import tapAnimationsJson from '../../examples/NewExample/sample-divs/tap-animations.json';
+import widgetJson from './fixtures/widget.json';
+import storyJson from './fixtures/story.json';
+import tapAnimationsJson from './fixtures/tap-animations.json';
+
+type JsonNode = {
+    type?: string;
+    props?: Record<string, any>;
+    children?: Array<JsonNode | string>;
+} | null;
+
+function collectNodes(node: JsonNode): JsonNode[] {
+    if (!node || typeof node !== 'object') {
+        return [];
+    }
+
+    const children = Array.isArray(node.children)
+        ? node.children.flatMap(child => collectNodes(child as JsonNode))
+        : [];
+
+    return [node, ...children];
+}
 
 describe('DivKit Snapshot Tests', () => {
     // =========================================================================
@@ -11,8 +29,8 @@ describe('DivKit Snapshot Tests', () => {
     // =========================================================================
 
     describe('Full JSON fixtures', () => {
-        it('test.json (overlap template) renders correctly', () => {
-            const { toJSON } = renderDivKit(testJson);
+        it('widget.json (overlap template) renders correctly', () => {
+            const { toJSON } = renderDivKit(widgetJson);
             expect(toJSON()).toMatchSnapshot();
         });
 
@@ -182,6 +200,78 @@ describe('DivKit Snapshot Tests', () => {
             });
             const { toJSON } = renderDivKit(data);
             expect(toJSON()).toMatchSnapshot();
+        });
+
+        it('actions + action_animation keep bottom alignment in overlap', () => {
+            const data = makeCard({
+                type: 'container',
+                orientation: 'overlap',
+                width: { type: 'match_parent' },
+                height: { type: 'fixed', value: 200 },
+                items: [
+                    {
+                        type: 'text',
+                        text: 'Base layer',
+                        width: { type: 'match_parent' },
+                        height: { type: 'match_parent' }
+                    },
+                    {
+                        type: 'container',
+                        width: { type: 'wrap_content' },
+                        height: { type: 'wrap_content' },
+                        alignment_horizontal: 'right',
+                        alignment_vertical: 'bottom',
+                        margins: {
+                            right: 12,
+                            bottom: 10
+                        },
+                        actions: [
+                            {
+                                log_id: 'open_url',
+                                url: 'https://example.com'
+                            }
+                        ],
+                        action_animation: {
+                            name: 'fade',
+                            start_value: 1,
+                            end_value: 0.5,
+                            duration: 250
+                        },
+                        items: [
+                            {
+                                type: 'text',
+                                text: 'CTA'
+                            }
+                        ]
+                    }
+                ]
+            });
+
+            const { toJSON } = renderDivKit(data);
+            const root = toJSON() as JsonNode;
+            const nodes = collectNodes(root);
+
+            const bottomAlignedPressable = nodes.find(node => {
+                if (!node || node.type !== 'Pressable') {
+                    return false;
+                }
+
+                const style = node.props?.style || {};
+                return (
+                    style.marginTop === 'auto' &&
+                    style.marginBottom === 10 &&
+                    style.marginRight === 12
+                );
+            });
+
+            expect(bottomAlignedPressable).toBeDefined();
+
+            const animatedChild = (bottomAlignedPressable as any)?.children?.find(
+                (child: any) => child?.type === 'Animated.View'
+            );
+
+            expect(animatedChild).toBeDefined();
+            expect(animatedChild.props?.style?.flex).toBeUndefined();
         });
     });
 

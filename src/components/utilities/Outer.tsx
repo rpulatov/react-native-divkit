@@ -477,7 +477,20 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             if (marginRight !== undefined) outerStyle.marginRight = marginRight;
 
             // Build animated style from inner (visual) properties
-            const animatedStyle: any = { ...innerStyle, flex: 1 };
+            const shouldFillInner =
+                w !== undefined ||
+                h !== undefined ||
+                minWidth !== undefined ||
+                maxWidth !== undefined ||
+                minHeight !== undefined ||
+                maxHeight !== undefined ||
+                flexGrow !== undefined ||
+                flexShrink !== undefined ||
+                flexBasis !== undefined;
+
+            const animatedStyle: any = shouldFillInner
+                ? { ...innerStyle, flex: 1 }
+                : { ...innerStyle };
 
             if (hasFadeAnimation) {
                 const staticOpacity = animatedStyle.opacity;
