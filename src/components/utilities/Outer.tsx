@@ -1,15 +1,18 @@
-import React, { ReactNode, useMemo } from 'react';
-import { View, Pressable, ViewStyle, StyleSheet } from 'react-native';
+import React, { ReactNode, useMemo, useRef, useCallback } from 'react';
+import { View, Pressable, Animated, ViewStyle, StyleSheet, Easing, EasingFunction } from 'react-native';
 import type { ComponentContext } from '../../types/componentContext';
 import type { DivBaseData } from '../../types/base';
 import type { Visibility } from '../../types/base';
 import type { FixedSize, MatchParentSize } from '../../types/sizes';
 import type { MaybeMissing } from '../../expressions/json';
+import type { Animation } from '../../types/animation';
+import type { Interpolation } from '../../../typings/common';
 import { useDerivedFromVarsSimple } from '../../hooks/useDerivedFromVars';
 import { useActionHandler, useHasActions } from '../../hooks/useAction';
 import { useDivKitContext } from '../../context/DivKitContext';
 import { useLayoutParams } from '../../context/LayoutParamsContext';
 import { Background } from './Background';
+import { flattenAnimation } from '../../utils/flattenAnimation';
 
 function resolveAlignSelf(
     alignment: string | undefined,
@@ -32,6 +35,57 @@ function resolveAlignSelf(
     }
 }
 
+function interpolationToEasing(interpolator: Interpolation | undefined): EasingFunction {
+    switch (interpolator) {
+        case 'linear':
+            return Easing.linear;
+        case 'ease':
+            return Easing.ease;
+        case 'ease_in':
+            return Easing.in(Easing.ease);
+        case 'ease_out':
+            return Easing.out(Easing.ease);
+        case 'ease_in_out':
+            return Easing.inOut(Easing.ease);
+        case 'spring':
+            return Easing.inOut(Easing.ease);
+        default:
+            return Easing.inOut(Easing.ease);
+    }
+}
+
+interface ParsedActionAnimation {
+    type: 'fade' | 'scale';
+    startValue: number;
+    endValue: number;
+    duration: number;
+    startDelay: number;
+    easing: EasingFunction;
+}
+
+function parseActionAnimations(animation: MaybeMissing<Animation> | undefined): ParsedActionAnimation[] {
+    if (!animation) return [];
+
+    const list = flattenAnimation(animation);
+    const result: ParsedActionAnimation[] = [];
+
+    for (const anim of list) {
+        if (anim.name === 'fade' || anim.name === 'scale') {
+            result.push({
+                type: anim.name,
+                startValue: anim.start_value ?? 1,
+                endValue: anim.end_value ?? 1,
+                duration: Math.max(0, anim.duration ?? 300),
+                startDelay: Math.max(0, anim.start_delay ?? 0),
+                easing: interpolationToEasing(anim.interpolator),
+            });
+        }
+        // 'native' and 'no_animation' are ignored
+    }
+
+    return result;
+}
+
 export interface OuterProps<T extends DivBaseData = DivBaseData> {
     componentContext: ComponentContext<T>;
     children: ReactNode;
@@ -40,9 +94,9 @@ export interface OuterProps<T extends DivBaseData = DivBaseData> {
 
 /**
  * Outer component - base wrapper for all DivKit components
- * Handles visibility, sizing, padding, margins, background, borders, and actions
+ * Handles visibility, sizing, padding, margins, background, borders, actions and action_animation
  *
- * Based on Web Outer.svelte but simplified for React Native MVP
+ * Based on Web Outer.svelte
  */
 export function Outer<T extends DivBaseData = DivBaseData>({
     componentContext,
@@ -54,7 +108,6 @@ export function Outer<T extends DivBaseData = DivBaseData>({
     const { json, variables } = componentContext;
 
     // Only use reactive hooks for truly dynamic properties (visibility, alpha)
-    // For MVP, other properties are read directly from JSON (can be enhanced later)
     const visibility = useDerivedFromVarsSimple<Visibility>(json.visibility || 'visible', variables || new Map());
     const alpha = useDerivedFromVarsSimple<number>(json.alpha !== undefined ? json.alpha : 1, variables || new Map());
 
@@ -68,11 +121,62 @@ export function Outer<T extends DivBaseData = DivBaseData>({
     const alignmentHorizontal = useDerivedFromVarsSimple(json.alignment_horizontal, variables || new Map());
     const alignmentVertical = useDerivedFromVarsSimple(json.alignment_vertical, variables || new Map());
 
-    // Actions - use type assertion for now (will be refined in component implementations)
+    // Actions
     const jsonAny = json as any;
     const actions = jsonAny.actions || (jsonAny.action ? [jsonAny.action] : []);
     const hasActions = useHasActions(actions);
     const handlePress = useActionHandler(actions, { componentContext });
+
+    // Action animation
+    const actionAnimation = jsonAny.action_animation as MaybeMissing<Animation> | undefined;
+    const parsedAnimations = useMemo(() => parseActionAnimations(actionAnimation), [actionAnimation]);
+
+    const hasFadeAnimation = parsedAnimations.some(a => a.type === 'fade');
+    const hasScaleAnimation = parsedAnimations.some(a => a.type === 'scale');
+
+    // Animated values (created once, stable refs)
+    const animOpacity = useRef(new Animated.Value(1)).current;
+    const animScale = useRef(new Animated.Value(1)).current;
+
+    const onPressIn = useCallback(() => {
+        if (parsedAnimations.length === 0) return;
+
+        const anims: Animated.CompositeAnimation[] = [];
+        for (const anim of parsedAnimations) {
+            const target = anim.type === 'fade' ? animOpacity : animScale;
+            anims.push(
+                Animated.timing(target, {
+                    toValue: anim.endValue,
+                    duration: anim.duration,
+                    delay: anim.startDelay,
+                    easing: anim.easing,
+                    useNativeDriver: true,
+                })
+            );
+        }
+
+        Animated.parallel(anims).start();
+    }, [parsedAnimations, animOpacity, animScale]);
+
+    const onPressOut = useCallback(() => {
+        if (parsedAnimations.length === 0) return;
+
+        const anims: Animated.CompositeAnimation[] = [];
+        for (const anim of parsedAnimations) {
+            const target = anim.type === 'fade' ? animOpacity : animScale;
+            anims.push(
+                Animated.timing(target, {
+                    toValue: anim.startValue,
+                    duration: anim.duration,
+                    delay: anim.startDelay,
+                    easing: anim.easing,
+                    useNativeDriver: true,
+                })
+            );
+        }
+
+        Animated.parallel(anims).start();
+    }, [parsedAnimations, animOpacity, animScale]);
 
     // Early return for gone visibility
     if (visibility === 'gone') {
@@ -99,7 +203,6 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                 styles.width = (widthVal as FixedSize).value;
             } else if (widthVal.type === 'match_parent') {
                 styles.alignSelf = 'stretch';
-                // flexGrow only on the main axis (horizontal parent)
                 if (parentOrientation === 'horizontal') {
                     styles.flexGrow = (widthVal as MatchParentSize).weight || 1;
                     styles.flexShrink = 1;
@@ -109,9 +212,7 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                 styles.alignSelf = hAlign || 'flex-start';
             }
         } else {
-            // Default: match_parent
             styles.alignSelf = 'stretch';
-            // flexGrow only on the main axis (horizontal parent) or outside a container
             if (!parentOrientation || parentOrientation === 'horizontal') {
                 styles.flexGrow = 1;
                 styles.flexShrink = 1;
@@ -124,15 +225,12 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             if (heightVal.type === 'fixed') {
                 styles.height = (heightVal as FixedSize).value;
             } else if (heightVal.type === 'match_parent') {
-                // flexGrow only on the main axis (vertical parent)
                 if (parentOrientation === 'vertical') {
                     styles.flexGrow = (heightVal as MatchParentSize).weight || 1;
                 } else {
-                    // Cross axis — stretch via alignSelf or explicit height
                     styles.alignSelf = 'stretch';
                 }
             }
-            // wrap_content is default in React Native
         }
 
         // Paddings
@@ -141,7 +239,6 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             if (p.top !== undefined) styles.paddingTop = p.top;
             if (p.bottom !== undefined) styles.paddingBottom = p.bottom;
 
-            // Handle RTL for start/end
             if (direction === 'rtl') {
                 if (p.start !== undefined) styles.paddingRight = p.start;
                 if (p.end !== undefined) styles.paddingLeft = p.end;
@@ -150,7 +247,6 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                 if (p.end !== undefined) styles.paddingRight = p.end;
             }
 
-            // Fallback to left/right if start/end not provided
             if (p.left !== undefined && p.start === undefined) {
                 styles.paddingLeft = p.left;
             }
@@ -165,7 +261,6 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             if (m.top !== undefined) styles.marginTop = m.top;
             if (m.bottom !== undefined) styles.marginBottom = m.bottom;
 
-            // Handle RTL for start/end
             if (direction === 'rtl') {
                 if (m.start !== undefined) styles.marginRight = m.start;
                 if (m.end !== undefined) styles.marginLeft = m.end;
@@ -174,7 +269,6 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                 if (m.end !== undefined) styles.marginRight = m.end;
             }
 
-            // Fallback to left/right
             if (m.left !== undefined && m.start === undefined) {
                 styles.marginLeft = m.left;
             }
@@ -183,8 +277,6 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             }
         }
 
-        // Background handled by Background component
-        
         // Border
         if (border) {
             const b = border as any;
@@ -196,11 +288,9 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                 styles.borderStyle = b.stroke.style?.type === 'dashed' ? 'dashed' : 'solid';
             }
 
-            // Border radius
             if (b.corner_radius !== undefined) {
                 styles.borderRadius = b.corner_radius;
             } else if (b.corners_radius) {
-                // React Native supports individual corners
                 const corners = b.corners_radius;
                 if (corners['top-left'] !== undefined) {
                     styles.borderTopLeftRadius = corners['top-left'];
@@ -216,7 +306,6 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                 }
             }
 
-            // Shadow (box-shadow equivalent)
             if (b.has_shadow) {
                 const shadow = b.shadow;
                 if (shadow) {
@@ -227,10 +316,8 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                     };
                     styles.shadowOpacity = shadow.alpha !== undefined ? shadow.alpha : 0.18;
                     styles.shadowRadius = shadow.blur || 2;
-                    // Android elevation
                     styles.elevation = 3;
                 } else {
-                    // Default shadow
                     styles.shadowColor = '#000000';
                     styles.shadowOffset = { width: 0, height: 1 };
                     styles.shadowOpacity = 0.18;
@@ -258,8 +345,43 @@ export function Outer<T extends DivBaseData = DivBaseData>({
         return res;
     }, [finalStyle]);
 
-    // Render with or without Pressable based on actions
+    // Render with actions and animation
     if (hasActions) {
+        const hasAnimation = parsedAnimations.length > 0;
+
+        if (hasAnimation) {
+            // Build animated style with opacity/scale overrides
+            const animatedStyle: any = { ...finalStyle };
+
+            if (hasFadeAnimation) {
+                const staticOpacity = animatedStyle.opacity;
+                if (staticOpacity !== undefined && staticOpacity !== 1) {
+                    animatedStyle.opacity = Animated.multiply(animOpacity, staticOpacity);
+                } else {
+                    animatedStyle.opacity = animOpacity;
+                }
+            }
+
+            if (hasScaleAnimation) {
+                const existingTransform = animatedStyle.transform || [];
+                animatedStyle.transform = [...existingTransform, { scale: animScale }];
+            }
+
+            return (
+                <Pressable
+                    onPress={handlePress}
+                    onPressIn={onPressIn}
+                    onPressOut={onPressOut}
+                    style={{ alignSelf: finalStyle?.alignSelf, flexGrow: finalStyle?.flexGrow, flexShrink: finalStyle?.flexShrink }}
+                >
+                    <Animated.View style={animatedStyle}>
+                        <Background layers={background as any} style={borderStyle} />
+                        {children}
+                    </Animated.View>
+                </Pressable>
+            );
+        }
+
         return (
             <Pressable onPress={handlePress} style={finalStyle}>
                 <Background layers={background as any} style={borderStyle} />

@@ -221,8 +221,35 @@ interface DivBaseData {
     width?: Size;
     height?: Size;
     actions?: Action[];
+    action_animation?: Animation;
     // ... component-specific properties
 }
+```
+
+### `Animation`
+
+Animation applied on tap (action_animation).
+
+```typescript
+type AnimationType = 'fade' | 'scale' | 'native' | 'no_animation' | 'translate';
+
+interface AnyAnimation {
+    name: AnimationType;
+    duration?: number;        // ms, default: 300
+    start_delay?: number;     // ms, default: 0
+    start_value?: number;     // default: 1
+    end_value?: number;       // default: 1
+    interpolator?: Interpolation;  // default: 'ease_in_out'
+}
+
+interface AnimationSet {
+    name: 'set';
+    items: Animation[];
+}
+
+type Animation = AnyAnimation | AnimationSet;
+
+type Interpolation = 'linear' | 'ease' | 'ease_in' | 'ease_out' | 'ease_in_out' | 'spring';
 ```
 
 ---
@@ -540,6 +567,61 @@ Conditional rendering with states.
     ]
 }
 ```
+
+---
+
+## Action Animation
+
+Components with actions can have tap animations. Supported types: `fade`, `scale`, and `set` (combination).
+
+### Fade Animation
+
+```json
+{
+    "action_animation": {
+        "name": "fade",
+        "start_value": 1,
+        "end_value": 0.4,
+        "duration": 500,
+        "interpolator": "ease_in_out"
+    }
+}
+```
+
+### Scale Animation
+
+```json
+{
+    "action_animation": {
+        "name": "scale",
+        "start_value": 1,
+        "end_value": 0.8,
+        "duration": 300,
+        "interpolator": "ease_in_out"
+    }
+}
+```
+
+### Combined Animation (Set)
+
+```json
+{
+    "action_animation": {
+        "name": "set",
+        "items": [
+            { "name": "fade", "start_value": 1, "end_value": 0.2, "duration": 300 },
+            { "name": "scale", "start_value": 1, "end_value": 0.5, "duration": 500 }
+        ]
+    }
+}
+```
+
+### How it works
+
+- On `pressIn`: animates from `start_value` to `end_value`
+- On `pressOut`: animates back from `end_value` to `start_value`
+- Uses React Native `Animated` API with `useNativeDriver: true` for smooth 60fps animations
+- `native` and `no_animation` types are ignored (no custom animation applied)
 
 ---
 
