@@ -26,12 +26,28 @@ function resolveAlignSelf(
             return dir === 'rtl' ? 'flex-end' : 'flex-start';
         case 'right':
             return dir === 'rtl' ? 'flex-start' : 'flex-end';
+        case 'top':
         case 'start':
             return 'flex-start';
+        case 'bottom':
         case 'end':
             return 'flex-end';
         default:
             return undefined;
+    }
+}
+
+/**
+ * Convert Align ('start'|'center'|'end') from layoutParams to flex value
+ */
+function generalAlignToFlex(
+    align: string | undefined
+): 'flex-start' | 'center' | 'flex-end' | undefined {
+    switch (align) {
+        case 'start': return 'flex-start';
+        case 'center': return 'center';
+        case 'end': return 'flex-end';
+        default: return undefined;
     }
 }
 
@@ -194,18 +210,40 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             styles.opacity = Math.max(0, Math.min(1, alpha));
         }
 
+        // Resolve effective alignment (explicit > parent fallback > 'start')
+        const effectiveHAlign = resolveAlignSelf(alignmentHorizontal as string | undefined, direction)
+            || generalAlignToFlex(layoutParams.parentHAlign)
+            || 'flex-start';
+        const effectiveVAlign = resolveAlignSelf(alignmentVertical as string | undefined, direction)
+            || generalAlignToFlex(layoutParams.parentVAlign as string | undefined)
+            || 'flex-start';
+
+        const isOverlap = layoutParams.overlapParent;
+
         // Width
         const parentOrientation = layoutParams.parentContainerOrientation;
+
+        // In RN flexbox, alignSelf always controls cross-axis:
+        //   - column (vertical) container: cross-axis = horizontal → alignSelf from hAlign
+        //   - row (horizontal) container: cross-axis = vertical → alignSelf from vAlign
+        const crossAxisAlign = parentOrientation === 'horizontal' ? effectiveVAlign : effectiveHAlign;
 
         if (width) {
             const widthVal = width as MaybeMissing<any>;
             if (widthVal.type === 'fixed') {
                 styles.width = (widthVal as FixedSize).value;
+                if (!isOverlap) {
+                    styles.alignSelf = crossAxisAlign;
+                }
             } else if (widthVal.type === 'match_parent') {
-                styles.alignSelf = 'stretch';
                 if (parentOrientation === 'horizontal') {
+                    // Width is main axis in row layout — use flexGrow, not alignSelf stretch
                     styles.flexGrow = (widthVal as MatchParentSize).weight || 1;
                     styles.flexShrink = 1;
+                    styles.flexBasis = 0;
+                } else {
+                    // Width is cross axis in column layout — stretch
+                    styles.alignSelf = 'stretch';
                 }
                 const mp = widthVal as MatchParentSize;
                 if (mp.min_size && mp.min_size.value >= 0) {
@@ -215,8 +253,9 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                     styles.maxWidth = mp.max_size.value;
                 }
             } else if (widthVal.type === 'wrap_content') {
-                const hAlign = resolveAlignSelf(alignmentHorizontal as string | undefined, direction);
-                styles.alignSelf = hAlign || 'flex-start';
+                if (!isOverlap) {
+                    styles.alignSelf = crossAxisAlign;
+                }
                 const wc = widthVal as WrapContentSize;
                 if (wc.min_size && wc.min_size.value >= 0) {
                     styles.minWidth = wc.min_size.value;
@@ -241,7 +280,9 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             } else if (heightVal.type === 'match_parent') {
                 if (parentOrientation === 'vertical') {
                     styles.flexGrow = (heightVal as MatchParentSize).weight || 1;
+                    styles.flexBasis = 0;
                 } else {
+                    // Height is cross axis in row layout — stretch
                     styles.alignSelf = 'stretch';
                 }
                 const mp = heightVal as MatchParentSize;
@@ -260,6 +301,21 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                     styles.maxHeight = wc.max_size.value;
                 }
             }
+        }
+
+        // Overlap positioning: use margin auto trick for vertical alignment
+        if (isOverlap) {
+            // Horizontal: alignSelf on the child
+            styles.alignSelf = effectiveHAlign;
+
+            // Vertical: margin auto trick (flexDirection: column in wrapper)
+            if (effectiveVAlign === 'center') {
+                styles.marginTop = 'auto';
+                styles.marginBottom = 'auto';
+            } else if (effectiveVAlign === 'flex-end') {
+                styles.marginTop = 'auto';
+            }
+            // flex-start is default, no margin needed
         }
 
         // Paddings

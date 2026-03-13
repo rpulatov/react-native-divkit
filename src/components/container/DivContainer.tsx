@@ -85,8 +85,25 @@ export function DivContainer({ componentContext }: DivContainerProps) {
             params.parentContainerOrientation = 'vertical';
         }
 
+        // Pass parent alignment to children (same logic as Web Container.svelte)
+        const hAlignMap: Record<string, 'start' | 'center' | 'end'> = {
+            start: 'start', left: 'start', center: 'center', end: 'end', right: 'end',
+            'space-between': 'start', 'space-around': 'start', 'space-evenly': 'start'
+        };
+        const vAlignMap: Record<string, 'start' | 'center' | 'end' | 'baseline'> = {
+            start: 'start', top: 'start', center: 'center', end: 'end', bottom: 'end', baseline: 'baseline',
+            'space-between': 'start', 'space-around': 'start', 'space-evenly': 'start'
+        };
+
+        if (orientation !== 'horizontal') {
+            params.parentHAlign = hAlignMap[contentAlignmentHorizontal as string] || 'start';
+        }
+        if (orientation !== 'vertical') {
+            params.parentVAlign = vAlignMap[contentAlignmentVertical as string] || 'start';
+        }
+
         return params;
-    }, [orientation]);
+    }, [orientation, contentAlignmentHorizontal, contentAlignmentVertical]);
 
     // For overlap mode, we need to position children absolutely
     const childWrapperStyle = useMemo((): ViewStyle | undefined => {
@@ -96,7 +113,8 @@ export function DivContainer({ componentContext }: DivContainerProps) {
                 top: 0,
                 left: 0,
                 right: 0,
-                bottom: 0
+                bottom: 0,
+                flexDirection: 'column',
             };
         }
         return undefined;
