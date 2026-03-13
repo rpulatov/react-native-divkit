@@ -1,3 +1,10 @@
+# [1.6.0](https://github.com/rpulatov/react-native-divkit/compare/v1.5.2...v1.6.0) (2026-03-13)
+
+
+### Features
+
+* Добавить новые фикстуры и улучшить обработку стилей в компоненте Outer ([207d3e3](https://github.com/rpulatov/react-native-divkit/commit/207d3e31fb05b03941ffc137d29e60341e593ad6))
+
 ## [1.5.2](https://github.com/rpulatov/react-native-divkit/compare/v1.5.1...v1.5.2) (2026-03-13)
 
 
