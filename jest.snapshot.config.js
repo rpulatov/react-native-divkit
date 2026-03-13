@@ -1,7 +1,8 @@
 module.exports = {
     testEnvironment: 'node',
+    roots: ['<rootDir>/tests/snapshots', '<rootDir>/src'],
+    testMatch: ['**/tests/snapshots/**/*.test.tsx'],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-    testMatch: ['**/tests/**/*.test.ts', '**/tests/**/*.test.tsx'],
     transform: {
         '^.+\\.(ts|tsx)$': [
             'ts-jest',
@@ -14,13 +15,8 @@ module.exports = {
     moduleNameMapper: {
         '^@/(.*)$': '<rootDir>/src/$1',
         '^react-native-svg$': '<rootDir>/tests/__mocks__/react-native-svg.ts',
-        '^react-native$': '<rootDir>/tests/__mocks__/react-native.ts',
-        '^react$': '<rootDir>/tests/__mocks__/react.ts'
+        '^react-native$': '<rootDir>/tests/snapshots/__mocks__/react-native.ts'
     },
     setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
-    collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/expressions/expressions.ts'],
-    coverageDirectory: 'coverage',
-    coverageReporters: ['text', 'lcov'],
-    testPathIgnorePatterns: ['/node_modules/', '/dist/', '/tests/snapshots/'],
     modulePathIgnorePatterns: ['<rootDir>/dist/']
 };
