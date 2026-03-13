@@ -303,19 +303,31 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             }
         }
 
-        // Overlap positioning: use margin auto trick for vertical alignment
+        // Overlap positioning: wrapper is absolute + flexDirection: column
         if (isOverlap) {
-            // Horizontal: alignSelf on the child
-            styles.alignSelf = effectiveHAlign;
+            const widthType = width ? (width as any).type : undefined;
+            const heightType = height ? (height as any).type : undefined;
 
-            // Vertical: margin auto trick (flexDirection: column in wrapper)
-            if (effectiveVAlign === 'center') {
-                styles.marginTop = 'auto';
-                styles.marginBottom = 'auto';
-            } else if (effectiveVAlign === 'flex-end') {
-                styles.marginTop = 'auto';
+            // Horizontal: alignSelf controls cross-axis (horizontal) in column wrapper
+            if (widthType === 'match_parent') {
+                styles.alignSelf = 'stretch';
+            } else {
+                styles.alignSelf = effectiveHAlign;
             }
-            // flex-start is default, no margin needed
+
+            // Vertical: main axis in column wrapper
+            if (heightType === 'match_parent') {
+                styles.flexGrow = 1;
+                styles.flexBasis = 0;
+            } else {
+                // Use margin auto trick for vertical positioning
+                if (effectiveVAlign === 'center') {
+                    styles.marginTop = 'auto';
+                    styles.marginBottom = 'auto';
+                } else if (effectiveVAlign === 'flex-end') {
+                    styles.marginTop = 'auto';
+                }
+            }
         }
 
         // Paddings
@@ -439,8 +451,33 @@ export function Outer<T extends DivBaseData = DivBaseData>({
         const hasAnimation = parsedAnimations.length > 0;
 
         if (hasAnimation) {
-            // Build animated style with opacity/scale overrides
-            const animatedStyle: any = { ...finalStyle };
+            // Split finalStyle into outer (layout) and inner (visual) styles
+            // Margins must be on Pressable to affect parent layout
+            const {
+                alignSelf, flexGrow, flexShrink, flexBasis,
+                width: w, height: h, minWidth, maxWidth, minHeight, maxHeight,
+                marginTop, marginBottom, marginLeft, marginRight,
+                ...innerStyle
+            } = (finalStyle || {}) as any;
+
+            const outerStyle: ViewStyle = {};
+            if (alignSelf !== undefined) outerStyle.alignSelf = alignSelf;
+            if (flexGrow !== undefined) outerStyle.flexGrow = flexGrow;
+            if (flexShrink !== undefined) outerStyle.flexShrink = flexShrink;
+            if (flexBasis !== undefined) outerStyle.flexBasis = flexBasis;
+            if (w !== undefined) outerStyle.width = w;
+            if (h !== undefined) outerStyle.height = h;
+            if (minWidth !== undefined) outerStyle.minWidth = minWidth;
+            if (maxWidth !== undefined) outerStyle.maxWidth = maxWidth;
+            if (minHeight !== undefined) outerStyle.minHeight = minHeight;
+            if (maxHeight !== undefined) outerStyle.maxHeight = maxHeight;
+            if (marginTop !== undefined) outerStyle.marginTop = marginTop;
+            if (marginBottom !== undefined) outerStyle.marginBottom = marginBottom;
+            if (marginLeft !== undefined) outerStyle.marginLeft = marginLeft;
+            if (marginRight !== undefined) outerStyle.marginRight = marginRight;
+
+            // Build animated style from inner (visual) properties
+            const animatedStyle: any = { ...innerStyle, flex: 1 };
 
             if (hasFadeAnimation) {
                 const staticOpacity = animatedStyle.opacity;
@@ -461,17 +498,7 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                     onPress={handlePress}
                     onPressIn={onPressIn}
                     onPressOut={onPressOut}
-                    style={{
-                        alignSelf: finalStyle?.alignSelf,
-                        flexGrow: finalStyle?.flexGrow,
-                        flexShrink: finalStyle?.flexShrink,
-                        minWidth: finalStyle?.minWidth,
-                        maxWidth: finalStyle?.maxWidth,
-                        minHeight: finalStyle?.minHeight,
-                        maxHeight: finalStyle?.maxHeight,
-                        width: finalStyle?.width,
-                        height: finalStyle?.height,
-                    }}
+                    style={outerStyle}
                 >
                     <Animated.View style={animatedStyle}>
                         <Background layers={background as any} style={borderStyle} />
