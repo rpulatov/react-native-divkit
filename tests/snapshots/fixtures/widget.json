@@ -1,0 +1,138 @@
+{
+    "card": {
+        "log_id": "mock_main_page",
+        "states": [
+            {
+                "state_id": 0,
+                "div": {
+                    "items": [
+                        {
+                            "type": "bestEstablishmentTemplate"
+                        }
+                    ],
+                    "height": {
+                        "type": "match_parent"
+                    },
+                    "orientation": "vertical",
+                    "type": "container"
+                }
+            }
+        ],
+        "variables": []
+    },
+    "templates": {
+        "bestEstablishmentTemplate": {
+            "type": "container",
+            "width": {
+                "type": "match_parent"
+            },
+            "height": {
+                "type": "match_parent",
+                "min_size": {
+                    "value": 10
+                },
+                "max_size": {
+                    "value": 300
+                }
+            },
+            "orientation": "overlap",
+            "border": {
+                "corner_radius": "@{radius !: 22}"
+            },
+            "actions": [
+                {
+                    "log_id": "scale_button_press",
+                    "typed": {
+                        "type": "animator_start",
+                        "animator_id": "scale"
+                    }
+                },
+                {
+                    "log_id": "navigate_to_details",
+                    "url": "mock://actions/open-details?page=1"
+                }
+            ],
+            "action_animation": {
+                "name": "scale",
+                "start_value": 1,
+                "end_value": 0.9,
+                "duration": 150,
+                "interpolator": "ease_in_out"
+            },
+            "items": [
+                {
+                    "type": "image",
+                    "image_url": "mock://images/widget-cover",
+                    "width": {
+                        "type": "match_parent"
+                    },
+                    "height": {
+                        "type": "match_parent"
+                    },
+                    "preload_required": true,
+                    "scale": "fill",
+                    "alignment_horizontal": "center",
+                    "preview": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO3Z0eQAAAAASUVORK5CYII=",
+                    "content_alignment_horizontal": "center",
+                    "content_alignment_vertical": "center"
+                },
+                {
+                    "type": "container",
+                    "width": {
+                        "type": "match_parent"
+                    },
+                    "height": {
+                        "type": "wrap_content"
+                    },
+                    "alignment_horizontal": "center",
+                    "alignment_vertical": "top",
+                    "items": [
+                        {
+                            "type": "text",
+                            "text": "Демо подборка мест",
+                            "font_size": 16,
+                            "width": {
+                                "type": "wrap_content",
+                                "constrained": true
+                            },
+                            "alignment_horizontal": "left",
+                            "alignment_vertical": "top",
+                            "margins": {
+                                "top": 14,
+                                "left": 18
+                            },
+                            "text_color": "#ffffff",
+                            "font_weight_value": 500
+                        },
+                        {
+                            "type": "image",
+                            "image_url": "mock://images/widget-badge",
+                            "width": {
+                                "type": "fixed",
+                                "value": 104
+                            },
+                            "height": {
+                                "type": "fixed",
+                                "value": 25
+                            },
+                            "preload_required": true,
+                            "alignment_horizontal": "right",
+                            "alignment_vertical": "top",
+                            "margins": {
+                                "top": 12,
+                                "right": 12,
+                                "left": 12
+                            }
+                        }
+                    ],
+                    "orientation": "horizontal",
+                    "content_alignment_horizontal": "space-between"
+                }
+            ],
+            "margins": {
+                "left": "@{(scaleFactor !: 1) * 16}",
+                "right": "@{(scaleFactor !: 1) * 16}"
+            }
+        }
+    }
+}

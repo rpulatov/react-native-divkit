@@ -1,0 +1,287 @@
+{
+    "card": {
+        "log_id": "mock_story",
+        "states": [
+            {
+                "state_id": 0,
+                "div": {
+                    "items": [
+                        {
+                            "type": "container",
+                            "width": {
+                                "type": "match_parent"
+                            },
+                            "height": {
+                                "type": "match_parent"
+                            },
+                            "orientation": "vertical",
+                            "items": [
+                                {
+                                    "type": "image",
+                                    "image_url": "mock://images/story-cover",
+                                    "width": {
+                                        "type": "match_parent"
+                                    },
+                                    "height": {
+                                        "type": "match_parent",
+                                        "weight": 67
+                                    },
+                                    "border": {
+                                        "corner_radius": 22
+                                    },
+                                    "preload_required": true,
+                                    "scale": "fill",
+                                    "alignment_horizontal": "center",
+                                    "content_alignment_horizontal": "center",
+                                    "content_alignment_vertical": "center"
+                                },
+                                {
+                                    "type": "container",
+                                    "width": {
+                                        "type": "match_parent"
+                                    },
+                                    "height": {
+                                        "type": "match_parent",
+                                        "weight": 33
+                                    },
+                                    "items": [
+                                        {
+                                            "type": "container",
+                                            "width": {
+                                                "type": "match_parent"
+                                            },
+                                            "height": {
+                                                "type": "wrap_content"
+                                            },
+                                            "items": [
+                                                {
+                                                    "type": "text",
+                                                    "text": "демо",
+                                                    "width": {
+                                                        "type": "wrap_content"
+                                                    },
+                                                    "text_color": "#c99d66",
+                                                    "font_size": "@{(scaleFactor !: 1) * 16}",
+                                                    "margins": {
+                                                        "right": "@{(scaleFactor !: 1) * 8}"
+                                                    }
+                                                },
+                                                {
+                                                    "type": "image",
+                                                    "image_url": "mock://images/story-badge",
+                                                    "width": {
+                                                        "type": "fixed",
+                                                        "value": "@{(scaleFactor !: 1) * 86}"
+                                                    },
+                                                    "height": {
+                                                        "type": "fixed",
+                                                        "value": "@{(scaleFactor !: 1) * 20}"
+                                                    },
+                                                    "preload_required": true,
+                                                    "content_alignment_horizontal": "left",
+                                                    "content_alignment_vertical": "top",
+                                                    "scale": "fit"
+                                                }
+                                            ],
+                                            "orientation": "horizontal",
+                                            "content_alignment_horizontal": "right",
+                                            "content_alignment_vertical": "top",
+                                            "margins": {
+                                                "top": "@{(scaleFactor !: 1) * 18}",
+                                                "right": "@{(scaleFactor !: 1) * 15}",
+                                                "bottom": 0,
+                                                "left": "@{(scaleFactor !: 1) * 15}"
+                                            }
+                                        },
+                                        {
+                                            "type": "container",
+                                            "orientation": "overlap",
+                                            "width": {
+                                                "type": "match_parent"
+                                            },
+                                            "height": {
+                                                "type": "match_parent"
+                                            },
+                                            "items": [
+                                                {
+                                                    "type": "container",
+                                                    "width": {
+                                                        "type": "match_parent"
+                                                    },
+                                                    "height": {
+                                                        "type": "match_parent"
+                                                    },
+                                                    "items": [
+                                                        {
+                                                            "type": "text",
+                                                            "text": "Demo Place",
+                                                            "width": {
+                                                                "type": "wrap_content"
+                                                            },
+                                                            "font_weight": "bold",
+                                                            "font_size": "@{(scaleFactor !: 1) * 24}",
+                                                            "line_height": 0,
+                                                            "margins": {
+                                                                "bottom": "@{(scaleFactor !: 1) * 5}"
+                                                            }
+                                                        },
+                                                        {
+                                                            "type": "text",
+                                                            "text": "Это демонстрационный текст карточки.\n\nКонтент используется только для snapshot-тестов и не содержит бизнес-данных.",
+                                                            "font_size": "@{(scaleFactor !: 1) * 16}",
+                                                            "width": {
+                                                                "type": "wrap_content",
+                                                                "constrained": true
+                                                            },
+                                                            "alignment_horizontal": "center",
+                                                            "alignment_vertical": "center",
+                                                            "font_weight": "regular",
+                                                            "line_height": "@{(scaleFactor !: 1) * 22}"
+                                                        }
+                                                    ],
+                                                    "margins": {
+                                                        "right": "@{(scaleFactor !: 1) * 16}",
+                                                        "left": "@{(scaleFactor !: 1) * 16}"
+                                                    }
+                                                },
+                                                {
+                                                    "type": "container",
+                                                    "width": {
+                                                        "type": "wrap_content"
+                                                    },
+                                                    "height": {
+                                                        "type": "wrap_content"
+                                                    },
+                                                    "alignment_horizontal": "right",
+                                                    "alignment_vertical": "bottom",
+                                                    "margins": {
+                                                        "right": "@{(scaleFactor !: 1) * 15}",
+                                                        "bottom": "@{(scaleFactor !: 1) * 15}"
+                                                    },
+                                                    "actions": [
+                                                        {
+                                                            "log_id": "navigate_animation",
+                                                            "typed": {
+                                                                "type": "animator_start",
+                                                                "animator_id": "fade"
+                                                            }
+                                                        },
+                                                        {
+                                                            "log_id": "navigate_to_mock",
+                                                            "url": "mock://actions/open-details"
+                                                        }
+                                                    ],
+                                                    "action_animation": {
+                                                        "name": "fade",
+                                                        "start_value": 1,
+                                                        "end_value": 0.4,
+                                                        "duration": 500,
+                                                        "interpolator": "ease_in_out"
+                                                    },
+                                                    "items": [
+                                                        {
+                                                            "type": "container",
+                                                            "orientation": "horizontal",
+                                                            "width": {
+                                                                "type": "wrap_content"
+                                                            },
+                                                            "height": {
+                                                                "type": "wrap_content"
+                                                            },
+                                                            "items": [
+                                                                {
+                                                                    "type": "image",
+                                                                    "image_url": "mock://images/map-icon",
+                                                                    "width": {
+                                                                        "type": "fixed",
+                                                                        "value": "@{(scaleFactor !: 1) * 30}"
+                                                                    },
+                                                                    "height": {
+                                                                        "type": "fixed",
+                                                                        "value": "@{(scaleFactor !: 1) * 30}"
+                                                                    },
+                                                                    "preload_required": true,
+                                                                    "margins": {
+                                                                        "right": "@{(scaleFactor !: 1) * 9}"
+                                                                    }
+                                                                },
+                                                                {
+                                                                    "type": "container",
+                                                                    "width": {
+                                                                        "type": "wrap_content"
+                                                                    },
+                                                                    "height": {
+                                                                        "type": "wrap_content"
+                                                                    },
+                                                                    "items": [
+                                                                        {
+                                                                            "type": "text",
+                                                                            "text": "Demo Maps",
+                                                                            "width": {
+                                                                                "type": "wrap_content"
+                                                                            },
+                                                                            "font_size": "@{(scaleFactor !: 1) * 16}",
+                                                                            "font_weight": "bold",
+                                                                            "text_color": "#1e9bfe"
+                                                                        },
+                                                                        {
+                                                                            "type": "text",
+                                                                            "text": "mock://maps",
+                                                                            "width": {
+                                                                                "type": "wrap_content"
+                                                                            },
+                                                                            "font_size": "@{(scaleFactor !: 1) * 11}",
+                                                                            "font_weight": "regular",
+                                                                            "text_color": "#1e9bfe"
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ],
+                                                            "content_alignment_horizontal": "center",
+                                                            "content_alignment_vertical": "bottom"
+                                                        },
+                                                        {
+                                                            "type": "container",
+                                                            "width": {
+                                                                "type": "match_parent"
+                                                            },
+                                                            "height": {
+                                                                "type": "fixed",
+                                                                "value": 1
+                                                            },
+                                                            "background": [
+                                                                {
+                                                                    "type": "solid",
+                                                                    "color": "#1E9BFE"
+                                                                }
+                                                            ],
+                                                            "margins": {
+                                                                "top": "@{(scaleFactor !: 1) * 4}"
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "background": [
+                                {
+                                    "type": "solid",
+                                    "color": "#ffffff"
+                                }
+                            ]
+                        }
+                    ],
+                    "height": {
+                        "type": "match_parent"
+                    },
+                    "orientation": "vertical",
+                    "type": "container"
+                }
+            }
+        ]
+    },
+    "templates": {}
+}

@@ -33,6 +33,9 @@ jobs:
       - name: Test
         run: npm test
 
+      - name: Snapshot tests
+        run: npm run test:snapshot
+
       - name: Install example dependencies
         run: npm ci
         working-directory: examples/NewExample
