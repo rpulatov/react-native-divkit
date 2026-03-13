@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/rpulatov/react-native-divkit/compare/v1.5.0...v1.5.1) (2026-03-13)
+
+
+### Bug Fixes
+
+* Исправить проблемы с выравниванием элементов в DivContainer и Outer компонентах ([7afe2a6](https://github.com/rpulatov/react-native-divkit/commit/7afe2a6b310be6e1140f06bd20a3c352039d1368))
+
 # [1.5.0](https://github.com/rpulatov/react-native-divkit/compare/v1.4.0...v1.5.0) (2026-03-13)
 
 
