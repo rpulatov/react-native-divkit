@@ -34,7 +34,7 @@ DivKit React Native is based on the DivKit Web (TypeScript + Svelte) implementat
 | Rendering        | DOM + CSS           | React Native Views         |
 | State management | Svelte stores       | React hooks + Observable   |
 | Styling          | CSS + inline styles | StyleSheet                 |
-| Animations       | CSS transitions     | LayoutAnimation (MVP)      |
+| Animations       | CSS transitions     | Animated API (fade, scale) |
 | Events           | DOM events          | Pressable/TouchableOpacity |
 
 ---
@@ -407,31 +407,86 @@ const text = useDerivedFromVars(json.text, variables);
 
 ---
 
+## Animation Differences
+
+### Action Animation (tap animations)
+
+JSON is fully compatible. The implementation differs:
+
+**Web:** Uses CSS transitions on `:active` pseudo-class.
+
+```css
+transition: opacity 500ms ease-in-out;
+/* :active state triggers end_value */
+```
+
+**React Native:** Uses `Animated` API with `onPressIn`/`onPressOut`.
+
+```typescript
+Animated.timing(animOpacity, {
+    toValue: endValue,
+    duration: 500,
+    easing: Easing.inOut(Easing.ease),
+    useNativeDriver: true
+});
+```
+
+### Supported animation types
+
+| Type             | Web | React Native |
+| ---------------- | --- | ------------ |
+| `fade`           | Yes | Yes          |
+| `scale`          | Yes | Yes          |
+| `set`            | Yes | Yes          |
+| `native`         | Yes | Ignored      |
+| `no_animation`   | Yes | Ignored      |
+| `translate`      | No* | No           |
+
+\* `translate` is only used for transition_in/transition_out in Web, not for action_animation.
+
+### Interpolators
+
+All interpolators are mapped:
+
+| DivKit           | Web CSS            | React Native Easing        |
+| ---------------- | ------------------ | -------------------------- |
+| `linear`         | `linear`           | `Easing.linear`            |
+| `ease`           | `ease`             | `Easing.ease`              |
+| `ease_in`        | `ease-in`          | `Easing.in(Easing.ease)`   |
+| `ease_out`       | `ease-out`         | `Easing.out(Easing.ease)`  |
+| `ease_in_out`    | `ease-in-out`      | `Easing.inOut(Easing.ease)` |
+| `spring`         | `ease-in-out`*     | `Easing.inOut(Easing.ease)`* |
+
+\* `spring` falls back to `ease_in_out` in both Web and RN implementations.
+
+---
+
 ## Known Limitations
 
 ### Not in MVP (0.1.x)
 
 These features are planned for future versions:
 
-| Feature           | Web Support | RN MVP  | RN Future |
-| ----------------- | ----------- | ------- | --------- |
-| Text              | Full        | Basic   | 0.2.0     |
-| Container         | Full        | Basic   | 0.2.0     |
-| Image             | Full        | Basic   | 0.2.0     |
-| State             | Full        | Full    | -         |
-| Gallery           | Full        | No      | 0.2.0     |
-| Pager             | Full        | No      | 0.2.0     |
-| Tabs              | Full        | No      | 0.2.0     |
-| Input             | Full        | No      | 0.3.0     |
-| Select            | Full        | No      | 0.3.0     |
-| Video             | Full        | No      | 0.3.0     |
-| Lottie            | Full        | No      | 0.3.0     |
-| Text ranges       | Full        | No      | 0.2.0     |
-| Gradients         | Full        | Partial | 0.2.0     |
-| Animations        | Full        | Basic   | 0.2.0     |
-| Timers            | Full        | No      | 0.2.0     |
-| Tooltips          | Full        | No      | 0.3.0     |
-| Custom components | Full        | No      | 0.3.0     |
+| Feature           | Web Support | RN MVP  |
+| ----------------- | ----------- | ------- |
+| Text              | Full        | Basic   |
+| Container         | Full        | Basic   |
+| Image             | Full        | Basic   |
+| State             | Full        | Full    |
+| Gallery           | Full        | No      |
+| Pager             | Full        | No      |
+| Tabs              | Full        | No      |
+| Input             | Full        | No      |
+| Select            | Full        | No      |
+| Video             | Full        | No      |
+| Lottie            | Full        | No      |
+| Text ranges       | Full        | No      |
+| Gradients         | Full        | Partial |
+| Action Animation  | Full        | Partial |
+| Transitions       | Full        | No      |
+| Timers            | Full        | No      |
+| Tooltips          | Full        | No      |
+| Custom components | Full        | No      |
 
 ### Platform Differences
 

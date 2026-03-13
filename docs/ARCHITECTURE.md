@@ -107,6 +107,7 @@ src/
 ├── utils/                      # Utilities (from Web)
 │   ├── applyTemplate.ts        # Template resolution
 │   ├── correctColor.ts         # Color conversion
+│   ├── flattenAnimation.ts     # Flatten animation sets
 │   ├── correct*.ts             # Value converters
 │   └── ...                     # Other utilities
 │
@@ -116,6 +117,8 @@ src/
 │   ├── container.d.ts          # Container types
 │   ├── image.d.ts              # Image types
 │   ├── state.d.ts              # State types
+│   ├── animation.d.ts          # Animation types
+│   ├── actionable.d.ts         # Actionable data types
 │   └── componentContext.d.ts   # Context types
 │
 └── typings/                    # Shared type definitions
@@ -259,16 +262,21 @@ Outer.tsx           → Base wrapper
 ```
 1. User taps component with actions
    │
-2. Outer.handlePress() called
+2. Outer.onPressIn() → action_animation starts (fade/scale to end_value)
    │
-3. componentContext.execAnyActions(actions)
+3. User releases tap
    │
-4. For each action:
+4. Outer.onPressOut() → action_animation reverses (back to start_value)
+   │   Outer.handlePress() called
+   │
+5. componentContext.execAnyActions(actions)
+   │
+6. For each action:
    │   ├─ Log statistics (onStat)
    │   ├─ Execute typed action (set_variable, set_state, etc.)
    │   └─ Call custom handler (onCustomAction)
    │
-5. State updates trigger re-render
+7. State updates trigger re-render
 ```
 
 ---
@@ -311,6 +319,7 @@ The `Outer` component handles common functionality:
     - borders
     - paddings/margins
     - actions (tap handling)
+    - action_animation (fade, scale, set)
     - accessibility
   */}
 </Outer>
@@ -481,6 +490,44 @@ async execAnyActions(actions: Action[]): Promise<void> {
   }
 }
 ```
+
+---
+
+## Animation System
+
+### Action Animation
+
+Tap animations are handled in the `Outer` component using React Native's `Animated` API.
+
+```
+1. JSON specifies action_animation (fade, scale, or set)
+   │
+2. flattenAnimation() expands sets into flat list
+   │
+3. parseActionAnimations() creates typed animation configs
+   │
+4. Animated.Value refs created (opacity, scale)
+   │
+5. On pressIn: Animated.timing → end_value
+   │
+6. On pressOut: Animated.timing → start_value
+```
+
+### Web → RN Mapping
+
+| Web (CSS Transitions)                    | React Native (Animated API)          |
+| ---------------------------------------- | ------------------------------------ |
+| CSS `transition: opacity 500ms`          | `Animated.timing(opacity, {...})`    |
+| CSS `:active { opacity: 0.4 }`          | `onPressIn` → animate to end_value  |
+| CSS `transform: scale(0.5)`              | `transform: [{ scale: animScale }]` |
+| CSS interpolators (`ease-in-out`)        | `Easing.inOut(Easing.ease)`          |
+| Multiple transitions (comma-separated)  | `Animated.parallel([...])`           |
+
+### Performance
+
+- Uses `useNativeDriver: true` for all animations (opacity + transform)
+- Animations run on the UI thread, not JS thread
+- `Animated.Value` refs are stable (created once via `useRef`)
 
 ---
 

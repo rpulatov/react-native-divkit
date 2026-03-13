@@ -26,6 +26,7 @@ import withVariablesJson from './sample-divs/with-variables.json';
 import stateSwitchingJson from './sample-divs/state-switching.json';
 import withImageJson from './sample-divs/with-image.json';
 import withActionsJson from './sample-divs/with-actions.json';
+import tapAnimationsJson from './sample-divs/tap-animations.json';
 
 import type { DivJson } from '../../src';
 
@@ -54,6 +55,11 @@ const examples = [
   { name: 'State', data: stateSwitchingJson, description: 'State switching' },
   { name: 'Image', data: withImageJson, description: 'Image loading' },
   { name: 'Actions', data: withActionsJson, description: 'Action handling' },
+  {
+    name: 'Tap Animations',
+    data: tapAnimationsJson,
+    description: 'Tap animations',
+  },
 ];
 
 function AppContent() {

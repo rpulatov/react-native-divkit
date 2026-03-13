@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { PixelRatio, Text, TextStyle } from 'react-native';
+import { PixelRatio, Text, TextStyle, ViewStyle } from 'react-native';
 import type { ComponentContext } from '../../types/componentContext';
 import type { DivTextData, FontSizeUnit, FontWeight, Truncate } from '../../types/text';
 import { Outer } from '../utilities/Outer';
@@ -43,6 +43,11 @@ export function DivText({ componentContext }: DivTextProps) {
 
     const textAlignmentHorizontal = useDerivedFromVarsSimple(
         json.text_alignment_horizontal || 'start',
+        variables || new Map()
+    );
+
+    const textAlignmentVertical = useDerivedFromVarsSimple(
+        json.text_alignment_vertical || 'top',
         variables || new Map()
     );
 
@@ -175,11 +180,33 @@ export function DivText({ componentContext }: DivTextProps) {
         return undefined;
     }, [json.truncate, numberOfLines]);
 
-    // Vertical alignment is handled by Outer component via alignment props
-    // For text, we primarily care about horizontal alignment which is in textStyle
+    // Build wrapper style for text block alignment inside the Outer container
+    // In Web, .text is display:flex with justify-content (halign) and align-items (valign)
+    // In RN (column layout): justifyContent = vertical, alignItems = horizontal
+    const outerStyle = useMemo((): ViewStyle => {
+        const style: ViewStyle = {};
+
+        // Vertical alignment of text block
+        switch (textAlignmentVertical) {
+            case 'center':
+                style.justifyContent = 'center';
+                break;
+            case 'bottom':
+                style.justifyContent = 'flex-end';
+                break;
+            case 'baseline':
+                style.justifyContent = 'flex-end';
+                break;
+            default: // top
+                style.justifyContent = 'flex-start';
+                break;
+        }
+
+        return style;
+    }, [textAlignmentVertical]);
 
     return (
-        <Outer componentContext={componentContext}>
+        <Outer componentContext={componentContext} style={outerStyle}>
             <Text
                 style={textStyle}
                 numberOfLines={numberOfLines}

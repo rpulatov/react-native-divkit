@@ -11,7 +11,7 @@ DivKit — это фреймворк для построения UI на осн�
 
 ## Статус
 
-**MVP Версия 0.1.0-alpha**
+**MVP**
 
 | Функция             | Статус      |
 | ------------------- | ----------- |
@@ -23,6 +23,7 @@ DivKit — это фреймворк для построения UI на осн�
 | Движок выражений    | ✅ Готово   |
 | Обработчики действий| ✅ Готово   |
 | Подстановка шаблонов| ✅ Готово   |
+| Анимации нажатия    | ✅ Готово   |
 
 ## Скриншоты
 
@@ -241,6 +242,67 @@ export default function App() {
 }
 ```
 
+## Анимации нажатия (Action Animation)
+
+Компоненты с действиями могут иметь анимацию при нажатии. Поддерживаются анимации `fade` (прозрачность), `scale` (масштаб) и их комбинация через `set`.
+
+```json
+{
+    "type": "text",
+    "text": "Нажми меня",
+    "actions": [
+        {
+            "log_id": "button_tap",
+            "url": "div-action://tap"
+        }
+    ],
+    "action_animation": {
+        "name": "fade",
+        "start_value": 1,
+        "end_value": 0.4,
+        "duration": 500,
+        "interpolator": "ease_in_out"
+    }
+}
+```
+
+### Комбинированная анимация (Set)
+
+```json
+{
+    "action_animation": {
+        "name": "set",
+        "items": [
+            {
+                "name": "fade",
+                "start_value": 1,
+                "end_value": 0.2,
+                "duration": 300,
+                "interpolator": "ease_in_out"
+            },
+            {
+                "name": "scale",
+                "start_value": 1,
+                "end_value": 0.5,
+                "duration": 500,
+                "interpolator": "ease_in_out"
+            }
+        ]
+    }
+}
+```
+
+### Параметры анимации
+
+| Параметр       | Тип     | По умолч.    | Описание                    |
+| -------------- | ------- | ------------ | --------------------------- |
+| `name`         | string  | —            | `fade`, `scale`, `set`, `native`, `no_animation` |
+| `start_value`  | number  | `1`          | Начальное значение          |
+| `end_value`    | number  | `1`          | Конечное значение           |
+| `duration`     | number  | `300`        | Длительность в миллисекундах|
+| `start_delay`  | number  | `0`          | Задержка перед стартом      |
+| `interpolator` | string  | `ease_in_out`| `linear`, `ease`, `ease_in`, `ease_out`, `ease_in_out`, `spring` |
+
 ## Свойства (Props)
 
 | Свойство         | Тип                    | Обязательно | Описание                           |
@@ -297,7 +359,7 @@ npm run ios   # или npm run android
 - Input (Ввод), Select (Выбор), Switch (Переключатель)
 - Видео, Lottie-анимации
 - Диапазоны текста, сложные градиенты
-- Продвинутые переходы и анимации
+- Продвинутые переходы (transition_in/transition_out)
 - API пользовательских компонентов
 
 ## Архитектура
