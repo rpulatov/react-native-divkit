@@ -1,3 +1,11 @@
+# [1.3.0](https://github.com/rpulatov/react-native-divkit/compare/v1.2.1...v1.3.0) (2026-03-13)
+
+
+### Features
+
+* Добавить поддержку action_animation ([e86d722](https://github.com/rpulatov/react-native-divkit/commit/e86d722dd75e3fce9fce49049880010826dd1f6d))
+* Добавить поддержку text_alignment_vertical ([27b0904](https://github.com/rpulatov/react-native-divkit/commit/27b0904adf9de628ace7204a9997dcdcd8588469))
+
 ## [1.2.1](https://github.com/rpulatov/react-native-divkit/compare/v1.2.0...v1.2.1) (2026-03-12)
 
 
