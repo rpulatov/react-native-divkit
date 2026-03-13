@@ -3,7 +3,7 @@ import { View, Pressable, Animated, ViewStyle, StyleSheet, Easing, EasingFunctio
 import type { ComponentContext } from '../../types/componentContext';
 import type { DivBaseData } from '../../types/base';
 import type { Visibility } from '../../types/base';
-import type { FixedSize, MatchParentSize } from '../../types/sizes';
+import type { FixedSize, MatchParentSize, WrapContentSize } from '../../types/sizes';
 import type { MaybeMissing } from '../../expressions/json';
 import type { Animation } from '../../types/animation';
 import type { Interpolation } from '../../../typings/common';
@@ -207,9 +207,23 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                     styles.flexGrow = (widthVal as MatchParentSize).weight || 1;
                     styles.flexShrink = 1;
                 }
+                const mp = widthVal as MatchParentSize;
+                if (mp.min_size && mp.min_size.value >= 0) {
+                    styles.minWidth = mp.min_size.value;
+                }
+                if (mp.max_size && mp.max_size.value >= 0) {
+                    styles.maxWidth = mp.max_size.value;
+                }
             } else if (widthVal.type === 'wrap_content') {
                 const hAlign = resolveAlignSelf(alignmentHorizontal as string | undefined, direction);
                 styles.alignSelf = hAlign || 'flex-start';
+                const wc = widthVal as WrapContentSize;
+                if (wc.min_size && wc.min_size.value >= 0) {
+                    styles.minWidth = wc.min_size.value;
+                }
+                if (wc.max_size && wc.max_size.value >= 0) {
+                    styles.maxWidth = wc.max_size.value;
+                }
             }
         } else {
             styles.alignSelf = 'stretch';
@@ -229,6 +243,21 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                     styles.flexGrow = (heightVal as MatchParentSize).weight || 1;
                 } else {
                     styles.alignSelf = 'stretch';
+                }
+                const mp = heightVal as MatchParentSize;
+                if (mp.min_size && mp.min_size.value >= 0) {
+                    styles.minHeight = mp.min_size.value;
+                }
+                if (mp.max_size && mp.max_size.value >= 0) {
+                    styles.maxHeight = mp.max_size.value;
+                }
+            } else if (heightVal.type === 'wrap_content') {
+                const wc = heightVal as WrapContentSize;
+                if (wc.min_size && wc.min_size.value >= 0) {
+                    styles.minHeight = wc.min_size.value;
+                }
+                if (wc.max_size && wc.max_size.value >= 0) {
+                    styles.maxHeight = wc.max_size.value;
                 }
             }
         }
@@ -376,7 +405,17 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                     onPress={handlePress}
                     onPressIn={onPressIn}
                     onPressOut={onPressOut}
-                    style={{ alignSelf: finalStyle?.alignSelf, flexGrow: finalStyle?.flexGrow, flexShrink: finalStyle?.flexShrink }}
+                    style={{
+                        alignSelf: finalStyle?.alignSelf,
+                        flexGrow: finalStyle?.flexGrow,
+                        flexShrink: finalStyle?.flexShrink,
+                        minWidth: finalStyle?.minWidth,
+                        maxWidth: finalStyle?.maxWidth,
+                        minHeight: finalStyle?.minHeight,
+                        maxHeight: finalStyle?.maxHeight,
+                        width: finalStyle?.width,
+                        height: finalStyle?.height,
+                    }}
                 >
                     <Animated.View style={animatedStyle}>
                         <Background layers={background as any} style={borderStyle} />

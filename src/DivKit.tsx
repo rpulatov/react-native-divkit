@@ -39,6 +39,7 @@ import { updateStructure } from './actions/updateStructure';
 import { applySetStateAction, type ActionSetStateCompat } from './actions/setState';
 import { evalExpression } from './expressions/eval';
 import { parse } from './expressions/expressions';
+import { getUrlSchema } from './utils/url';
 
 /**
  * Callback for logging statistics
@@ -403,8 +404,59 @@ export function DivKit({
                 }
 
                 // Handle URL actions
-                if (processUrls && action.url && onCustomAction) {
-                    onCustomAction(action as Action & { url: string });
+                if (action.url) {
+                    const actionUrl = action.url;
+                    const schema = getUrlSchema(actionUrl);
+
+                    if (schema === 'div-action') {
+                        // Internal DivKit action — parse and execute
+                        try {
+                            const url = actionUrl.replace(/div-action:\/\//, '');
+                            const parts = /([^?]+)\?(.+)/.exec(url);
+                            if (parts) {
+                                const params = new URLSearchParams(parts[2]);
+
+                                switch (parts[1]) {
+                                    case 'set_state': {
+                                        const stateId = params.get('state_id');
+                                        if (stateId) {
+                                            await applySetStateAction(
+                                                { state_id: stateId } as ActionSetStateCompat,
+                                                statesMap.current
+                                            );
+                                        }
+                                        break;
+                                    }
+                                    case 'set_variable': {
+                                        const name = params.get('name');
+                                        const value = params.get('value');
+                                        if (name && value !== null) {
+                                            setVariable(name, value);
+                                        } else {
+                                            logError(
+                                                wrapError(new Error('Incorrect set_variable_action'), {
+                                                    additional: { url }
+                                                })
+                                            );
+                                        }
+                                        break;
+                                    }
+                                    // MVP: other div-action types (timer, scroll, pager) deferred
+                                    default:
+                                        break;
+                                }
+                            }
+                        } catch (err) {
+                            logError(
+                                wrapError(err as Error, {
+                                    additional: { action: 'div-action', url: actionUrl }
+                                })
+                            );
+                        }
+                    } else if (processUrls && onCustomAction && action.log_id) {
+                        // Custom action — pass to user callback
+                        onCustomAction(action as Action & { url: string });
+                    }
                 }
             }
         },
