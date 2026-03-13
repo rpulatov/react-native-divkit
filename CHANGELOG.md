@@ -1,3 +1,10 @@
+## [1.5.2](https://github.com/rpulatov/react-native-divkit/compare/v1.5.1...v1.5.2) (2026-03-13)
+
+
+### Bug Fixes
+
+* Улучшить обработку выравнивания и стилей в компоненте Outer ([fdb7127](https://github.com/rpulatov/react-native-divkit/commit/fdb7127dda7494c0746abf363816cceba9a6bbfc))
+
 ## [1.5.1](https://github.com/rpulatov/react-native-divkit/compare/v1.5.0...v1.5.1) (2026-03-13)
 
 
