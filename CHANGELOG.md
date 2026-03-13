@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/rpulatov/react-native-divkit/compare/v1.3.0...v1.4.0) (2026-03-13)
+
+
+### Features
+
+* Добавить overflow hidden для corner_radius блоков по умолчанию ([0343152](https://github.com/rpulatov/react-native-divkit/commit/0343152443817fed16c1c9697fc816a6a2e316b4))
+
 # [1.3.0](https://github.com/rpulatov/react-native-divkit/compare/v1.2.1...v1.3.0) (2026-03-13)
 
 
