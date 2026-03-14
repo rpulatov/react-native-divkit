@@ -22,5 +22,5 @@ module.exports = {
     coverageDirectory: 'coverage',
     coverageReporters: ['text', 'lcov'],
     testPathIgnorePatterns: ['/node_modules/', '/dist/', '/tests/snapshots/'],
-    modulePathIgnorePatterns: ['<rootDir>/dist/']
+    modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/examples/', '<rootDir>/tests/snapshots/']
 };

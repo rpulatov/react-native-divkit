@@ -518,7 +518,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
                       "color": "#000000",
                       "fontSize": 16,
                       "fontWeight": "400",
-                      "lineHeight": "@{(scaleFactor !: 1) * 22}",
+                      "lineHeight": 22,
                       "textAlign": "left",
                     }
                   }
