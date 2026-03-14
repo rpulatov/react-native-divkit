@@ -1,3 +1,11 @@
+## [1.6.2](https://github.com/rpulatov/react-native-divkit/compare/v1.6.1...v1.6.2) (2026-03-14)
+
+
+### Bug Fixes
+
+* Исправление проблемы с transform-remove-console плагином ([2e0a4d7](https://github.com/rpulatov/react-native-divkit/commit/2e0a4d709f8a3d1ce3fd911f987f3e394f09cff6))
+* Обновить настройки игнорирования модулей и исправить значение lineHeight в snapshot-тестах ([b08205b](https://github.com/rpulatov/react-native-divkit/commit/b08205b6e9ac42b63cdc917f1871b4f2b4d2b39f))
+
 ## [1.6.1](https://github.com/rpulatov/react-native-divkit/compare/v1.6.0...v1.6.1) (2026-03-14)
 
 
