@@ -53,6 +53,10 @@ export function DivText({ componentContext }: DivTextProps) {
 
     const fontSizeUnit = useDerivedFromVarsSimple<FontSizeUnit>(json.font_size_unit || 'sp', variables || new Map());
 
+    const lineHeight = useDerivedFromVarsSimple<number | undefined>(json.line_height, variables || new Map());
+
+    const letterSpacing = useDerivedFromVarsSimple<number | undefined>(json.letter_spacing, variables || new Map());
+
     const maxLines = useDerivedFromVarsSimple<number | undefined>(json.max_lines, variables || new Map());
 
     // Convert size value based on font_size_unit
@@ -107,13 +111,16 @@ export function DivText({ componentContext }: DivTextProps) {
         }
 
         // Line height
-        if (json.line_height && fontSize) {
-            style.lineHeight = convertSize(json.line_height);
+        // Android requires lineHeight to be an integer >= fontSize
+        if (lineHeight && fontSize) {
+            const computedLineHeight = convertSize(lineHeight);
+            const computedFontSize = style.fontSize || convertSize(fontSize);
+            style.lineHeight = Math.round(Math.max(computedLineHeight, computedFontSize));
         }
 
         // Letter spacing
-        if (json.letter_spacing !== undefined) {
-            style.letterSpacing = json.letter_spacing;
+        if (letterSpacing !== undefined) {
+            style.letterSpacing = letterSpacing;
         }
 
         // Text alignment
@@ -160,8 +167,8 @@ export function DivText({ componentContext }: DivTextProps) {
         json.font_weight_value,
         json.font_family,
         typefaceProvider,
-        json.line_height,
-        json.letter_spacing,
+        lineHeight,
+        letterSpacing,
         json.underline,
         json.strike,
         json.font_feature_settings,
