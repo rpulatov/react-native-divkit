@@ -8,6 +8,16 @@
 import { useEffect, useState, useMemo, useRef } from 'react';
 import type { MaybeMissing } from '../expressions/json';
 import { prepareVars } from '../expressions/json';
+
+/**
+ * Stable module-level fallback for logError.
+ * Must be defined at module scope so that babel-plugin-transform-remove-console
+ * replaces console.error only once (stable reference), not on every hook call.
+ * If defined inline as a default parameter, the plugin creates a new function(){}
+ * on every invocation, breaking useMemo dependency comparison and causing infinite re-renders.
+ */
+// eslint-disable-next-line no-console
+const defaultLogError: (error: Error) => void = console.error;
 import type { Variable } from '../expressions/variable';
 import type { VariablesMap } from '../expressions/eval';
 import type { Store } from '../../typings/store';
@@ -81,7 +91,7 @@ export function useDerivedFromVars<T>(jsonProp: T, options: UseDerivedFromVarsOp
         customFunctions,
         store,
         weekStartDay = 0,
-        logError = console.error
+        logError = defaultLogError
     } = options;
 
     // Merge variables maps
