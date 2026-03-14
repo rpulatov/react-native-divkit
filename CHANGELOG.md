@@ -1,3 +1,10 @@
+## [1.6.1](https://github.com/rpulatov/react-native-divkit/compare/v1.6.0...v1.6.1) (2026-03-14)
+
+
+### Bug Fixes
+
+* Исправить ошибку округления line-height и возможность чтения из переменных ([0669eb0](https://github.com/rpulatov/react-native-divkit/commit/0669eb090c05b08a77cd9fe1df01be9bfbb4e436))
+
 # [1.6.0](https://github.com/rpulatov/react-native-divkit/compare/v1.5.2...v1.6.0) (2026-03-13)
 
 
