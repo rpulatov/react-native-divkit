@@ -282,6 +282,8 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
           ref={null}
           style={
             {
+              "alignItems": "center",
+              "justifyContent": "center",
               "overflow": "hidden",
             }
           }
@@ -392,6 +394,8 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
               ref={null}
               style={
                 {
+                  "alignItems": "flex-start",
+                  "justifyContent": "flex-start",
                   "overflow": "hidden",
                 }
               }
@@ -598,6 +602,8 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
                       ref={null}
                       style={
                         {
+                          "alignItems": "center",
+                          "justifyContent": "center",
                           "overflow": "hidden",
                         }
                       }
@@ -1168,6 +1174,8 @@ exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template)
               ref={null}
               style={
                 {
+                  "alignItems": "center",
+                  "justifyContent": "center",
                   "overflow": "hidden",
                 }
               }
@@ -1280,6 +1288,8 @@ exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template)
                 ref={null}
                 style={
                   {
+                    "alignItems": "center",
+                    "justifyContent": "center",
                     "overflow": "hidden",
                   }
                 }
@@ -1370,6 +1380,8 @@ exports[`DivKit Snapshot Tests Horizontal container alignment content_alignment_
         ref={null}
         style={
           {
+            "alignItems": "center",
+            "justifyContent": "center",
             "overflow": "hidden",
           }
         }
@@ -1690,6 +1702,8 @@ exports[`DivKit Snapshot Tests Overlap container match_parent children fill pare
           ref={null}
           style={
             {
+              "alignItems": "center",
+              "justifyContent": "center",
               "overflow": "hidden",
             }
           }
