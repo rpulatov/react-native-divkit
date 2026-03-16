@@ -332,27 +332,38 @@ describe('DivKit Snapshot Tests', () => {
             const root = toJSON() as JsonNode;
             const nodes = collectNodes(root);
 
-            const bottomAlignedPressable = nodes.find(node => {
-                if (!node || node.type !== 'Pressable') {
+            // With the new overlap approach, alignment is handled by a wrapper View
+            // with justifyContent/alignItems instead of marginTop: 'auto' on the child
+            const bottomAlignedWrapper = nodes.find(node => {
+                if (!node || node.type !== 'View') {
                     return false;
                 }
-
                 const style = node.props?.style || {};
                 return (
-                    style.marginTop === 'auto' &&
-                    style.marginBottom === 10 &&
-                    style.marginRight === 12
+                    style.position === 'absolute' &&
+                    style.justifyContent === 'flex-end' &&
+                    style.alignItems === 'flex-end'
                 );
             });
 
-            expect(bottomAlignedPressable).toBeDefined();
+            expect(bottomAlignedWrapper).toBeDefined();
 
-            const animatedChild = (bottomAlignedPressable as any)?.children?.find(
-                (child: any) => child?.type === 'Animated.View'
-            );
+            const pressable = (bottomAlignedWrapper as JsonNode)?.children?.find(
+                (child) => (child as JsonNode)?.type === 'Pressable'
+            ) as JsonNode | undefined;
+
+            expect(pressable).toBeDefined();
+
+            const pressableStyle = pressable?.props?.style || {};
+            expect(pressableStyle.marginBottom).toBe(10);
+            expect(pressableStyle.marginRight).toBe(12);
+
+            const animatedChild = pressable?.children?.find(
+                (child) => (child as JsonNode)?.type === 'Animated.View'
+            ) as JsonNode | undefined;
 
             expect(animatedChild).toBeDefined();
-            expect(animatedChild.props?.style?.flex).toBeUndefined();
+            expect((animatedChild as NonNullable<JsonNode>).props?.style?.flex).toBeUndefined();
         });
     });
 
