@@ -218,7 +218,10 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
       {
         "alignItems": "flex-start",
         "alignSelf": "stretch",
+        "flexBasis": 0,
         "flexDirection": "column",
+        "flexGrow": 1,
+        "flexShrink": 1,
         "justifyContent": "flex-start",
       }
     }
@@ -232,6 +235,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
           "flexBasis": 0,
           "flexDirection": "column",
           "flexGrow": 1,
+          "flexShrink": 1,
           "justifyContent": "flex-start",
         }
       }
@@ -270,6 +274,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
             "borderRadius": 22,
             "flexBasis": 0,
             "flexGrow": 67,
+            "flexShrink": 1,
             "overflow": "hidden",
           }
         }
@@ -333,6 +338,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
             "flexBasis": 0,
             "flexDirection": "column",
             "flexGrow": 33,
+            "flexShrink": 1,
             "justifyContent": "flex-start",
           }
         }
@@ -444,6 +450,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
               "alignSelf": "stretch",
               "flexBasis": 0,
               "flexGrow": 1,
+              "flexShrink": 1,
               "position": "relative",
             }
           }
@@ -453,13 +460,13 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
             style={
               {
                 "alignItems": "flex-start",
-                "alignSelf": "stretch",
-                "flexBasis": 0,
+                "bottom": 0,
                 "flexDirection": "column",
-                "flexGrow": 1,
                 "justifyContent": "flex-start",
-                "marginLeft": 16,
-                "marginRight": 16,
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
               }
             }
           >
@@ -467,53 +474,70 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
               ref={null}
               style={
                 {
-                  "alignSelf": "flex-start",
+                  "alignItems": "flex-start",
+                  "alignSelf": "stretch",
+                  "flexBasis": 0,
+                  "flexDirection": "column",
+                  "flexGrow": 1,
+                  "flexShrink": 1,
                   "justifyContent": "flex-start",
-                  "marginBottom": 5,
+                  "marginLeft": 16,
+                  "marginRight": 16,
                 }
               }
             >
-              <Text
-                allowFontScaling={true}
+              <View
                 ref={null}
                 style={
                   {
-                    "color": "#000000",
-                    "fontSize": 24,
-                    "fontWeight": "700",
-                    "textAlign": "left",
+                    "alignSelf": "flex-start",
+                    "justifyContent": "flex-start",
+                    "marginBottom": 5,
                   }
                 }
               >
-                Demo Place
-              </Text>
-            </View>
-            <View
-              ref={null}
-              style={
-                {
-                  "alignSelf": "center",
-                  "justifyContent": "flex-start",
-                }
-              }
-            >
-              <Text
-                allowFontScaling={true}
+                <Text
+                  allowFontScaling={true}
+                  ref={null}
+                  style={
+                    {
+                      "color": "#000000",
+                      "fontSize": 24,
+                      "fontWeight": "700",
+                      "textAlign": "left",
+                    }
+                  }
+                >
+                  Demo Place
+                </Text>
+              </View>
+              <View
                 ref={null}
                 style={
                   {
-                    "color": "#000000",
-                    "fontSize": 16,
-                    "fontWeight": "400",
-                    "lineHeight": 22,
-                    "textAlign": "left",
+                    "alignSelf": "center",
+                    "justifyContent": "flex-start",
                   }
                 }
               >
-                Это демонстрационный текст карточки.
+                <Text
+                  allowFontScaling={true}
+                  ref={null}
+                  style={
+                    {
+                      "color": "#000000",
+                      "fontSize": 16,
+                      "fontWeight": "400",
+                      "lineHeight": 22,
+                      "textAlign": "left",
+                    }
+                  }
+                >
+                  Это демонстрационный текст карточки.
 
 Контент используется только для snapshot-тестов и не содержит бизнес-данных.
-              </Text>
+                </Text>
+              </View>
             </View>
           </View>
           <View
@@ -1084,7 +1108,10 @@ exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template)
       {
         "alignItems": "flex-start",
         "alignSelf": "stretch",
+        "flexBasis": 0,
         "flexDirection": "column",
+        "flexGrow": 1,
+        "flexShrink": 1,
         "justifyContent": "flex-start",
       }
     }
@@ -1099,6 +1126,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template)
           "alignSelf": "stretch",
           "flexBasis": 0,
           "flexGrow": 1,
+          "flexShrink": 1,
           "marginLeft": 16,
           "marginRight": 16,
           "maxHeight": 300,
@@ -1130,9 +1158,14 @@ exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template)
           ref={null}
           style={
             {
-              "alignSelf": "stretch",
-              "flexBasis": 0,
-              "flexGrow": 1,
+              "alignItems": "center",
+              "bottom": 0,
+              "flexDirection": "column",
+              "justifyContent": "flex-start",
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
             }
           }
         >
@@ -1140,49 +1173,61 @@ exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template)
             ref={null}
             style={
               {
-                "alignItems": "center",
-                "justifyContent": "center",
-                "overflow": "hidden",
+                "alignSelf": "stretch",
+                "flexBasis": 0,
+                "flexGrow": 1,
+                "flexShrink": 1,
               }
             }
           >
-            <Image
-              onError={[Function]}
-              onLoadEnd={[Function]}
-              ref={null}
-              resizeMode="cover"
-              source={
-                {
-                  "uri": "mock://images/widget-cover",
-                }
-              }
-              style={
-                {
-                  "height": "100%",
-                  "width": "100%",
-                }
-              }
-            />
             <View
               ref={null}
               style={
                 {
                   "alignItems": "center",
-                  "backgroundColor": "transparent",
-                  "bottom": 0,
                   "justifyContent": "center",
-                  "left": 0,
-                  "position": "absolute",
-                  "right": 0,
-                  "top": 0,
+                  "overflow": "hidden",
                 }
               }
             >
-              <ActivityIndicator
-                color="#999999"
+              <Image
+                onError={[Function]}
+                onLoadEnd={[Function]}
                 ref={null}
-                size="small"
+                resizeMode="cover"
+                source={
+                  {
+                    "uri": "mock://images/widget-cover",
+                  }
+                }
+                style={
+                  {
+                    "height": "100%",
+                    "width": "100%",
+                  }
+                }
               />
+              <View
+                ref={null}
+                style={
+                  {
+                    "alignItems": "center",
+                    "backgroundColor": "transparent",
+                    "bottom": 0,
+                    "justifyContent": "center",
+                    "left": 0,
+                    "position": "absolute",
+                    "right": 0,
+                    "top": 0,
+                  }
+                }
+              >
+                <ActivityIndicator
+                  color="#999999"
+                  ref={null}
+                  size="small"
+                />
+              </View>
             </View>
           </View>
         </View>
@@ -1570,10 +1615,14 @@ exports[`DivKit Snapshot Tests Overlap container child alignment_horizontal: rig
       ref={null}
       style={
         {
-          "alignItems": "flex-start",
-          "alignSelf": "flex-end",
+          "alignItems": "flex-end",
+          "bottom": 0,
           "flexDirection": "column",
-          "justifyContent": "flex-start",
+          "justifyContent": "flex-end",
+          "left": 0,
+          "position": "absolute",
+          "right": 0,
+          "top": 0,
         }
       }
     >
@@ -1581,24 +1630,36 @@ exports[`DivKit Snapshot Tests Overlap container child alignment_horizontal: rig
         ref={null}
         style={
           {
-            "alignSelf": "stretch",
+            "alignItems": "flex-start",
+            "alignSelf": "flex-end",
+            "flexDirection": "column",
             "justifyContent": "flex-start",
           }
         }
       >
-        <Text
-          allowFontScaling={true}
+        <View
           ref={null}
           style={
             {
-              "color": "#000000",
-              "fontSize": 12,
-              "textAlign": "left",
+              "alignSelf": "stretch",
+              "justifyContent": "flex-start",
             }
           }
         >
-          Bottom-right
-        </Text>
+          <Text
+            allowFontScaling={true}
+            ref={null}
+            style={
+              {
+                "color": "#000000",
+                "fontSize": 12,
+                "textAlign": "left",
+              }
+            }
+          >
+            Bottom-right
+          </Text>
+        </View>
       </View>
     </View>
   </View>
@@ -1631,9 +1692,14 @@ exports[`DivKit Snapshot Tests Overlap container match_parent children fill pare
       ref={null}
       style={
         {
-          "alignSelf": "stretch",
-          "flexBasis": 0,
-          "flexGrow": 1,
+          "alignItems": "flex-start",
+          "bottom": 0,
+          "flexDirection": "column",
+          "justifyContent": "flex-start",
+          "left": 0,
+          "position": "absolute",
+          "right": 0,
+          "top": 0,
         }
       }
     >
@@ -1641,49 +1707,61 @@ exports[`DivKit Snapshot Tests Overlap container match_parent children fill pare
         ref={null}
         style={
           {
-            "alignItems": "center",
-            "justifyContent": "center",
-            "overflow": "hidden",
+            "alignSelf": "stretch",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
           }
         }
       >
-        <Image
-          onError={[Function]}
-          onLoadEnd={[Function]}
-          ref={null}
-          resizeMode="cover"
-          source={
-            {
-              "uri": "https://example.com/bg.png",
-            }
-          }
-          style={
-            {
-              "height": "100%",
-              "width": "100%",
-            }
-          }
-        />
         <View
           ref={null}
           style={
             {
               "alignItems": "center",
-              "backgroundColor": "transparent",
-              "bottom": 0,
               "justifyContent": "center",
-              "left": 0,
-              "position": "absolute",
-              "right": 0,
-              "top": 0,
+              "overflow": "hidden",
             }
           }
         >
-          <ActivityIndicator
-            color="#999999"
+          <Image
+            onError={[Function]}
+            onLoadEnd={[Function]}
             ref={null}
-            size="small"
+            resizeMode="cover"
+            source={
+              {
+                "uri": "https://example.com/bg.png",
+              }
+            }
+            style={
+              {
+                "height": "100%",
+                "width": "100%",
+              }
+            }
           />
+          <View
+            ref={null}
+            style={
+              {
+                "alignItems": "center",
+                "backgroundColor": "transparent",
+                "bottom": 0,
+                "justifyContent": "center",
+                "left": 0,
+                "position": "absolute",
+                "right": 0,
+                "top": 0,
+              }
+            }
+          >
+            <ActivityIndicator
+              color="#999999"
+              ref={null}
+              size="small"
+            />
+          </View>
         </View>
       </View>
     </View>
@@ -1788,7 +1866,10 @@ exports[`DivKit Snapshot Tests Sizing combinations match_parent with min/max siz
       {
         "alignItems": "flex-start",
         "alignSelf": "stretch",
+        "flexBasis": 0,
         "flexDirection": "column",
+        "flexGrow": 1,
+        "flexShrink": 1,
         "justifyContent": "flex-start",
       }
     }
@@ -1800,6 +1881,7 @@ exports[`DivKit Snapshot Tests Sizing combinations match_parent with min/max siz
           "alignSelf": "stretch",
           "flexBasis": 0,
           "flexGrow": 1,
+          "flexShrink": 1,
           "justifyContent": "flex-start",
           "maxHeight": 150,
           "maxWidth": 300,
@@ -1844,7 +1926,10 @@ exports[`DivKit Snapshot Tests Sizing combinations match_parent with weight in v
       {
         "alignItems": "flex-start",
         "alignSelf": "stretch",
+        "flexBasis": 0,
         "flexDirection": "column",
+        "flexGrow": 1,
+        "flexShrink": 1,
         "justifyContent": "flex-start",
       }
     }
@@ -1856,6 +1941,7 @@ exports[`DivKit Snapshot Tests Sizing combinations match_parent with weight in v
           "alignSelf": "stretch",
           "flexBasis": 0,
           "flexGrow": 1,
+          "flexShrink": 1,
           "justifyContent": "flex-start",
         }
       }
@@ -1881,6 +1967,7 @@ exports[`DivKit Snapshot Tests Sizing combinations match_parent with weight in v
           "alignSelf": "stretch",
           "flexBasis": 0,
           "flexGrow": 2,
+          "flexShrink": 1,
           "justifyContent": "flex-start",
         }
       }
