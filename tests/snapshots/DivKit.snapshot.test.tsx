@@ -131,6 +131,87 @@ describe('DivKit Snapshot Tests', () => {
             expect(toJSON()).toMatchSnapshot();
         });
 
+        it('child without explicit width inside horizontal container uses flexGrow (not alignSelf:stretch)', () => {
+            // Regression: before the fix, a child with no width in a horizontal container
+            // got alignSelf:stretch which expanded it to full HEIGHT (cross-axis in row layout).
+            // After the fix it should get flexGrow:1 to expand along the main axis (WIDTH).
+            const data = makeCard({
+                type: 'container',
+                orientation: 'horizontal',
+                width: { type: 'match_parent' },
+                height: { type: 'fixed', value: 100 },
+                items: [
+                    {
+                        type: 'container',
+                        orientation: 'horizontal',
+                        alignment_vertical: 'center',
+                        // No width specified — should default to match_parent (flexGrow:1), not stretch height
+                        items: [
+                            {
+                                type: 'image',
+                                image_url: 'https://example.com/star.png',
+                                width: { type: 'fixed', value: 16 },
+                                height: { type: 'fixed', value: 16 }
+                            }
+                        ]
+                    }
+                ]
+            });
+            const { toJSON } = renderDivKit(data);
+            const json = toJSON() as any;
+
+            // Find the inner container (child of horizontal root)
+            const innerContainer = json?.children?.[0]?.children?.[0];
+            const style = innerContainer?.props?.style || {};
+
+            // Must use flexGrow for width (main axis in row), NOT alignSelf:stretch (which would stretch height)
+            expect(style.flexGrow).toBe(1);
+            expect(style.alignSelf).not.toBe('stretch');
+        });
+
+        it('wrap_content horizontal container: children do not expand width with flexGrow', () => {
+            // Regression: children without explicit width inside a wrap_content horizontal
+            // container must NOT get flexGrow:1 — otherwise the badge expands to full width.
+            const data = makeCard({
+                type: 'container',
+                orientation: 'overlap',
+                width: { type: 'match_parent' },
+                height: { type: 'fixed', value: 100 },
+                items: [
+                    {
+                        type: 'container',
+                        orientation: 'horizontal',
+                        width: { type: 'wrap_content' },
+                        // No explicit width on children — they must wrap their content
+                        items: [
+                            {
+                                type: 'image',
+                                image_url: 'https://example.com/star.png',
+                                width: { type: 'fixed', value: 16 },
+                                height: { type: 'fixed', value: 16 }
+                            },
+                            {
+                                type: 'text',
+                                text: '4.8'
+                                // No width — should NOT get flexGrow:1 inside wrap_content parent
+                            }
+                        ]
+                    }
+                ]
+            });
+            const { toJSON } = renderDivKit(data);
+            const json = toJSON() as any;
+
+            // Navigate to the text element inside the badge
+            // Structure: root View > badge View (wrap_content horizontal) > text View
+            const badgeChildren = json?.children?.[0]?.children;
+            const textNode = badgeChildren?.find((n: any) => n?.type === 'Text' || n?.props?.style?.fontSize);
+            const textStyle = textNode?.props?.style || {};
+
+            // Text must NOT have flexGrow (would expand badge to full width)
+            expect(textStyle.flexGrow).toBeUndefined();
+        });
+
         it('content_alignment_horizontal: space-between', () => {
             const data = makeCard({
                 type: 'container',

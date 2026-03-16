@@ -265,10 +265,20 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                 }
             }
         } else {
-            styles.alignSelf = 'stretch';
-            if (!parentOrientation || parentOrientation === 'horizontal') {
-                styles.flexGrow = 1;
-                styles.flexShrink = 1;
+            // Default width = match_parent — same logic as explicit match_parent
+            if (parentOrientation === 'horizontal') {
+                if (layoutParams.parentHorizontalWrapContent) {
+                    // match_parent inside wrap_content horizontal container = wrap content
+                    // (can't grow into a parent that has no fixed width itself)
+                } else {
+                    // Width is main axis in row layout — use flexGrow, not alignSelf stretch
+                    styles.flexGrow = 1;
+                    styles.flexShrink = 1;
+                    styles.flexBasis = 0;
+                }
+            } else {
+                // Width is cross axis in column layout (or unknown) — stretch
+                styles.alignSelf = 'stretch';
             }
         }
 
