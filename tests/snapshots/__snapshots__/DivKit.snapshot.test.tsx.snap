@@ -520,8 +520,10 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
             ref={null}
             style={
               {
+                "alignItems": "flex-end",
                 "bottom": 0,
                 "flexDirection": "column",
+                "justifyContent": "flex-end",
                 "left": 0,
                 "position": "absolute",
                 "right": 0,
@@ -539,7 +541,6 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
                   "alignSelf": "flex-end",
                   "marginBottom": 15,
                   "marginRight": 15,
-                  "marginTop": "auto",
                 }
               }
             >
@@ -1189,8 +1190,10 @@ exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template)
           ref={null}
           style={
             {
+              "alignItems": "center",
               "bottom": 0,
               "flexDirection": "column",
+              "justifyContent": "flex-start",
               "left": 0,
               "position": "absolute",
               "right": 0,
@@ -1571,7 +1574,6 @@ exports[`DivKit Snapshot Tests Overlap container child alignment_horizontal: rig
           "alignSelf": "flex-end",
           "flexDirection": "column",
           "justifyContent": "flex-start",
-          "marginTop": "auto",
         }
       }
     >
@@ -1689,8 +1691,10 @@ exports[`DivKit Snapshot Tests Overlap container match_parent children fill pare
       ref={null}
       style={
         {
+          "alignItems": "center",
           "bottom": 0,
           "flexDirection": "column",
+          "justifyContent": "flex-end",
           "left": 0,
           "position": "absolute",
           "right": 0,
@@ -1704,7 +1708,6 @@ exports[`DivKit Snapshot Tests Overlap container match_parent children fill pare
           {
             "alignSelf": "center",
             "justifyContent": "flex-start",
-            "marginTop": "auto",
           }
         }
       >
