@@ -315,7 +315,8 @@ export function Outer<T extends DivBaseData = DivBaseData>({
 
         // Overlap positioning: wrapper is absolute + flexDirection: column
         if (isOverlap) {
-            const widthType = width ? (width as any).type : undefined;
+            // undefined width means match_parent (default per DivKit spec)
+            const widthType = width ? (width as any).type : 'match_parent';
             const heightType = height ? (height as any).type : undefined;
 
             // Horizontal: alignSelf controls cross-axis (horizontal) in column wrapper
