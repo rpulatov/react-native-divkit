@@ -112,11 +112,25 @@ export function applyTemplatesRecursively(
 
     let resolvedJson = json;
 
-    // Attempt expansion if type matches a template
+    // Attempt expansion if type matches a template (loop for chained templates, like Web)
     if (json.type && templates[json.type]) {
         try {
-            const res = applyTemplate(json, {}, templates, logError);
-            resolvedJson = res.json;
+            const usedTypes = new Set([json.type]);
+            let current = json;
+            let context = {};
+
+            while (current.type && templates[current.type]) {
+                const res = applyTemplate(current, context, templates, logError);
+                current = res.json;
+                context = res.templateContext;
+
+                if (usedTypes.has(current.type)) {
+                    break; // circular reference guard
+                }
+                usedTypes.add(current.type);
+            }
+
+            resolvedJson = current;
         } catch (_e) {
             // Expansion failed
         }
