@@ -327,17 +327,10 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             }
 
             // Vertical: main axis in column wrapper
+            // justifyContent on the wrapper handles positioning; only match_parent needs flexGrow
             if (heightType === 'match_parent') {
                 styles.flexGrow = 1;
                 styles.flexBasis = 0;
-            } else {
-                // Use margin auto trick for vertical positioning
-                if (effectiveVAlign === 'center') {
-                    styles.marginTop = 'auto';
-                    styles.marginBottom = 'auto';
-                } else if (effectiveVAlign === 'flex-end') {
-                    styles.marginTop = 'auto';
-                }
             }
         }
 

@@ -110,9 +110,15 @@ export function DivContainer({ componentContext }: DivContainerProps) {
         return params;
     }, [orientation, contentAlignmentHorizontal, contentAlignmentVertical]);
 
-    // For overlap mode, we need to position children absolutely
-    const childWrapperStyle = useMemo((): ViewStyle | undefined => {
-        if (orientation === 'overlap') {
+    // For overlap mode, build a per-child absolute wrapper style
+    // justifyContent / alignItems position the child within the full-area overlay
+    const getOverlapWrapperStyle = useMemo(() => {
+        if (orientation !== 'overlap') return undefined;
+
+        return (item: any): ViewStyle => {
+            // Child's own alignment takes priority over container's content alignment
+            const alignV: string = item.alignment_vertical || contentAlignmentVertical || 'top';
+            const alignH: string = item.alignment_horizontal || contentAlignmentHorizontal || 'start';
             return {
                 position: 'absolute',
                 top: 0,
@@ -120,10 +126,11 @@ export function DivContainer({ componentContext }: DivContainerProps) {
                 right: 0,
                 bottom: 0,
                 flexDirection: 'column',
+                justifyContent: mapContentAlignmentToJustify(alignV as any, direction),
+                alignItems: mapContentAlignmentToAlign(alignH as any, direction),
             };
-        }
-        return undefined;
-    }, [orientation]);
+        };
+    }, [orientation, contentAlignmentVertical, contentAlignmentHorizontal, direction]);
 
     const renderChildren = () => {
         if (!json.items || json.items.length === 0) {
@@ -144,9 +151,9 @@ export function DivContainer({ componentContext }: DivContainerProps) {
             // Wrap in positioned View for overlap mode (all except first child).
             // The first child stays in normal flow to establish the container's size;
             // subsequent children are absolutely positioned on top of it.
-            if (orientation === 'overlap' && index > 0 && childWrapperStyle) {
+            if (orientation === 'overlap' && index > 0 && getOverlapWrapperStyle) {
                 return (
-                    <View key={item.id || `item-${index}`} style={childWrapperStyle}>
+                    <View key={item.id || `item-${index}`} style={getOverlapWrapperStyle(item)}>
                         {child}
                     </View>
                 );
