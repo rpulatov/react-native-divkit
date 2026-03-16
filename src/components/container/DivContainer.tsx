@@ -81,6 +81,11 @@ export function DivContainer({ componentContext }: DivContainerProps) {
 
         if (orientation === 'horizontal') {
             params.parentContainerOrientation = 'horizontal';
+            // If this horizontal container wraps its own content, children with default
+            // (match_parent) width should NOT use flexGrow — they should wrap their content too.
+            if ((json as any).width?.type === 'wrap_content') {
+                params.parentHorizontalWrapContent = true;
+            }
         } else if (orientation === 'vertical') {
             params.parentContainerOrientation = 'vertical';
         }

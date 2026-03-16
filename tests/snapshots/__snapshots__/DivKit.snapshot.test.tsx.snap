@@ -19,8 +19,6 @@ exports[`DivKit Snapshot Tests Animated buttons with margins buttons with action
         "alignItems": "flex-start",
         "alignSelf": "stretch",
         "flexDirection": "column",
-        "flexGrow": 1,
-        "flexShrink": 1,
         "justifyContent": "flex-start",
       }
     }
@@ -221,8 +219,6 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
         "alignItems": "flex-start",
         "alignSelf": "stretch",
         "flexDirection": "column",
-        "flexGrow": 1,
-        "flexShrink": 1,
         "justifyContent": "flex-start",
       }
     }
@@ -764,8 +760,6 @@ exports[`DivKit Snapshot Tests Full JSON fixtures tap-animations.json renders co
         "alignItems": "flex-start",
         "alignSelf": "stretch",
         "flexDirection": "column",
-        "flexGrow": 1,
-        "flexShrink": 1,
         "justifyContent": "flex-start",
         "marginBottom": 24,
         "marginTop": 24,
@@ -1090,8 +1084,6 @@ exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template)
         "alignItems": "flex-start",
         "alignSelf": "stretch",
         "flexDirection": "column",
-        "flexGrow": 1,
-        "flexShrink": 1,
         "justifyContent": "flex-start",
       }
     }
@@ -2069,8 +2061,6 @@ exports[`DivKit Snapshot Tests Visibility gone hides element completely 1`] = `
         "alignItems": "flex-start",
         "alignSelf": "stretch",
         "flexDirection": "column",
-        "flexGrow": 1,
-        "flexShrink": 1,
         "justifyContent": "flex-start",
       }
     }
@@ -2144,8 +2134,6 @@ exports[`DivKit Snapshot Tests Visibility invisible takes space but not visible 
         "alignItems": "flex-start",
         "alignSelf": "stretch",
         "flexDirection": "column",
-        "flexGrow": 1,
-        "flexShrink": 1,
         "justifyContent": "flex-start",
       }
     }
