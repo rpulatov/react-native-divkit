@@ -1,3 +1,12 @@
+## [1.6.4](https://github.com/rpulatov/react-native-divkit/compare/v1.6.3...v1.6.4) (2026-03-16)
+
+
+### Bug Fixes
+
+* Исправить ошибку веса в контейнера с overlap содержимым ([021343e](https://github.com/rpulatov/react-native-divkit/commit/021343e2182f42f9766cf32896aa54f0390deb73))
+* Обновить .gitignore для исключения папки vendor-divs и добавления .gitkeep ([4b5a2e2](https://github.com/rpulatov/react-native-divkit/commit/4b5a2e2b0f8163db3f7b1d1b0a7909d419ac43d2))
+* Обновить стили для корректного выравнивания и поведения контейнеров в snapshot-тестах ([7311df7](https://github.com/rpulatov/react-native-divkit/commit/7311df714654d676ffb9af9b1af221c8e253ad8e))
+
 ## [1.6.3](https://github.com/rpulatov/react-native-divkit/compare/v1.6.2...v1.6.3) (2026-03-16)
 
 
