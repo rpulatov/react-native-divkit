@@ -1,0 +1,223 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DivImage snapshots full render snapshots basic image with fixed size 1`] = `
+<View
+  ref={null}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    ref={null}
+    style={
+      {
+        "alignSelf": "stretch",
+        "height": 200,
+      }
+    }
+  >
+    <View
+      ref={null}
+      style={
+        {
+          "alignItems": "center",
+          "justifyContent": "center",
+          "overflow": "hidden",
+        }
+      }
+    >
+      <Image
+        onError={[Function]}
+        onLoadEnd={[Function]}
+        ref={null}
+        resizeMode="cover"
+        source={
+          {
+            "uri": "https://example.com/photo.jpg",
+          }
+        }
+        style={
+          {
+            "height": "100%",
+            "width": "100%",
+          }
+        }
+      />
+      <View
+        ref={null}
+        style={
+          {
+            "alignItems": "center",
+            "backgroundColor": "transparent",
+            "bottom": 0,
+            "justifyContent": "center",
+            "left": 0,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+          }
+        }
+      >
+        <ActivityIndicator
+          color="#999999"
+          ref={null}
+          size="small"
+        />
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`DivImage snapshots full render snapshots image with alignment 1`] = `
+<View
+  ref={null}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    ref={null}
+    style={
+      {
+        "alignSelf": "stretch",
+        "height": 200,
+      }
+    }
+  >
+    <View
+      ref={null}
+      style={
+        {
+          "alignItems": "flex-start",
+          "justifyContent": "flex-start",
+          "overflow": "hidden",
+        }
+      }
+    >
+      <Image
+        onError={[Function]}
+        onLoadEnd={[Function]}
+        ref={null}
+        resizeMode="cover"
+        source={
+          {
+            "uri": "https://example.com/photo.jpg",
+          }
+        }
+        style={
+          {
+            "height": "100%",
+            "width": "100%",
+          }
+        }
+      />
+      <View
+        ref={null}
+        style={
+          {
+            "alignItems": "center",
+            "backgroundColor": "transparent",
+            "bottom": 0,
+            "justifyContent": "center",
+            "left": 0,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+          }
+        }
+      >
+        <ActivityIndicator
+          color="#999999"
+          ref={null}
+          size="small"
+        />
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`DivImage snapshots full render snapshots image with aspect ratio and fit scale 1`] = `
+<View
+  ref={null}
+  style={
+    [
+      {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    ref={null}
+    style={
+      {
+        "alignSelf": "stretch",
+      }
+    }
+  >
+    <View
+      ref={null}
+      style={
+        {
+          "alignItems": "center",
+          "aspectRatio": 1.78,
+          "justifyContent": "center",
+          "overflow": "hidden",
+        }
+      }
+    >
+      <Image
+        onError={[Function]}
+        onLoadEnd={[Function]}
+        ref={null}
+        resizeMode="contain"
+        source={
+          {
+            "uri": "https://example.com/photo.jpg",
+          }
+        }
+        style={
+          {
+            "height": "100%",
+            "width": "100%",
+          }
+        }
+      />
+      <View
+        ref={null}
+        style={
+          {
+            "alignItems": "center",
+            "backgroundColor": "transparent",
+            "bottom": 0,
+            "justifyContent": "center",
+            "left": 0,
+            "position": "absolute",
+            "right": 0,
+            "top": 0,
+          }
+        }
+      >
+        <ActivityIndicator
+          color="#999999"
+          ref={null}
+          size="small"
+        />
+      </View>
+    </View>
+  </View>
+</View>
+`;

@@ -13,7 +13,16 @@ function createMockComponent(name: string) {
 
 export const View = createMockComponent('View');
 export const Text = createMockComponent('Text');
-export const Image = createMockComponent('Image');
+export const Image = Object.assign(createMockComponent('Image'), {
+    // Synchronous mock: resolves to 200x100 by default (aspect ratio 2.0)
+    getSize: jest.fn((
+        _uri: string,
+        success: (w: number, h: number) => void,
+        _failure?: (error: any) => void
+    ) => {
+        success(200, 100);
+    })
+});
 export const TextInput = createMockComponent('TextInput');
 export const ScrollView = createMockComponent('ScrollView');
 export const Switch = createMockComponent('Switch');
