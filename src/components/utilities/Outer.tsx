@@ -288,8 +288,10 @@ export function Outer<T extends DivBaseData = DivBaseData>({
             if (heightVal.type === 'fixed') {
                 styles.height = (heightVal as FixedSize).value;
             } else if (heightVal.type === 'match_parent') {
-                if (parentOrientation === 'vertical') {
+                if (parentOrientation !== 'horizontal') {
+                    // Vertical container or root (default RN flex direction is column)
                     styles.flexGrow = (heightVal as MatchParentSize).weight || 1;
+                    styles.flexShrink = 1;
                     styles.flexBasis = 0;
                 } else {
                     // Height is cross axis in row layout — stretch

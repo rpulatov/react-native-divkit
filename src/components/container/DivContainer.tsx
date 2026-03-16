@@ -132,6 +132,14 @@ export function DivContainer({ componentContext }: DivContainerProps) {
         };
     }, [orientation, contentAlignmentVertical, contentAlignmentHorizontal, direction]);
 
+    // When the overlap container has a definite height (match_parent or fixed), all children
+    // must be absolutely positioned so they don't contribute to the container's minimum size.
+    // This matches the Web behaviour where stretchHeight prevents children from sizing the parent.
+    // When height is wrap_content (or unset), the first child stays in normal flow to give
+    // the container its intrinsic height.
+    const overlapAllAbsolute = orientation === 'overlap' &&
+        (json.height?.type === 'match_parent' || json.height?.type === 'fixed');
+
     const renderChildren = () => {
         if (!json.items || json.items.length === 0) {
             return null;
@@ -148,10 +156,12 @@ export function DivContainer({ componentContext }: DivContainerProps) {
 
             const child = <DivComponent key={item.id || `item-${index}`} componentContext={childContext} />;
 
-            // Wrap in positioned View for overlap mode (all except first child).
-            // The first child stays in normal flow to establish the container's size;
-            // subsequent children are absolutely positioned on top of it.
-            if (orientation === 'overlap' && index > 0 && getOverlapWrapperStyle) {
+            // Wrap in positioned View for overlap mode.
+            // When the container has a definite height (match_parent/fixed), ALL children are
+            // absolutely positioned so they don't push the container beyond its allocated size.
+            // When height is wrap_content, only subsequent children (index > 0) are absolute;
+            // the first child stays in normal flow to establish the container's intrinsic height.
+            if (orientation === 'overlap' && (overlapAllAbsolute || index > 0) && getOverlapWrapperStyle) {
                 return (
                     <View key={item.id || `item-${index}`} style={getOverlapWrapperStyle(item)}>
                         {child}
