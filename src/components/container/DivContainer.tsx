@@ -136,8 +136,10 @@ export function DivContainer({ componentContext }: DivContainerProps) {
 
             const child = <DivComponent key={item.id || `item-${index}`} componentContext={childContext} />;
 
-            // Wrap in positioned View for overlap mode
-            if (orientation === 'overlap' && childWrapperStyle) {
+            // Wrap in positioned View for overlap mode (all except first child).
+            // The first child stays in normal flow to establish the container's size;
+            // subsequent children are absolutely positioned on top of it.
+            if (orientation === 'overlap' && index > 0 && childWrapperStyle) {
                 return (
                     <View key={item.id || `item-${index}`} style={childWrapperStyle}>
                         {child}
