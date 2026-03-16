@@ -1,3 +1,16 @@
+## [1.6.3](https://github.com/rpulatov/react-native-divkit/compare/v1.6.2...v1.6.3) (2026-03-16)
+
+
+### Bug Fixes
+
+* Исправить растягивание wrap_content, добавить content_alignment и тесты ([30ee635](https://github.com/rpulatov/react-native-divkit/commit/30ee635a874e30af1514edef65ffa65ee602c26c))
+* Обновить логику выравнивания дочерних элементов в тестах для поддержки нового подхода перекрытия ([06ee243](https://github.com/rpulatov/react-native-divkit/commit/06ee2438e317a2a13b25d4072b46a71dac3edca3))
+* Обновить логику обертки дочерних элементов в режиме перекрытия в DivContainer ([90eda36](https://github.com/rpulatov/react-native-divkit/commit/90eda362c522a0eb466212252cc6a3026dc516ba))
+* Обновить логику обертки дочерних элементов в режиме перекрытия для корректного позиционирования ([def8124](https://github.com/rpulatov/react-native-divkit/commit/def81244f4cd1ea9d20483b0d8e379cf5f5a738a))
+* Обновить логику обработки ширины дочерних элементов в горизонтальных контейнерах с wrap_content ([6f6c1b9](https://github.com/rpulatov/react-native-divkit/commit/6f6c1b9ae8890d6c164ed7b05b2d2c163e73588d))
+* Обновить логику определения типа ширины в режиме перекрытия для соответствия спецификации DivKit ([7c7a9d6](https://github.com/rpulatov/react-native-divkit/commit/7c7a9d6e59498545e196fb7f73a6c507b10aec01))
+* Улучшить обработку шаблонов с поддержкой циклических ссылок в applyTemplatesRecursively ([dc4a2bb](https://github.com/rpulatov/react-native-divkit/commit/dc4a2bb41cfe167f34600f91e252dbb5f4900092))
+
 ## [1.6.2](https://github.com/rpulatov/react-native-divkit/compare/v1.6.1...v1.6.2) (2026-03-14)
 
 
