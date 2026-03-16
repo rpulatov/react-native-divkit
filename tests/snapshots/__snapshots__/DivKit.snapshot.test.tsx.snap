@@ -456,12 +456,14 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
             ref={null}
             style={
               {
-                "bottom": 0,
+                "alignItems": "flex-start",
+                "alignSelf": "stretch",
+                "flexBasis": 0,
                 "flexDirection": "column",
-                "left": 0,
-                "position": "absolute",
-                "right": 0,
-                "top": 0,
+                "flexGrow": 1,
+                "justifyContent": "flex-start",
+                "marginLeft": 16,
+                "marginRight": 16,
               }
             }
           >
@@ -469,69 +471,53 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
               ref={null}
               style={
                 {
-                  "alignItems": "flex-start",
-                  "alignSelf": "stretch",
-                  "flexBasis": 0,
-                  "flexDirection": "column",
-                  "flexGrow": 1,
+                  "alignSelf": "flex-start",
                   "justifyContent": "flex-start",
-                  "marginLeft": 16,
-                  "marginRight": 16,
+                  "marginBottom": 5,
                 }
               }
             >
-              <View
+              <Text
+                allowFontScaling={true}
                 ref={null}
                 style={
                   {
-                    "alignSelf": "flex-start",
-                    "justifyContent": "flex-start",
-                    "marginBottom": 5,
+                    "color": "#000000",
+                    "fontSize": 24,
+                    "fontWeight": "700",
+                    "textAlign": "left",
                   }
                 }
               >
-                <Text
-                  allowFontScaling={true}
-                  ref={null}
-                  style={
-                    {
-                      "color": "#000000",
-                      "fontSize": 24,
-                      "fontWeight": "700",
-                      "textAlign": "left",
-                    }
-                  }
-                >
-                  Demo Place
-                </Text>
-              </View>
-              <View
+                Demo Place
+              </Text>
+            </View>
+            <View
+              ref={null}
+              style={
+                {
+                  "alignSelf": "center",
+                  "justifyContent": "flex-start",
+                }
+              }
+            >
+              <Text
+                allowFontScaling={true}
                 ref={null}
                 style={
                   {
-                    "alignSelf": "center",
-                    "justifyContent": "flex-start",
+                    "color": "#000000",
+                    "fontSize": 16,
+                    "fontWeight": "400",
+                    "lineHeight": 22,
+                    "textAlign": "left",
                   }
                 }
               >
-                <Text
-                  allowFontScaling={true}
-                  ref={null}
-                  style={
-                    {
-                      "color": "#000000",
-                      "fontSize": 16,
-                      "fontWeight": "400",
-                      "lineHeight": 22,
-                      "textAlign": "left",
-                    }
-                  }
-                >
-                  Это демонстрационный текст карточки.
+                Это демонстрационный текст карточки.
 
 Контент используется только для snapshot-тестов и не содержит бизнес-данных.
-                </Text>
-              </View>
+              </Text>
             </View>
           </View>
           <View
@@ -1151,12 +1137,9 @@ exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template)
           ref={null}
           style={
             {
-              "bottom": 0,
-              "flexDirection": "column",
-              "left": 0,
-              "position": "absolute",
-              "right": 0,
-              "top": 0,
+              "alignSelf": "stretch",
+              "flexBasis": 0,
+              "flexGrow": 1,
             }
           }
         >
@@ -1164,60 +1147,49 @@ exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template)
             ref={null}
             style={
               {
-                "alignSelf": "stretch",
-                "flexBasis": 0,
-                "flexGrow": 1,
+                "alignItems": "center",
+                "justifyContent": "center",
+                "overflow": "hidden",
               }
             }
           >
+            <Image
+              onError={[Function]}
+              onLoadEnd={[Function]}
+              ref={null}
+              resizeMode="cover"
+              source={
+                {
+                  "uri": "mock://images/widget-cover",
+                }
+              }
+              style={
+                {
+                  "height": "100%",
+                  "width": "100%",
+                }
+              }
+            />
             <View
               ref={null}
               style={
                 {
                   "alignItems": "center",
+                  "backgroundColor": "transparent",
+                  "bottom": 0,
                   "justifyContent": "center",
-                  "overflow": "hidden",
+                  "left": 0,
+                  "position": "absolute",
+                  "right": 0,
+                  "top": 0,
                 }
               }
             >
-              <Image
-                onError={[Function]}
-                onLoadEnd={[Function]}
+              <ActivityIndicator
+                color="#999999"
                 ref={null}
-                resizeMode="cover"
-                source={
-                  {
-                    "uri": "mock://images/widget-cover",
-                  }
-                }
-                style={
-                  {
-                    "height": "100%",
-                    "width": "100%",
-                  }
-                }
+                size="small"
               />
-              <View
-                ref={null}
-                style={
-                  {
-                    "alignItems": "center",
-                    "backgroundColor": "transparent",
-                    "bottom": 0,
-                    "justifyContent": "center",
-                    "left": 0,
-                    "position": "absolute",
-                    "right": 0,
-                    "top": 0,
-                  }
-                }
-              >
-                <ActivityIndicator
-                  color="#999999"
-                  ref={null}
-                  size="small"
-                />
-              </View>
             </View>
           </View>
         </View>
@@ -1603,12 +1575,11 @@ exports[`DivKit Snapshot Tests Overlap container child alignment_horizontal: rig
       ref={null}
       style={
         {
-          "bottom": 0,
+          "alignItems": "flex-start",
+          "alignSelf": "flex-end",
           "flexDirection": "column",
-          "left": 0,
-          "position": "absolute",
-          "right": 0,
-          "top": 0,
+          "justifyContent": "flex-start",
+          "marginTop": "auto",
         }
       }
     >
@@ -1616,37 +1587,24 @@ exports[`DivKit Snapshot Tests Overlap container child alignment_horizontal: rig
         ref={null}
         style={
           {
-            "alignItems": "flex-start",
-            "alignSelf": "flex-end",
-            "flexDirection": "column",
+            "alignSelf": "stretch",
             "justifyContent": "flex-start",
-            "marginTop": "auto",
           }
         }
       >
-        <View
+        <Text
+          allowFontScaling={true}
           ref={null}
           style={
             {
-              "alignSelf": "stretch",
-              "justifyContent": "flex-start",
+              "color": "#000000",
+              "fontSize": 12,
+              "textAlign": "left",
             }
           }
         >
-          <Text
-            allowFontScaling={true}
-            ref={null}
-            style={
-              {
-                "color": "#000000",
-                "fontSize": 12,
-                "textAlign": "left",
-              }
-            }
-          >
-            Bottom-right
-          </Text>
-        </View>
+          Bottom-right
+        </Text>
       </View>
     </View>
   </View>
@@ -1679,12 +1637,9 @@ exports[`DivKit Snapshot Tests Overlap container match_parent children fill pare
       ref={null}
       style={
         {
-          "bottom": 0,
-          "flexDirection": "column",
-          "left": 0,
-          "position": "absolute",
-          "right": 0,
-          "top": 0,
+          "alignSelf": "stretch",
+          "flexBasis": 0,
+          "flexGrow": 1,
         }
       }
     >
@@ -1692,60 +1647,49 @@ exports[`DivKit Snapshot Tests Overlap container match_parent children fill pare
         ref={null}
         style={
           {
-            "alignSelf": "stretch",
-            "flexBasis": 0,
-            "flexGrow": 1,
+            "alignItems": "center",
+            "justifyContent": "center",
+            "overflow": "hidden",
           }
         }
       >
+        <Image
+          onError={[Function]}
+          onLoadEnd={[Function]}
+          ref={null}
+          resizeMode="cover"
+          source={
+            {
+              "uri": "https://example.com/bg.png",
+            }
+          }
+          style={
+            {
+              "height": "100%",
+              "width": "100%",
+            }
+          }
+        />
         <View
           ref={null}
           style={
             {
               "alignItems": "center",
+              "backgroundColor": "transparent",
+              "bottom": 0,
               "justifyContent": "center",
-              "overflow": "hidden",
+              "left": 0,
+              "position": "absolute",
+              "right": 0,
+              "top": 0,
             }
           }
         >
-          <Image
-            onError={[Function]}
-            onLoadEnd={[Function]}
+          <ActivityIndicator
+            color="#999999"
             ref={null}
-            resizeMode="cover"
-            source={
-              {
-                "uri": "https://example.com/bg.png",
-              }
-            }
-            style={
-              {
-                "height": "100%",
-                "width": "100%",
-              }
-            }
+            size="small"
           />
-          <View
-            ref={null}
-            style={
-              {
-                "alignItems": "center",
-                "backgroundColor": "transparent",
-                "bottom": 0,
-                "justifyContent": "center",
-                "left": 0,
-                "position": "absolute",
-                "right": 0,
-                "top": 0,
-              }
-            }
-          >
-            <ActivityIndicator
-              color="#999999"
-              ref={null}
-              size="small"
-            />
-          </View>
         </View>
       </View>
     </View>
