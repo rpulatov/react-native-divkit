@@ -3,14 +3,6 @@
 exports[`DivImage snapshots full render snapshots basic image with fixed size 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -77,14 +69,6 @@ exports[`DivImage snapshots full render snapshots basic image with fixed size 1`
 exports[`DivImage snapshots full render snapshots image with alignment 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -151,14 +135,6 @@ exports[`DivImage snapshots full render snapshots image with alignment 1`] = `
 exports[`DivImage snapshots full render snapshots image with aspect ratio and fit scale 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
