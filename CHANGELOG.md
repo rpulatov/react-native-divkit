@@ -1,3 +1,10 @@
+## [1.6.5](https://github.com/rpulatov/react-native-divkit/compare/v1.6.4...v1.6.5) (2026-04-17)
+
+
+### Bug Fixes
+
+* Сделать отрисовку DivKit root контент по intrinsic size ([f9af65c](https://github.com/rpulatov/react-native-divkit/commit/f9af65c8cf5838b486dcdb68639322672a9dc2ed))
+
 ## [1.6.4](https://github.com/rpulatov/react-native-divkit/compare/v1.6.3...v1.6.4) (2026-03-16)
 
 
