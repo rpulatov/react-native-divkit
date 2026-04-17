@@ -19,7 +19,7 @@
  */
 
 import React, { useMemo, useCallback, useRef, useEffect } from 'react';
-import { View, StyleSheet, type ViewStyle } from 'react-native';
+import { View, type ViewStyle } from 'react-native';
 import type { Action, DivJson, DivVariable, Direction } from '../typings/common';
 import type { DivBaseData } from './types/base';
 import type { ComponentContext } from './types/componentContext';
@@ -95,8 +95,8 @@ export interface DivKitProps {
      * @example
      * ```tsx
      * <DivKit
-    *   typefaceProvider={(fontFamily, opts) => {
-    *     if (!fontFamily) return 'MyDefaultText-Regular';
+     *   typefaceProvider={(fontFamily, opts) => {
+     *     if (!fontFamily) return 'MyDefaultText-Regular';
      *     if (fontFamily === 'display') return 'MyCustomDisplay-Bold';
      *     return '';
      *   }}
@@ -651,14 +651,20 @@ export function DivKit({
             registerPager: (): any => {
                 // MVP: Pagers deferred
                 return {
-                    update() { /* noop */ },
-                    destroy() { /* noop */ }
+                    update() {
+                        /* noop */
+                    },
+                    destroy() {
+                        /* noop */
+                    }
                 };
             },
 
             listenPager: (): (() => void) => {
                 // MVP: Pagers deferred
-                return () => { /* noop */ };
+                return () => {
+                    /* noop */
+                };
             },
 
             destroy: (): void => {
@@ -671,14 +677,14 @@ export function DivKit({
 
     // Render
     if (!rootDiv || !rootComponentContext) {
-        return <View style={[styles.container, style]}>{/* Empty state - could render error UI here */}</View>;
+        return <View style={style}>{/* Empty state - could render error UI here */}</View>;
     }
 
     return (
         <DivKitContext.Provider value={divKitContextValue}>
             <ActionContext.Provider value={actionContextValue}>
                 <StateContext.Provider value={stateContextValue}>
-                    <View style={[styles.container, style]}>
+                    <View style={style}>
                         <DivComponent componentContext={rootComponentContext} />
                     </View>
                 </StateContext.Provider>
@@ -686,9 +692,3 @@ export function DivKit({
         </DivKitContext.Provider>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    }
-});

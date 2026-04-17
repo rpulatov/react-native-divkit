@@ -3,14 +3,6 @@
 exports[`DivKit Snapshot Tests Animated buttons with margins buttons with action_animation preserve margins 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -122,14 +114,6 @@ exports[`DivKit Snapshot Tests Animated buttons with margins buttons with action
 exports[`DivKit Snapshot Tests Background and borders solid background with corner_radius 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -203,14 +187,6 @@ exports[`DivKit Snapshot Tests Background and borders solid background with corn
 exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -769,14 +745,6 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
 exports[`DivKit Snapshot Tests Full JSON fixtures tap-animations.json renders correctly 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -1093,14 +1061,6 @@ Fade, scale, and a combination of fade and scale animations are supported.
 exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template) renders correctly 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -1357,14 +1317,6 @@ exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template)
 exports[`DivKit Snapshot Tests Horizontal container alignment content_alignment_horizontal: center + content_alignment_vertical: bottom 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -1468,14 +1420,6 @@ exports[`DivKit Snapshot Tests Horizontal container alignment content_alignment_
 exports[`DivKit Snapshot Tests Horizontal container alignment content_alignment_horizontal: space-between 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -1541,14 +1485,6 @@ exports[`DivKit Snapshot Tests Horizontal container alignment content_alignment_
 exports[`DivKit Snapshot Tests Horizontal container alignment content_alignment_vertical: bottom aligns children to bottom 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -1592,14 +1528,6 @@ exports[`DivKit Snapshot Tests Horizontal container alignment content_alignment_
 exports[`DivKit Snapshot Tests Overlap container child alignment_horizontal: right, alignment_vertical: bottom 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -1669,14 +1597,6 @@ exports[`DivKit Snapshot Tests Overlap container child alignment_horizontal: rig
 exports[`DivKit Snapshot Tests Overlap container match_parent children fill parent 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -1811,14 +1731,6 @@ exports[`DivKit Snapshot Tests Overlap container match_parent children fill pare
 exports[`DivKit Snapshot Tests Sizing combinations fixed width and height 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -1851,14 +1763,6 @@ exports[`DivKit Snapshot Tests Sizing combinations fixed width and height 1`] = 
 exports[`DivKit Snapshot Tests Sizing combinations match_parent with min/max size 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -1911,14 +1815,6 @@ exports[`DivKit Snapshot Tests Sizing combinations match_parent with min/max siz
 exports[`DivKit Snapshot Tests Sizing combinations match_parent with weight in vertical container 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -1993,14 +1889,6 @@ exports[`DivKit Snapshot Tests Sizing combinations match_parent with weight in v
 exports[`DivKit Snapshot Tests Sizing combinations wrap_content with min/max constraints 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -2033,14 +1921,6 @@ exports[`DivKit Snapshot Tests Sizing combinations wrap_content with min/max con
 exports[`DivKit Snapshot Tests Vertical container alignment content_alignment_horizontal: center 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -2084,14 +1964,6 @@ exports[`DivKit Snapshot Tests Vertical container alignment content_alignment_ho
 exports[`DivKit Snapshot Tests Vertical container alignment content_alignment_vertical: bottom 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -2135,14 +2007,6 @@ exports[`DivKit Snapshot Tests Vertical container alignment content_alignment_ve
 exports[`DivKit Snapshot Tests Visibility gone hides element completely 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
@@ -2208,14 +2072,6 @@ exports[`DivKit Snapshot Tests Visibility gone hides element completely 1`] = `
 exports[`DivKit Snapshot Tests Visibility invisible takes space but not visible 1`] = `
 <View
   ref={null}
-  style={
-    [
-      {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
 >
   <View
     ref={null}
