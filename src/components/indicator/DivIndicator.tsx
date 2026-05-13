@@ -1,67 +1,15 @@
 import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { View, ScrollView, Pressable, StyleSheet, ViewStyle } from 'react-native';
 import type { ComponentContext } from '../../types/componentContext';
-import type {
-    DivIndicatorData,
-    DivIndicatorDefaultItemPlacement,
-    DivIndicatorStretchItemPlacement
-} from '../../types/indicator';
-import type { RoundedRectangle, Circle } from '../../types/shape';
+import type { DivIndicatorData } from '../../types/indicator';
 import type { PagerData } from '../../types/componentContext';
 import { Outer } from '../utilities/Outer';
 import { useDerivedFromVarsSimple } from '../../hooks/useDerivedFromVars';
 import { usePagerContextOptional } from '../../context/PagerContext';
-import { correctColor } from '../../utils/correctColor';
+import { buildDotStyles, resolvePlacement } from './utils';
 
 export interface DivIndicatorProps {
     componentContext: ComponentContext<DivIndicatorData>;
-}
-
-interface DotStyle {
-    width: number;
-    height: number;
-    borderRadius: number;
-    background: string;
-}
-
-const DEFAULT_ACTIVE: DotStyle = {
-    width: 13,
-    height: 13,
-    borderRadius: 6.5,
-    background: '#ffdc60'
-};
-const DEFAULT_INACTIVE: DotStyle = {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    background: '#33919cb5'
-};
-
-function shapeToDot(shape: any, fallbackColor: string, base: DotStyle): DotStyle {
-    if (!shape) return base;
-    if (shape.type === 'rounded_rectangle') {
-        const s = shape as RoundedRectangle;
-        const w = s.item_width?.value ?? base.width;
-        const h = s.item_height?.value ?? base.height;
-        const r = s.corner_radius?.value ?? Math.min(w, h) / 2;
-        return {
-            width: w,
-            height: h,
-            borderRadius: r,
-            background: correctColor(s.background_color, 1, fallbackColor)
-        };
-    }
-    if (shape.type === 'circle') {
-        const s = shape as Circle;
-        const r = s.radius?.value ?? base.width / 2;
-        return {
-            width: r * 2,
-            height: r * 2,
-            borderRadius: r,
-            background: correctColor(s.background_color, 1, fallbackColor)
-        };
-    }
-    return base;
 }
 
 /**
@@ -109,55 +57,28 @@ export function DivIndicator({ componentContext }: DivIndicatorProps) {
         variables || new Map()
     );
 
-    const { activeStyle, inactiveStyle } = useMemo(() => {
-        let inactive: DotStyle = { ...DEFAULT_INACTIVE };
-        let active: DotStyle = { ...DEFAULT_ACTIVE };
+    const { active: activeStyle, inactive: inactiveStyle } = useMemo(
+        () =>
+            buildDotStyles({
+                activeShape: activeShapeJson,
+                inactiveShape: inactiveShapeJson,
+                legacyShape: shapeJson,
+                activeColor,
+                inactiveColor,
+                activeItemSize
+            }),
+        [activeShapeJson, inactiveShapeJson, shapeJson, activeColor, inactiveColor, activeItemSize]
+    );
 
-        if (activeShapeJson) {
-            active = shapeToDot(activeShapeJson, active.background, active);
-        }
-        if (inactiveShapeJson) {
-            inactive = shapeToDot(inactiveShapeJson, inactive.background, inactive);
-        }
-        if (!activeShapeJson && !inactiveShapeJson && shapeJson) {
-            const sizeMul = typeof activeItemSize === 'number' && activeItemSize > 0 ? activeItemSize : 1.3;
-            inactive = shapeToDot(shapeJson, inactive.background, inactive);
-            inactive.background = correctColor(inactiveColor, 1, inactive.background);
-            const activeBg = correctColor(activeColor, 1, active.background);
-            active = {
-                width: inactive.width * sizeMul,
-                height: inactive.height * sizeMul,
-                borderRadius: inactive.borderRadius * sizeMul,
-                background: activeBg
-            };
-        }
-        return { activeStyle: active, inactiveStyle: inactive };
-    }, [activeShapeJson, inactiveShapeJson, shapeJson, activeColor, inactiveColor, activeItemSize]);
-
-    // Resolve placement
-    const { placement, gap, stretchSpacing, maxVisible } = useMemo(() => {
-        if (itemsPlacement && (itemsPlacement as any).type === 'stretch') {
-            const p = itemsPlacement as DivIndicatorStretchItemPlacement;
-            return {
-                placement: 'stretch' as const,
-                gap: 0,
-                stretchSpacing: p.item_spacing?.value ?? 5,
-                maxVisible: p.max_visible_items ?? 10
-            };
-        }
-        let center = (spaceBetweenCenters as { value?: number } | undefined)?.value;
-        if (itemsPlacement && (itemsPlacement as any).type === 'default') {
-            const p = itemsPlacement as DivIndicatorDefaultItemPlacement;
-            center = p.space_between_centers?.value ?? center;
-        }
-        const c = typeof center === 'number' && center >= 0 ? center : 15;
-        return {
-            placement: 'default' as const,
-            gap: Math.max(0, c - inactiveStyle.width),
-            stretchSpacing: 0,
-            maxVisible: 10
-        };
-    }, [itemsPlacement, spaceBetweenCenters, inactiveStyle.width]);
+    const { placement, gap, stretchSpacing, maxVisible } = useMemo(
+        () =>
+            resolvePlacement({
+                itemsPlacement,
+                spaceBetweenCenters,
+                inactiveWidth: inactiveStyle.width
+            }),
+        [itemsPlacement, spaceBetweenCenters, inactiveStyle.width]
+    );
 
     const [pagerData, setPagerData] = useState<PagerData | null>(null);
     const scrollerRef = useRef<ScrollView>(null);

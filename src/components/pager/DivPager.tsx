@@ -16,14 +16,24 @@ import { useDerivedFromVarsSimple } from '../../hooks/useDerivedFromVars';
 import { useDivKitContext } from '../../context/DivKitContext';
 import { usePagerContextOptional } from '../../context/PagerContext';
 import { wrapError } from '../../utils/wrapError';
+import {
+    DUPLICATES_IN_INFINITE,
+    buildRenderedItems,
+    computeContentPad,
+    computePageSize,
+    isInDuplicateRegion as isInDuplicateRegionFn,
+    isInfiniteEnabled,
+    offsetToPosition,
+    positionToReal as positionToRealFn,
+    realToPosition as realToPositionFn,
+    type ScrollAxisAlignment
+} from './utils';
 
 export interface DivPagerProps {
     componentContext: ComponentContext<DivPagerData>;
 }
 
-// Number of duplicates added at each end in infinite_scroll mode.
-// Matches Web (DUPLICATES_IN_INFINITE).
-const DUPLICATES = 2;
+const DUPLICATES = DUPLICATES_IN_INFINITE;
 
 /**
  * DivPager — horizontal/vertical pager with snap-to-page scrolling.
@@ -74,12 +84,10 @@ export function DivPager({ componentContext }: DivPagerProps) {
         return Array.isArray(json.items) ? json.items : [];
     }, [json.items]);
 
-    // Infinite mode requires at least 2 items for duplicates to make sense.
-    const isInfinite = useMemo(() => {
-        const v = infiniteScroll as any;
-        const truthy = v === true || v === 1 || v === '1' || v === 'true';
-        return truthy && items.length >= 2;
-    }, [infiniteScroll, items.length]);
+    const isInfinite = useMemo(
+        () => isInfiniteEnabled(infiniteScroll, items.length),
+        [infiniteScroll, items.length]
+    );
 
     // Pager paddings — applied on the inner ScrollView so we can also use them
     // for snap math. Outer should NOT also apply them, so we strip them from
@@ -106,88 +114,57 @@ export function DivPager({ componentContext }: DivPagerProps) {
     const registerDataRef = useRef<PagerRegisterData | null>(null);
     const pagerInstId = useRef<string>(genId('pager'));
 
-    // Per-page size in main axis
-    const pageSize = useMemo(() => {
-        if (containerSize <= 0) return 0;
-        const usable = containerSize - innerPadStart - innerPadEnd;
-
-        if (layoutMode && (layoutMode as any).type === 'fixed') {
-            const neighbourW = (layoutMode as any).neighbour_page_width?.value ?? 0;
-            if (scrollAxisAlignment === 'center') {
-                return Math.max(0, containerSize - 2 * neighbourW - 2 * itemSpacing);
-            }
-            return Math.max(0, containerSize - neighbourW - itemSpacing);
-        }
-        if (layoutMode && (layoutMode as any).type === 'percentage') {
-            const pageW = (layoutMode as any).page_width?.value ?? 100;
-            return Math.max(0, (containerSize * pageW) / 100);
-        }
-        // wrap_content / unknown — fall back to full usable width
-        return Math.max(0, usable);
-    }, [containerSize, innerPadStart, innerPadEnd, layoutMode, scrollAxisAlignment, itemSpacing]);
+    const pageSize = useMemo(
+        () =>
+            computePageSize({
+                containerSize,
+                layoutMode,
+                scrollAxisAlignment: scrollAxisAlignment as ScrollAxisAlignment,
+                itemSpacing,
+                innerPadStart,
+                innerPadEnd
+            }),
+        [containerSize, innerPadStart, innerPadEnd, layoutMode, scrollAxisAlignment, itemSpacing]
+    );
 
     const snapInterval = pageSize > 0 ? pageSize + itemSpacing : 0;
 
-    // ContentContainer paddings — to position first/last items based on alignment.
-    // In infinite mode the duplicates fill that space, so paddings are not added
-    // (otherwise the loop would be visually offset on the wraparound jump).
-    const contentPad = useMemo(() => {
-        if (containerSize <= 0 || pageSize <= 0) {
-            return { start: innerPadStart, end: innerPadEnd };
-        }
-        if (isInfinite) {
-            return { start: 0, end: 0 };
-        }
-        if (layoutMode && (layoutMode as any).type === 'fixed') {
-            const neighbourW = (layoutMode as any).neighbour_page_width?.value ?? 0;
-            if (scrollAxisAlignment === 'center') {
-                const pad = neighbourW + itemSpacing;
-                return { start: pad, end: pad };
-            }
-            if (scrollAxisAlignment === 'start') {
-                return { start: innerPadStart, end: neighbourW + itemSpacing + innerPadEnd };
-            }
-            if (scrollAxisAlignment === 'end') {
-                return { start: neighbourW + itemSpacing + innerPadStart, end: innerPadEnd };
-            }
-        }
-        return { start: innerPadStart, end: innerPadEnd };
-    }, [
-        containerSize,
-        pageSize,
-        innerPadStart,
-        innerPadEnd,
-        layoutMode,
-        scrollAxisAlignment,
-        itemSpacing,
-        isInfinite
-    ]);
+    const contentPad = useMemo(
+        () =>
+            computeContentPad({
+                containerSize,
+                pageSize,
+                innerPadStart,
+                innerPadEnd,
+                layoutMode,
+                scrollAxisAlignment: scrollAxisAlignment as ScrollAxisAlignment,
+                itemSpacing,
+                isInfinite
+            }),
+        [
+            containerSize,
+            pageSize,
+            innerPadStart,
+            innerPadEnd,
+            layoutMode,
+            scrollAxisAlignment,
+            itemSpacing,
+            isInfinite
+        ]
+    );
 
-    // Real index → rendered position. In infinite mode real items live in
-    // [DUPLICATES, DUPLICATES + size).
     const realToPosition = useCallback(
-        (realIdx: number) => (isInfinite ? DUPLICATES + realIdx : realIdx),
+        (realIdx: number) => realToPositionFn(realIdx, isInfinite, DUPLICATES),
         [isInfinite]
     );
 
-    // Rendered position → real index (mod size for infinite mode).
     const positionToReal = useCallback(
-        (pos: number) => {
-            if (!isInfinite) {
-                return Math.max(0, Math.min(items.length - 1, pos));
-            }
-            const inner = pos - DUPLICATES;
-            const size = items.length;
-            return ((inner % size) + size) % size;
-        },
+        (pos: number) => positionToRealFn(pos, isInfinite, items.length, DUPLICATES),
         [isInfinite, items.length]
     );
 
     const isInDuplicateRegion = useCallback(
-        (pos: number) => {
-            if (!isInfinite) return false;
-            return pos < DUPLICATES || pos >= DUPLICATES + items.length;
-        },
+        (pos: number) => isInDuplicateRegionFn(pos, isInfinite, items.length, DUPLICATES),
         [isInfinite, items.length]
     );
 
@@ -279,7 +256,7 @@ export function DivPager({ componentContext }: DivPagerProps) {
             if (snapInterval <= 0) return;
             const { contentOffset } = event.nativeEvent;
             const offset = isHorizontal ? contentOffset.x : contentOffset.y;
-            const pos = Math.round(offset / snapInterval);
+            const pos = offsetToPosition(offset, snapInterval);
             const realIdx = positionToReal(pos);
 
             // In infinite mode: silently snap from a duplicate back to the
@@ -332,26 +309,10 @@ export function DivPager({ componentContext }: DivPagerProps) {
         return { ...componentContext, json: restJson } as ComponentContext<DivPagerData>;
     }, [componentContext, json]);
 
-    // Build the rendered item list (with duplicates in infinite mode).
-    const renderedItems = useMemo(() => {
-        if (!items.length) return [];
-        if (!isInfinite) {
-            return items.map((item, index) => ({ item, realIndex: index, key: `r-${index}` }));
-        }
-        const size = items.length;
-        const head: { item: any; realIndex: number; key: string }[] = [];
-        const tail: { item: any; realIndex: number; key: string }[] = [];
-        for (let i = 0; i < DUPLICATES; i++) {
-            const realIdx = (size - DUPLICATES + i + size) % size;
-            head.push({ item: items[realIdx], realIndex: realIdx, key: `dup-h-${i}` });
-        }
-        for (let i = 0; i < DUPLICATES; i++) {
-            const realIdx = i % size;
-            tail.push({ item: items[realIdx], realIndex: realIdx, key: `dup-t-${i}` });
-        }
-        const real = items.map((item, index) => ({ item, realIndex: index, key: `r-${index}` }));
-        return [...head, ...real, ...tail];
-    }, [items, isInfinite]);
+    const renderedItems = useMemo(
+        () => buildRenderedItems(items, isInfinite, DUPLICATES),
+        [items, isInfinite]
+    );
 
     if (!json.layout_mode) {
         componentContext.logError(

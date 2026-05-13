@@ -21,6 +21,16 @@ module.exports = {
     collectCoverageFrom: ['src/**/*.{ts,tsx}', '!src/**/*.d.ts', '!src/expressions/expressions.ts'],
     coverageDirectory: 'coverage',
     coverageReporters: ['text', 'lcov'],
-    testPathIgnorePatterns: ['/node_modules/', '/dist/', '/tests/snapshots/'],
-    modulePathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/examples/', '<rootDir>/tests/snapshots/']
+    testPathIgnorePatterns: [
+        '/node_modules/',
+        '/dist/',
+        '/tests/snapshots/',
+        '/tests/integration-rn/'
+    ],
+    modulePathIgnorePatterns: [
+        '<rootDir>/dist/',
+        '<rootDir>/examples/',
+        '<rootDir>/tests/snapshots/',
+        '<rootDir>/tests/integration-rn/'
+    ]
 };
