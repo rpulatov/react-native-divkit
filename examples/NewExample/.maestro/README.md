@@ -4,9 +4,12 @@ These flows run Android-only visual checks against the real React Native example
 
 ## First run
 
-Install Maestro and start an Android emulator, then run from `examples/NewExample`:
+Run the `CI` workflow manually from GitHub Actions with `maestro_android_mode=record`.
+The workflow records new Android goldens on the CI emulator and commits them back to the selected branch.
 
-Use the same emulator profile as CI when updating goldens: Pixel 9 Pro API 35.
+For local updates, install Maestro and start an Android emulator, then run from `examples/NewExample`:
+
+Use the same emulator profile as CI when updating goldens: Pixel API 33.
 
 ```sh
 npm run e2e:android:build

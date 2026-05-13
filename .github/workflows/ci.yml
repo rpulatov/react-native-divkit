@@ -5,6 +5,16 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      maestro_android_mode:
+        description: Verify snapshots or record new Android goldens
+        required: true
+        type: choice
+        default: verify
+        options:
+          - verify
+          - record
 
 jobs:
   ci:
@@ -48,6 +58,8 @@ jobs:
     name: Maestro Android Snapshots
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -93,13 +105,29 @@ jobs:
 
       - name: Run Maestro snapshots
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          MAESTRO_ANDROID_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.maestro_android_mode || 'verify' }}
         with:
           api-level: 33
           target: google_apis
           arch: x86_64
-          profile: pixel
+          profile: pixel_9_pro
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
           script: bash .github/scripts/run-maestro-android.sh
+
+      - name: Commit updated Maestro Android goldens
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.maestro_android_mode == 'record' }}
+        run: |
+          if git diff --quiet -- examples/NewExample/.maestro/goldens/android; then
+            echo "No Maestro Android golden changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add examples/NewExample/.maestro/goldens/android
+          git commit -m "Update Maestro Android snapshots"
+          git push origin HEAD:${GITHUB_REF_NAME}
 
       - name: Upload Maestro output
         if: always()
@@ -109,3 +137,10 @@ jobs:
           path: |
             examples/NewExample/.maestro/output
             examples/NewExample/metro.log
+
+      - name: Upload Maestro Android goldens
+        if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.maestro_android_mode == 'record' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-android-goldens
+          path: examples/NewExample/.maestro/goldens/android
