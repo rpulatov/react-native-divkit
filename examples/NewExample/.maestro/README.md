@@ -6,6 +6,8 @@ These flows run Android-only visual checks against the real React Native example
 
 Install Maestro and start an Android emulator, then run from `examples/NewExample`:
 
+Use the same emulator profile as CI when updating goldens: Pixel 9 Pro API 35.
+
 ```sh
 npm run e2e:android:build
 npm run e2e:android:install
@@ -22,4 +24,3 @@ npm run e2e:maestro:android
 ```
 
 The snapshot flows compare only the `divkit-snapshot-area` element, avoiding device status bars and the event log panel.
-
