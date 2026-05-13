@@ -20,7 +20,7 @@
 
 import React, { useMemo, useCallback, useRef, useEffect } from 'react';
 import { View, type ViewStyle } from 'react-native';
-import type { Action, DivJson, DivVariable, Direction } from '../typings/common';
+import type { Action, DivJson, DivVariable, Direction, VariableTrigger } from '../typings/common';
 import type { DivBaseData } from './types/base';
 import type { ComponentContext } from './types/componentContext';
 import type { MaybeMissing } from './expressions/json';
@@ -40,6 +40,7 @@ import { updateStructure } from './actions/updateStructure';
 import { applySetStateAction, type ActionSetStateCompat } from './actions/setState';
 import { evalExpression } from './expressions/eval';
 import { parse } from './expressions/expressions';
+import { prepareVars } from './expressions/json';
 import { getUrlSchema } from './utils/url';
 
 /**
@@ -249,6 +250,14 @@ export function DivKit({
         return `${key}_${componentIdCounter.current++}`;
     }, []);
 
+    // Card-level variable_triggers (data.card.variable_triggers).
+    // We can't subscribe here yet — execAnyActions is defined below; the actual subscription
+    // happens in a useEffect after execAnyActions is in scope.
+    const variableTriggers = useMemo<VariableTrigger[] | undefined>(() => {
+        const raw = data.card?.variable_triggers;
+        return Array.isArray(raw) ? (raw as VariableTrigger[]) : undefined;
+    }, [data]);
+
     // Variable management
     const getVariable = useCallback(
         (name: string): Variable | undefined => {
@@ -432,7 +441,24 @@ export function DivKit({
                                         const name = params.get('name');
                                         const value = params.get('value');
                                         if (name && value !== null) {
-                                            setVariable(name, value);
+                                            const variableInstance = variables.get(name);
+                                            if (variableInstance) {
+                                                try {
+                                                    variableInstance.set(value);
+                                                } catch (err) {
+                                                    logError(
+                                                        wrapError(err as Error, {
+                                                            additional: { variable: name, value }
+                                                        })
+                                                    );
+                                                }
+                                            } else {
+                                                logError(
+                                                    wrapError(new Error('Cannot find variable'), {
+                                                        additional: { name }
+                                                    })
+                                                );
+                                            }
                                         } else {
                                             logError(
                                                 wrapError(new Error('Incorrect set_variable_action'), {
@@ -463,6 +489,103 @@ export function DivKit({
         },
         [variables, logError, onStat, onCustomAction, setVariable]
     );
+
+    // Subscribe card-level variable_triggers (по образцу Web Root.svelte processVariableTriggers).
+    // on_condition — actions fire only on false→true transition.
+    // on_variable  — actions fire every time used variables change while condition is true.
+    useEffect(() => {
+        if (!variableTriggers || variableTriggers.length === 0) {
+            return;
+        }
+
+        const cleanups: Array<() => void> = [];
+
+        for (const trigger of variableTriggers) {
+            if (typeof trigger.condition !== 'string') {
+                logError(wrapError(new Error('variable_trigger has a condition that is not a string'), {
+                    additional: { condition: trigger.condition as unknown as string }
+                }));
+                continue;
+            }
+            if (!Array.isArray(trigger.actions)) {
+                logError(wrapError(new Error('variable_trigger has no actions'), {
+                    additional: { condition: trigger.condition }
+                }));
+                continue;
+            }
+            const mode = trigger.mode || 'on_condition';
+            if (mode !== 'on_variable' && mode !== 'on_condition') {
+                logError(wrapError(new Error('variable_trigger has an unsupported mode'), {
+                    additional: { mode }
+                }));
+                continue;
+            }
+
+            const prepared = prepareVars(
+                { condition: trigger.condition },
+                logError,
+                undefined,
+                0
+            );
+
+            if (prepared.vars.length === 0) {
+                logError(wrapError(new Error('variable_trigger must have variables in the condition'), {
+                    additional: { condition: trigger.condition }
+                }));
+                continue;
+            }
+
+            const evaluate = (): boolean => {
+                const { result } = prepared.applyVars(variables, undefined, false);
+                const value = (result as { condition?: unknown } | undefined)?.condition;
+                if (value === undefined) {
+                    return false;
+                }
+                // Boolean expressions stringify to '0'/'1' via prepareVars.
+                if (value === '1' || value === 1 || value === true) return true;
+                if (value === '0' || value === 0 || value === false) return false;
+                return Boolean(value);
+            };
+
+            let prevConditionResult = false;
+            let initialized = false;
+
+            const onChange = () => {
+                if (!initialized) return;
+                const cond = evaluate();
+                if (cond && (mode === 'on_variable' || prevConditionResult === false)) {
+                    prevConditionResult = cond;
+                    execAnyActions(trigger.actions, { processUrls: true });
+                } else {
+                    prevConditionResult = cond;
+                }
+            };
+
+            const unsubs: Array<() => void> = [];
+            for (const varName of prepared.vars) {
+                const variable = variables.get(varName);
+                if (!variable) continue;
+                unsubs.push(variable.subscribe(onChange));
+            }
+
+            // After all immediate subscribe-callbacks have fired (and been ignored),
+            // run initial evaluation explicitly — matches Web first-emit behavior.
+            initialized = true;
+            const initialCond = evaluate();
+            if (initialCond) {
+                prevConditionResult = initialCond;
+                execAnyActions(trigger.actions, { processUrls: true });
+            }
+
+            cleanups.push(() => {
+                unsubs.forEach(u => u());
+            });
+        }
+
+        return () => {
+            cleanups.forEach(c => c());
+        };
+    }, [variableTriggers, variables, execAnyActions, logError]);
 
     // Component registration
     const registerComponent = useCallback((_componentId: string, context: ComponentContext): void => {

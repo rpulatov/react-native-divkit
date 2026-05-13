@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
 import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
 import type { Background as BackgroundType, RadialBackground } from '../../types/background';
+import { correctColor } from '../../utils/correctColor';
 
 export interface BackgroundProps {
     layers?: BackgroundType[];
@@ -41,7 +42,7 @@ const RadialGradientLayer = ({ layer }: { layer: RadialBackground }) => {
             <Stop
                 key={index}
                 offset={index / (layer.colors!.length - 1)}
-                stopColor={color}
+                stopColor={correctColor(color)}
                 stopOpacity={1}
             />
         ));
@@ -50,7 +51,7 @@ const RadialGradientLayer = ({ layer }: { layer: RadialBackground }) => {
             <Stop
                 key={index}
                 offset={point.position}
-                stopColor={point.color}
+                stopColor={correctColor(point.color)}
                 stopOpacity={1}
             />
         ));
@@ -102,7 +103,7 @@ export const Background = ({ layers, style }: BackgroundProps) => {
                     return (
                         <View
                             key={index}
-                            style={[StyleSheet.absoluteFill, { backgroundColor: layer.color }]}
+                            style={[StyleSheet.absoluteFill, { backgroundColor: correctColor(layer.color) }]}
                         />
                     );
                 }

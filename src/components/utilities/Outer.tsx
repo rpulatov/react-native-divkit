@@ -1,18 +1,22 @@
-import React, { ReactNode, useMemo, useRef, useCallback } from 'react';
-import { View, Pressable, Animated, ViewStyle, StyleSheet, Easing, EasingFunction } from 'react-native';
+import React, { ReactNode, useMemo, useRef, useCallback, useState } from 'react';
+import { View, Pressable, Animated, ViewStyle, StyleSheet, Easing, EasingFunction, LayoutChangeEvent } from 'react-native';
 import type { ComponentContext } from '../../types/componentContext';
 import type { DivBaseData } from '../../types/base';
-import type { Visibility } from '../../types/base';
+import type { Visibility, AppearanceTransition, TransitionChange } from '../../types/base';
 import type { FixedSize, MatchParentSize, WrapContentSize } from '../../types/sizes';
 import type { MaybeMissing } from '../../expressions/json';
 import type { Animation } from '../../types/animation';
 import type { Interpolation } from '../../../typings/common';
 import { useDerivedFromVarsSimple } from '../../hooks/useDerivedFromVars';
 import { useActionHandler, useHasActions } from '../../hooks/useAction';
+import { useAppearanceTransition } from '../../hooks/useAppearanceTransition';
+import { useChangeBoundsTransition } from '../../hooks/useChangeBoundsTransition';
 import { useDivKitContext } from '../../context/DivKitContext';
 import { useLayoutParams } from '../../context/LayoutParamsContext';
+import { useDivStateScopeOptional } from '../../context/DivStateScopeContext';
 import { Background } from './Background';
 import { flattenAnimation } from '../../utils/flattenAnimation';
+import { configureChangeBoundsLayout } from '../../utils/configureChangeBoundsLayout';
 
 function resolveAlignSelf(
     alignment: string | undefined,
@@ -195,20 +199,72 @@ export function Outer<T extends DivBaseData = DivBaseData>({
         Animated.parallel(anims).start();
     }, [parsedAnimations, animOpacity, animScale]);
 
-    // Early return for gone visibility
-    if (visibility === 'gone') {
-        return null;
-    }
+    // Appearance transitions (transition_in / transition_out) and change_bounds (transition_change)
+    const transitionIn = (json as any).transition_in as MaybeMissing<AppearanceTransition> | undefined;
+    const transitionOut = (json as any).transition_out as MaybeMissing<AppearanceTransition> | undefined;
+    const transitionChange = (json as any).transition_change as MaybeMissing<TransitionChange> | undefined;
+    const hasAppearanceTransitions = Boolean(transitionIn || transitionOut);
+    const stateScope = useDivStateScopeOptional();
+    const insideDivState = Boolean(stateScope);
+
+    // For neighbors: when WE appear/collapse, queue a coarse LayoutAnimation so they reflow smoothly.
+    const triggerChangeBoundsForNeighbors = useCallback(() => {
+        configureChangeBoundsLayout(transitionChange);
+    }, [transitionChange]);
+
+    // FLIP-based bounds animation for THIS element: tracks layout deltas and animates via
+    // transform (translate+scale) so the spec's interpolator/cubic-bezier actually applies.
+    const bounds = useChangeBoundsTransition({
+        transitionChange
+    });
+
+    // Measured size for off-center pivot scale (translate-scale-translate emulation).
+    // We reuse the same onLayout for both FLIP and pivot calculations.
+    const [layoutSize, setLayoutSize] = useState<{ width: number; height: number } | null>(null);
+    const onLayoutMeasure = useCallback((e: LayoutChangeEvent) => {
+        const { width, height } = e.nativeEvent.layout;
+        setLayoutSize(prev => {
+            if (prev && prev.width === width && prev.height === height) return prev;
+            return { width, height };
+        });
+        bounds.onLayout(e);
+    }, [bounds]);
+
+    // Whether this element lives inside a DivState. If so, on state-change DivState will call
+    // our playOut (via the scope context) and await it before swapping children. In that mode we
+    // disable the visibility-driven first-mount transition_in (DivState will trigger playIn on
+    // the new children automatically through their mount-effect with auto-in mode).
+    const appearance = useAppearanceTransition({
+        visibility: visibility as Visibility,
+        transitionIn,
+        transitionOut,
+        enabled: hasAppearanceTransitions,
+        mode: insideDivState ? 'auto-in' : 'visibility',
+        onBeforeCollapse: triggerChangeBoundsForNeighbors,
+        onBeforeExpand: triggerChangeBoundsForNeighbors,
+        layoutWidth: layoutSize?.width,
+        layoutHeight: layoutSize?.height,
+    });
+
+    // Register transition_out player with the enclosing DivState scope so it can play before unmount.
+    React.useEffect(() => {
+        if (!stateScope || !appearance.hasTransitionOut) return;
+        return stateScope.registerTransitionOutPlayer(appearance.playOut);
+    }, [stateScope, appearance.hasTransitionOut, appearance.playOut]);
 
     // Build styles
     const containerStyle = useMemo(() => {
         const styles: ViewStyle = {};
 
         // Visibility (invisible = opacity 0, but still takes space)
-        if (visibility === 'invisible') {
-            styles.opacity = 0;
-        } else if (typeof alpha === 'number' && alpha !== 1) {
-            styles.opacity = Math.max(0, Math.min(1, alpha));
+        // When appearance transitions are present, opacity is driven by Animated values below,
+        // not by static styles — otherwise the static value would override animation.
+        if (!hasAppearanceTransitions) {
+            if (visibility === 'invisible') {
+                styles.opacity = 0;
+            } else if (typeof alpha === 'number' && alpha !== 1) {
+                styles.opacity = Math.max(0, Math.min(1, alpha));
+            }
         }
 
         // Resolve effective alignment (explicit > parent fallback > 'start')
@@ -436,7 +492,7 @@ export function Outer<T extends DivBaseData = DivBaseData>({
         }
 
         return styles;
-    }, [visibility, alpha, width, height, paddings, margins, background, border, direction, layoutParams, alignmentHorizontal, alignmentVertical]);
+    }, [visibility, alpha, width, height, paddings, margins, background, border, direction, layoutParams, alignmentHorizontal, alignmentVertical, hasAppearanceTransitions]);
 
     const finalStyle = useMemo(() => {
         return StyleSheet.flatten([containerStyle, customStyle]);
@@ -453,82 +509,141 @@ export function Outer<T extends DivBaseData = DivBaseData>({
         return res;
     }, [finalStyle]);
 
-    // Render with actions and animation
-    if (hasActions) {
-        const hasAnimation = parsedAnimations.length > 0;
+    // Collapsed via appearance transitions (or static 'gone' without transitions) — render nothing
+    if (appearance.collapsed) {
+        return null;
+    }
+    if (!hasAppearanceTransitions && visibility === 'gone') {
+        return null;
+    }
 
-        if (hasAnimation) {
-            // Split finalStyle into outer (layout) and inner (visual) styles
-            // Margins must be on Pressable to affect parent layout
-            const {
-                alignSelf, flexGrow, flexShrink, flexBasis,
-                width: w, height: h, minWidth, maxWidth, minHeight, maxHeight,
-                marginTop, marginBottom, marginLeft, marginRight,
-                ...innerStyle
-            } = (finalStyle || {}) as any;
+    const hasActionAnim = parsedAnimations.length > 0;
+    const hasTransitionChange = Boolean(transitionChange);
+    const needsAnimatedWrapper = hasActionAnim || hasAppearanceTransitions || hasTransitionChange;
 
-            const outerStyle: ViewStyle = {};
-            if (alignSelf !== undefined) outerStyle.alignSelf = alignSelf;
-            if (flexGrow !== undefined) outerStyle.flexGrow = flexGrow;
-            if (flexShrink !== undefined) outerStyle.flexShrink = flexShrink;
-            if (flexBasis !== undefined) outerStyle.flexBasis = flexBasis;
-            if (w !== undefined) outerStyle.width = w;
-            if (h !== undefined) outerStyle.height = h;
-            if (minWidth !== undefined) outerStyle.minWidth = minWidth;
-            if (maxWidth !== undefined) outerStyle.maxWidth = maxWidth;
-            if (minHeight !== undefined) outerStyle.minHeight = minHeight;
-            if (maxHeight !== undefined) outerStyle.maxHeight = maxHeight;
-            if (marginTop !== undefined) outerStyle.marginTop = marginTop;
-            if (marginBottom !== undefined) outerStyle.marginBottom = marginBottom;
-            if (marginLeft !== undefined) outerStyle.marginLeft = marginLeft;
-            if (marginRight !== undefined) outerStyle.marginRight = marginRight;
+    if (needsAnimatedWrapper) {
+        // Split finalStyle into outer (layout) and inner (visual) styles.
+        // Margins/sizing/alignSelf live on the wrapper that participates in parent layout (Pressable or outer View),
+        // visual styles go inside Animated.View.
+        const {
+            alignSelf, flexGrow, flexShrink, flexBasis,
+            width: w, height: h, minWidth, maxWidth, minHeight, maxHeight,
+            marginTop, marginBottom, marginLeft, marginRight,
+            ...innerStyle
+        } = (finalStyle || {}) as any;
 
-            // Build animated style from inner (visual) properties
-            const shouldFillInner =
-                w !== undefined ||
-                h !== undefined ||
-                minWidth !== undefined ||
-                maxWidth !== undefined ||
-                minHeight !== undefined ||
-                maxHeight !== undefined ||
-                flexGrow !== undefined ||
-                flexShrink !== undefined ||
-                flexBasis !== undefined;
+        const outerStyle: ViewStyle = {};
+        if (alignSelf !== undefined) outerStyle.alignSelf = alignSelf;
+        if (flexGrow !== undefined) outerStyle.flexGrow = flexGrow;
+        if (flexShrink !== undefined) outerStyle.flexShrink = flexShrink;
+        if (flexBasis !== undefined) outerStyle.flexBasis = flexBasis;
+        if (w !== undefined) outerStyle.width = w;
+        if (h !== undefined) outerStyle.height = h;
+        if (minWidth !== undefined) outerStyle.minWidth = minWidth;
+        if (maxWidth !== undefined) outerStyle.maxWidth = maxWidth;
+        if (minHeight !== undefined) outerStyle.minHeight = minHeight;
+        if (maxHeight !== undefined) outerStyle.maxHeight = maxHeight;
+        if (marginTop !== undefined) outerStyle.marginTop = marginTop;
+        if (marginBottom !== undefined) outerStyle.marginBottom = marginBottom;
+        if (marginLeft !== undefined) outerStyle.marginLeft = marginLeft;
+        if (marginRight !== undefined) outerStyle.marginRight = marginRight;
 
-            const animatedStyle: any = shouldFillInner
-                ? { ...innerStyle, flex: 1 }
-                : { ...innerStyle };
+        const shouldFillInner =
+            w !== undefined ||
+            h !== undefined ||
+            minWidth !== undefined ||
+            maxWidth !== undefined ||
+            minHeight !== undefined ||
+            maxHeight !== undefined ||
+            flexGrow !== undefined ||
+            flexShrink !== undefined ||
+            flexBasis !== undefined;
 
-            if (hasFadeAnimation) {
-                const staticOpacity = animatedStyle.opacity;
-                if (staticOpacity !== undefined && staticOpacity !== 1) {
-                    animatedStyle.opacity = Animated.multiply(animOpacity, staticOpacity);
-                } else {
-                    animatedStyle.opacity = animOpacity;
-                }
+        const animatedStyle: any = shouldFillInner
+            ? { ...innerStyle, flex: 1 }
+            : { ...innerStyle };
+
+        // Compose opacity chain: static * action_animation * appearance_transition
+        let opacityChain: any = undefined;
+        const staticOpacity = animatedStyle.opacity;
+        if (staticOpacity !== undefined && staticOpacity !== 1) {
+            opacityChain = staticOpacity;
+        }
+        if (hasActionAnim && hasFadeAnimation) {
+            opacityChain = opacityChain !== undefined
+                ? Animated.multiply(animOpacity, opacityChain)
+                : animOpacity;
+        }
+        if (hasAppearanceTransitions) {
+            opacityChain = opacityChain !== undefined
+                ? Animated.multiply(appearance.opacity as Animated.Value, opacityChain)
+                : appearance.opacity;
+        }
+        if (opacityChain !== undefined) {
+            animatedStyle.opacity = opacityChain;
+        }
+
+        // Compose transform array. Order matters: in RN transforms apply right-to-left
+        // (the LAST element is applied first to the point, then earlier ones).
+        // We want FLIP (bounds) to wrap everything → put it FIRST (so it applies last on top
+        // of action_animation/appearance). Static transforms from style come first too.
+        const transforms: any[] = animatedStyle.transform ? [...animatedStyle.transform] : [];
+        if (hasTransitionChange && bounds.transform.length > 0) {
+            for (const t of bounds.transform) {
+                transforms.push(t);
             }
-
-            if (hasScaleAnimation) {
-                const existingTransform = animatedStyle.transform || [];
-                animatedStyle.transform = [...existingTransform, { scale: animScale }];
+        }
+        if (hasActionAnim && hasScaleAnimation) {
+            transforms.push({ scale: animScale });
+        }
+        if (hasAppearanceTransitions && appearance.transform.length > 0) {
+            for (const t of appearance.transform) {
+                transforms.push(t);
             }
+        }
+        if (transforms.length > 0) {
+            animatedStyle.transform = transforms;
+        }
 
+        const innerNeedsOnLayout = hasAppearanceTransitions && !hasTransitionChange;
+        const outerNeedsOnLayout = hasTransitionChange;
+        const content = (
+            <Animated.View
+                style={animatedStyle}
+                onLayout={innerNeedsOnLayout ? onLayoutMeasure : undefined}
+            >
+                <Background layers={background as any} style={borderStyle} />
+                {children}
+            </Animated.View>
+        );
+
+        if (hasActions) {
             return (
                 <Pressable
                     onPress={handlePress}
                     onPressIn={onPressIn}
                     onPressOut={onPressOut}
                     style={outerStyle}
+                    onLayout={outerNeedsOnLayout ? onLayoutMeasure : undefined}
                     testID={testID}
                 >
-                    <Animated.View style={animatedStyle}>
-                        <Background layers={background as any} style={borderStyle} />
-                        {children}
-                    </Animated.View>
+                    {content}
                 </Pressable>
             );
         }
 
+        return (
+            <View
+                style={outerStyle}
+                onLayout={outerNeedsOnLayout ? onLayoutMeasure : undefined}
+                testID={testID}
+            >
+                {content}
+            </View>
+        );
+    }
+
+    if (hasActions) {
         return (
             <Pressable onPress={handlePress} style={finalStyle} testID={testID}>
                 <Background layers={background as any} style={borderStyle} />

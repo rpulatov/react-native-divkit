@@ -151,7 +151,7 @@ exports[`DivKit Snapshot Tests Background and borders solid background with corn
           [
             undefined,
             {
-              "backgroundColor": "#FF0000",
+              "backgroundColor": "#ff0000",
             },
           ]
         }
@@ -725,7 +725,7 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
                         [
                           undefined,
                           {
-                            "backgroundColor": "#1E9BFE",
+                            "backgroundColor": "#1e9bfe",
                           },
                         ]
                       }
@@ -869,7 +869,7 @@ Fade, scale, and a combination of fade and scale animations are supported.
               [
                 undefined,
                 {
-                  "backgroundColor": "#00B341",
+                  "backgroundColor": "#00b341",
                 },
               ]
             }
@@ -948,7 +948,7 @@ Fade, scale, and a combination of fade and scale animations are supported.
               [
                 undefined,
                 {
-                  "backgroundColor": "#0077FF",
+                  "backgroundColor": "#0077ff",
                 },
               ]
             }
@@ -1032,7 +1032,7 @@ Fade, scale, and a combination of fade and scale animations are supported.
               [
                 undefined,
                 {
-                  "backgroundColor": "#FFCC00",
+                  "backgroundColor": "#ffcc00",
                 },
               ]
             }
