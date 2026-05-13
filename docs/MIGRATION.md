@@ -473,8 +473,9 @@ These features are planned for future versions:
 | Container         | Full        | Basic   |
 | Image             | Full        | Basic   |
 | State             | Full        | Full    |
+| Pager             | Full        | Full    |
+| Indicator         | Full        | Full    |
 | Gallery           | Full        | No      |
-| Pager             | Full        | No      |
 | Tabs              | Full        | No      |
 | Input             | Full        | No      |
 | Select            | Full        | No      |
