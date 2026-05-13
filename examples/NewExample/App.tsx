@@ -28,6 +28,8 @@ import withImageJson from './sample-divs/with-image.json';
 import withActionsJson from './sample-divs/with-actions.json';
 import tapAnimationsJson from './sample-divs/tap-animations.json';
 import pagerWithIndicatorJson from './sample-divs/pager-with-indicator.json';
+import transitionOutJson from './sample-divs/transition-out.json';
+import transitionInOutVisibilityJson from './sample-divs/transition_in_out_visibility.json';
 
 import type { DivJson } from '../../src';
 
@@ -65,6 +67,17 @@ const examples = [
     name: 'Pager + Indicator',
     data: pagerWithIndicatorJson,
     description: 'Pager with indicator dots',
+  },
+  {
+    name: 'Transition Out',
+    data: transitionOutJson,
+    description:
+      'visibility binding + scale/fade transition_out + change_bounds',
+  },
+  {
+    name: 'Transition In/Out Visibility',
+    data: transitionInOutVisibilityJson,
+    description: 'transition_in / transition_out по смене visibility',
   },
 ];
 

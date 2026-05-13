@@ -7,8 +7,12 @@ module.exports = {
             jsx: true
         }
     },
-    extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
-    plugins: ['@typescript-eslint'],
+    extends: [
+        'eslint:recommended',
+        'plugin:@typescript-eslint/recommended',
+        'plugin:react-hooks/recommended'
+    ],
+    plugins: ['@typescript-eslint', 'react-hooks'],
     env: {
         browser: false,
         node: true,
