@@ -122,6 +122,7 @@ export function Outer<T extends DivBaseData = DivBaseData>({
     const { direction } = useDivKitContext();
     const layoutParams = useLayoutParams();
     const { json, variables } = componentContext;
+    const testID = (json as any).id as string | undefined;
 
     // Only use reactive hooks for truly dynamic properties (visibility, alpha)
     const visibility = useDerivedFromVarsSimple<Visibility>(json.visibility || 'visible', variables || new Map());
@@ -518,6 +519,7 @@ export function Outer<T extends DivBaseData = DivBaseData>({
                     onPressIn={onPressIn}
                     onPressOut={onPressOut}
                     style={outerStyle}
+                    testID={testID}
                 >
                     <Animated.View style={animatedStyle}>
                         <Background layers={background as any} style={borderStyle} />
@@ -528,7 +530,7 @@ export function Outer<T extends DivBaseData = DivBaseData>({
         }
 
         return (
-            <Pressable onPress={handlePress} style={finalStyle}>
+            <Pressable onPress={handlePress} style={finalStyle} testID={testID}>
                 <Background layers={background as any} style={borderStyle} />
                 {children}
             </Pressable>
@@ -536,7 +538,7 @@ export function Outer<T extends DivBaseData = DivBaseData>({
     }
 
     return (
-        <View style={finalStyle}>
+        <View style={finalStyle} testID={testID}>
             <Background layers={background as any} style={borderStyle} />
             {children}
         </View>
