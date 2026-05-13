@@ -1,3 +1,21 @@
+# [1.7.0](https://github.com/rpulatov/react-native-divkit/compare/v1.6.5...v1.7.0) (2026-05-13)
+
+
+### Bug Fixes
+
+* **ci:** изменить профиль эмулятора на pixel ([5edc70e](https://github.com/rpulatov/react-native-divkit/commit/5edc70ea4f9d926d25297246f0cd9fd8a12307ee))
+* **pager:** исправление ошибок линтера react-hooks/exhaustive-deps ([86f28ea](https://github.com/rpulatov/react-native-divkit/commit/86f28ea81b1d0d4197a2c5e42c45a96056c7d22b))
+
+
+### Features
+
+* **ci:** добавить поддержку режима записи для Maestro Android ([d01f7be](https://github.com/rpulatov/react-native-divkit/commit/d01f7bec59827036299d888873826943a1221df7))
+* **ci:** добавить скрипт для запуска Maestro на Android ([978f3af](https://github.com/rpulatov/react-native-divkit/commit/978f3af73964b92671b1f9cb0c65238753acdd96))
+* **ci:** добавить шаги для Maestro Android Snapshots ([20b5a27](https://github.com/rpulatov/react-native-divkit/commit/20b5a27ef928ef1e0b954e4a2515b4f4b5c8618d))
+* **docs:** добавить документацию для компонентов Pager и Indicator ([c512f11](https://github.com/rpulatov/react-native-divkit/commit/c512f11aaaf9216669908b6ca5de33d898d0d47e))
+* **e2e:** добавить поддержку Maestro для визуальных тестов ([1d581f1](https://github.com/rpulatov/react-native-divkit/commit/1d581f15f6df18737cf04b9ca55be1121edc5799))
+* Добавить pager компонент с поддержкой indicator ([eecf8f6](https://github.com/rpulatov/react-native-divkit/commit/eecf8f62c6c8e62234ff770b6f9d9de232afde84))
+
 ## [1.6.5](https://github.com/rpulatov/react-native-divkit/compare/v1.6.4...v1.6.5) (2026-04-17)
 
 
