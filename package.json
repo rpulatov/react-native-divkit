@@ -16,6 +16,7 @@
     "test": "jest",
     "test:snapshot": "jest --config jest.snapshot.config.js",
     "test:snapshot:update": "jest --config jest.snapshot.config.js -u",
+    "test:integration": "jest --config jest.integration.config.js",
     "lint": "eslint src --ext .ts,.tsx",
     "typecheck": "tsc --noEmit"
   },
