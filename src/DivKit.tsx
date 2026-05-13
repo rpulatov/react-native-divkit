@@ -27,6 +27,7 @@ import type { MaybeMissing } from './expressions/json';
 import { DivKitContext, type DivKitContextValue, type TypefaceProvider } from './context/DivKitContext';
 import { ActionContext, type ActionContextValue } from './context/ActionContext';
 import { StateContext, type StateContextValue, type StateSetter } from './context/StateContext';
+import { PagerProvider } from './context/PagerContext';
 import { DivComponent } from './components/DivComponent';
 import { createVariable, Variable, type VariableType } from './expressions/variable';
 import { GlobalVariablesController } from './expressions/globalVariablesController';
@@ -684,9 +685,11 @@ export function DivKit({
         <DivKitContext.Provider value={divKitContextValue}>
             <ActionContext.Provider value={actionContextValue}>
                 <StateContext.Provider value={stateContextValue}>
-                    <View style={style}>
-                        <DivComponent componentContext={rootComponentContext} />
-                    </View>
+                    <PagerProvider>
+                        <View style={style}>
+                            <DivComponent componentContext={rootComponentContext} />
+                        </View>
+                    </PagerProvider>
                 </StateContext.Provider>
             </ActionContext.Provider>
         </DivKitContext.Provider>

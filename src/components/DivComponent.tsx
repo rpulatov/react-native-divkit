@@ -5,6 +5,8 @@ import { DivText } from './text';
 import { DivContainer } from './container';
 import { DivImage } from './image';
 import { DivState } from './state';
+import { DivPager } from './pager';
+import { DivIndicator } from './indicator';
 import { Unknown } from './utilities/Unknown';
 
 export interface DivComponentProps {
@@ -54,12 +56,16 @@ export function DivComponent({ componentContext }: DivComponentProps) {
         case 'state':
             return <DivState componentContext={componentContext as any} />;
 
+        case 'pager':
+            return <DivPager componentContext={componentContext as any} />;
+
+        case 'indicator':
+            return <DivIndicator componentContext={componentContext as any} />;
+
         // Future components (post-MVP)
         case 'gallery':
-        case 'pager':
         case 'tabs':
         case 'slider':
-        case 'indicator':
         case 'input':
         case 'select':
         case 'switch':

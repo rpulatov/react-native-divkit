@@ -27,6 +27,7 @@ import stateSwitchingJson from './sample-divs/state-switching.json';
 import withImageJson from './sample-divs/with-image.json';
 import withActionsJson from './sample-divs/with-actions.json';
 import tapAnimationsJson from './sample-divs/tap-animations.json';
+import pagerWithIndicatorJson from './sample-divs/pager-with-indicator.json';
 
 import type { DivJson } from '../../src';
 
@@ -60,6 +61,11 @@ const examples = [
     data: tapAnimationsJson,
     description: 'Tap animations',
   },
+  {
+    name: 'Pager + Indicator',
+    data: pagerWithIndicatorJson,
+    description: 'Pager with indicator dots',
+  },
 ];
 
 function AppContent() {
@@ -73,6 +79,7 @@ function AppContent() {
   const globalController = useMemo(() => {
     const controller = createGlobalVariablesController();
     controller.setVariable(createVariable('safeAreaTop', 'integer', 50));
+    controller.setVariable(createVariable('scaleFactor', 'number', 0.8));
     return controller;
   }, []);
 

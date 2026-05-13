@@ -22,3 +22,11 @@ export {
     useIsEnabled,
     type EnabledContextValue
 } from './EnabledContext';
+
+export {
+    PagerContext,
+    PagerProvider,
+    usePagerContext,
+    usePagerContextOptional,
+    type PagerContextValue
+} from './PagerContext';
