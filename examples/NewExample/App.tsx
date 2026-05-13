@@ -68,6 +68,9 @@ const examples = [
   },
 ];
 
+const getExampleTestID = (name: string) =>
+  `example-tab-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+
 function AppContent() {
   const [selectedExample, setSelectedExample] = useState(0);
   const [logs, setLogs] = useState<string[]>([]);
@@ -135,6 +138,7 @@ function AppContent() {
 
       {/* Example selector */}
       <ScrollView
+        testID="example-selector"
         horizontal
         style={styles.exampleSelector}
         showsHorizontalScrollIndicator={false}
@@ -143,6 +147,8 @@ function AppContent() {
         {examples.map((example, index) => (
           <TouchableOpacity
             key={index}
+            testID={getExampleTestID(example.name)}
+            accessibilityLabel={`Example ${example.name}`}
             style={[
               styles.selectorButton,
               index === selectedExample && styles.selectorButtonActive,
@@ -163,6 +169,7 @@ function AppContent() {
 
       {/* DivKit rendering */}
       <ScrollView
+        testID="divkit-snapshot-area"
         style={styles.divKitContainer}
         contentContainerStyle={styles.divKitContentContainer}
         showsVerticalScrollIndicator={false}

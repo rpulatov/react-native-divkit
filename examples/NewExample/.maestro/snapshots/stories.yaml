@@ -1,0 +1,15 @@
+appId: com.newexample
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: "divkit-snapshot-area"
+    timeout: 30000
+- tapOn: "Stories"
+- waitForAnimationToEnd
+- assertScreenshot:
+    path: .maestro/goldens/android/stories.png
+    cropOn:
+      id: "divkit-snapshot-area"
+    thresholdPercentage: 98
