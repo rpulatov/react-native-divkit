@@ -94,29 +94,12 @@ jobs:
       - name: Run Maestro snapshots
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 35
+          api-level: 33
           target: google_apis
           arch: x86_64
-          profile: pixel_9_pro
+          profile: pixel
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
-          script: |
-            cd examples/NewExample
-            npm start -- --port 8081 > metro.log 2>&1 &
-            METRO_READY=0
-            for i in {1..60}; do
-              if curl -fsS http://localhost:8081/status | grep -q "packager-status:running"; then
-                METRO_READY=1
-                break
-              fi
-              sleep 2
-            done
-            if [ "$METRO_READY" != "1" ]; then
-              echo "Metro did not become ready in time"
-              cat metro.log
-              exit 1
-            fi
-            npm run e2e:android:install
-            npm run e2e:maestro:android
+          script: bash .github/scripts/run-maestro-android.sh
 
       - name: Upload Maestro output
         if: always()
