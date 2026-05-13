@@ -90,7 +90,44 @@ State management component for switching between different UI states.
 - Advanced state management
 - Multiple concurrent state transitions
 
-### 5. DivComponent (`DivComponent.tsx`)
+### 5. DivPager (`pager/DivPager.tsx`)
+
+Horizontal/vertical pager with snap-to-page scrolling, ported from
+`Pager.svelte`.
+
+**Features:**
+
+- ✅ `ScrollView` + `snapToInterval` snap-to-page behaviour
+- ✅ `layout_mode`: `percentage`, `neighbour_page_width` (fixed), `wrap_content`
+- ✅ `orientation`: horizontal / vertical
+- ✅ `infinite_scroll` (duplicate-edge trick with silent re-snap)
+- ✅ `default_item`, `restrict_parent_scroll`
+- ✅ `item_spacing`, `item_builder`
+- ✅ Exposes pager state to `DivIndicator` via `PagerContext`
+  (`registerPager` / `listenPager` / `scrollToItem`)
+
+**Deferred:**
+
+- `page_transformation` (parallax / depth)
+
+### 6. DivIndicator (`indicator/DivIndicator.tsx`)
+
+Page-position dots for a `DivPager`, ported from `Indicator.svelte`.
+
+**Features:**
+
+- ✅ Subscription to a pager via `PagerContext` (`pager_id`)
+- ✅ Active/inactive dot styles from `active_shape` / `inactive_shape`
+- ✅ Legacy `shape` + `active_item_size` + colors fallback
+- ✅ Tap-to-scroll: `Pressable` → `pagerCtx.scrollToItem(index)`
+- ✅ `items_placement`: `default` (space_between_centers) and `stretch`
+- ✅ Internal `ScrollView` for overflow (many pages)
+
+**Deferred:**
+
+- Animated transitions between dot states (positions snap; no interpolation)
+
+### 7. DivComponent (`DivComponent.tsx`)
 
 Universal component router that dispatches to appropriate component based on type.
 
@@ -100,11 +137,13 @@ Universal component router that dispatches to appropriate component based on typ
 - `container` → DivContainer
 - `image` / `gif` → DivImage
 - `state` → DivState
+- `pager` → DivPager
+- `indicator` → DivIndicator
 
 **Deferred Types:**
 
-- `gallery`, `pager`, `tabs`
-- `slider`, `indicator`
+- `gallery`, `tabs`
+- `slider`
 - `input`, `select`, `switch`
 - `video`, `custom`
 - `separator`, `grid`
@@ -141,9 +180,16 @@ DivComponent (router)
     │   └── DivComponent (recursive for children)
     ├── DivImage
     │   └── Outer
-    └── DivState
+    ├── DivState
+    │   ├── Outer
+    │   └── DivComponent (recursive for active state)
+    ├── DivPager
+    │   ├── Outer
+    │   ├── ScrollView (snap-to-page)
+    │   └── DivComponent (recursive for each page)
+    └── DivIndicator
         ├── Outer
-        └── DivComponent (recursive for active state)
+        └── PagerContext (subscription to bound pager)
 ```
 
 ## Integration with Context System
@@ -219,6 +265,14 @@ src/components/
 │   └── index.ts
 ├── state/
 │   ├── DivState.tsx         # State component
+│   └── index.ts
+├── pager/
+│   ├── DivPager.tsx         # Pager component
+│   ├── utils.ts             # layout_mode + infinite-scroll helpers
+│   └── index.ts
+├── indicator/
+│   ├── DivIndicator.tsx     # Indicator component
+│   ├── utils.ts             # dot styles / placement
 │   └── index.ts
 ├── utilities/
 │   ├── Outer.tsx            # Base wrapper

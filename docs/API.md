@@ -568,6 +568,76 @@ Conditional rendering with states.
 }
 ```
 
+### DivPager
+
+Horizontal/vertical pager with snap-to-page scrolling. Implemented on top of
+React Native `ScrollView` with `snapToInterval`. Supports `percentage`,
+`neighbour_page_width` (fixed) and `wrap_content` layout modes,
+`infinite_scroll`, `default_item`, and `restrict_parent_scroll`. Exposes its
+state to a `DivIndicator` via the internal `PagerContext`.
+
+```json
+{
+    "type": "pager",
+    "id": "stories_pager",
+    "orientation": "horizontal",
+    "layout_mode": {
+        "type": "percentage",
+        "page_width": { "type": "percentage", "value": 25 }
+    },
+    "item_spacing": { "type": "fixed", "value": 8 },
+    "restrict_parent_scroll": 1,
+    "items": [
+        /* child divs — each one is a page */
+    ]
+}
+```
+
+Alternative layout modes:
+
+```json
+{
+    "layout_mode": {
+        "type": "fixed",
+        "neighbour_page_width": { "type": "fixed", "value": 24 }
+    }
+}
+```
+
+```json
+{ "layout_mode": { "type": "wrap_content" } }
+```
+
+### DivIndicator
+
+Page-position dots for a `DivPager`. Subscribes to a pager via the internal
+`PagerContext` (lookup by `pager_id`), tap-to-scroll on each dot. Supports
+both modern `active_shape` / `inactive_shape` and the legacy
+`shape` + `active_item_size` + colors configuration.
+`items_placement` modes `default` (space_between_centers) and `stretch`
+(`item_spacing`) are supported.
+
+```json
+{
+    "type": "indicator",
+    "pager_id": "stories_pager",
+    "active_shape": {
+        "type": "rounded_rectangle",
+        "item_width": { "type": "fixed", "value": 20 },
+        "item_height": { "type": "fixed", "value": 8 },
+        "corner_radius": { "type": "fixed", "value": 4 },
+        "background_color": "#000000"
+    },
+    "inactive_shape": {
+        "type": "rounded_rectangle",
+        "item_width": { "type": "fixed", "value": 8 },
+        "item_height": { "type": "fixed", "value": 8 },
+        "corner_radius": { "type": "fixed", "value": 4 },
+        "background_color": "#CCCCCC"
+    }
+}
+```
+
 ---
 
 ## Action Animation
