@@ -10,6 +10,7 @@ import {
 import type { ComponentContext } from '../../types/componentContext';
 import type { DivPagerData, PagerOrientation } from '../../types/pager';
 import type { PagerData, PagerRegisterData } from '../../types/componentContext';
+import type { EdgeInsets } from '../../types/edgeInserts';
 import { Outer } from '../utilities/Outer';
 import { DivComponent } from '../DivComponent';
 import { useDerivedFromVarsSimple } from '../../hooks/useDerivedFromVars';
@@ -58,7 +59,7 @@ export function DivPager({ componentContext }: DivPagerProps) {
         (json.orientation as PagerOrientation) || 'horizontal',
         variables || new Map()
     );
-    const layoutMode = useDerivedFromVarsSimple<any>(
+    const layoutMode = useDerivedFromVarsSimple(
         json.layout_mode,
         variables || new Map()
     );
@@ -93,14 +94,14 @@ export function DivPager({ componentContext }: DivPagerProps) {
     // for snap math. Outer should NOT also apply them, so we strip them from
     // the json passed into Outer below.
     const innerPadStart = useMemo(() => {
-        const p = (paddings as any) || {};
+        const p = (paddings as EdgeInsets | undefined) || {};
         if (isHorizontal) {
             return Number(p.start ?? p.left ?? 0) || 0;
         }
         return Number(p.top ?? 0) || 0;
     }, [paddings, isHorizontal]);
     const innerPadEnd = useMemo(() => {
-        const p = (paddings as any) || {};
+        const p = (paddings as EdgeInsets | undefined) || {};
         if (isHorizontal) {
             return Number(p.end ?? p.right ?? 0) || 0;
         }
@@ -113,6 +114,7 @@ export function DivPager({ componentContext }: DivPagerProps) {
     const initialScrollDone = useRef(false);
     const registerDataRef = useRef<PagerRegisterData | null>(null);
     const pagerInstId = useRef<string>(genId('pager'));
+    const scrollToItemRef = useRef<((realIndex: number, animated: boolean) => void) | null>(null);
 
     const pageSize = useMemo(
         () =>
@@ -179,6 +181,21 @@ export function DivPager({ componentContext }: DivPagerProps) {
         [items, componentContext]
     );
 
+    const pushPagerState = useCallback(
+        (item: number) => {
+            const reg = registerDataRef.current;
+            if (!reg) return;
+            const data: PagerData = {
+                instId: pagerInstId.current,
+                size: items.length,
+                currentItem: item,
+                scrollToPagerItem: (index: number) => scrollToItemRef.current?.(index, true)
+            };
+            reg.update(data);
+        },
+        [items.length]
+    );
+
     const scrollToItem = useCallback(
         (realIndex: number, animated: boolean) => {
             const node = scrollRef.current;
@@ -199,25 +216,20 @@ export function DivPager({ componentContext }: DivPagerProps) {
                 runSelectedActions(clampedReal);
             }
         },
-        // pushPagerState is hoisted via closure (defined right below).
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [items.length, snapInterval, isHorizontal, isInfinite, realToPosition, runSelectedActions]
+        [
+            items.length,
+            snapInterval,
+            isHorizontal,
+            isInfinite,
+            realToPosition,
+            pushPagerState,
+            runSelectedActions
+        ]
     );
 
-    const pushPagerState = useCallback(
-        (item: number) => {
-            const reg = registerDataRef.current;
-            if (!reg) return;
-            const data: PagerData = {
-                instId: pagerInstId.current,
-                size: items.length,
-                currentItem: item,
-                scrollToPagerItem: (index: number) => scrollToItem(index, true)
-            };
-            reg.update(data);
-        },
-        [items.length, scrollToItem]
-    );
+    useEffect(() => {
+        scrollToItemRef.current = scrollToItem;
+    }, [scrollToItem]);
 
     // Register pager in context (so indicators can find it)
     useEffect(() => {
@@ -304,7 +316,7 @@ export function DivPager({ componentContext }: DivPagerProps) {
 
     // Strip paddings from Outer — we apply them on the ScrollView ourselves.
     const outerContext = useMemo(() => {
-        const restJson = { ...(json as any) };
+        const restJson = { ...json };
         delete restJson.paddings;
         return { ...componentContext, json: restJson } as ComponentContext<DivPagerData>;
     }, [componentContext, json]);
