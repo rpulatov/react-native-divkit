@@ -28,7 +28,7 @@ import withImageJson from './sample-divs/with-image.json';
 import withActionsJson from './sample-divs/with-actions.json';
 import tapAnimationsJson from './sample-divs/tap-animations.json';
 import pagerWithIndicatorJson from './sample-divs/pager-with-indicator.json';
-import transitionOutJson from './sample-divs/transition-out.json';
+import transitionChangeJson from './sample-divs/transition_change.json';
 import transitionInOutVisibilityJson from './sample-divs/transition_in_out_visibility.json';
 
 import type { DivJson } from '../../src';
@@ -69,10 +69,10 @@ const examples = [
     description: 'Pager with indicator dots',
   },
   {
-    name: 'Transition Out',
-    data: transitionOutJson,
+    name: 'Transition Change',
+    data: transitionChangeJson,
     description:
-      'visibility binding + scale/fade transition_out + change_bounds',
+      'transition_change (change_bounds) — FLIP-анимация изменений размеров/позиций',
   },
   {
     name: 'Transition In/Out Visibility',
@@ -84,8 +84,19 @@ const examples = [
 const getExampleTestID = (name: string) =>
   `example-tab-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
 
-function AppContent() {
-  const [selectedExample, setSelectedExample] = useState(0);
+type AppInitialProps = {
+  snapshotMode?: boolean;
+  initialExample?: string;
+};
+
+function AppContent({ snapshotMode = false, initialExample }: AppInitialProps) {
+  const [selectedExample, setSelectedExample] = useState(() => {
+    const initialIndex = examples.findIndex(
+      example => example.name === initialExample,
+    );
+
+    return initialIndex >= 0 ? initialIndex : 0;
+  });
   const [logs, setLogs] = useState<string[]>([]);
   const logCounterRef = useRef(0);
 
@@ -139,6 +150,43 @@ function AppContent() {
     logCounterRef.current = 0;
   }, []);
 
+  const divKitView = (
+    <DivKit
+      key={selectedExample} // Force re-mount on example change
+      data={currentExample.data as DivJson}
+      onStat={handleStat}
+      onCustomAction={handleCustomAction}
+      onError={handleError}
+      direction="ltr"
+      platform="touch"
+      style={snapshotMode ? styles.divKitSnapshot : styles.divKit}
+      globalVariablesController={globalController}
+      typefaceProvider={(fontFamily, opts) => {
+        if (fontFamily === 'display') return '';
+        if (fontFamily === 'text') {
+          return opts?.fontWeight && opts.fontWeight >= 700
+            ? 'MyCustomText-Bold'
+            : 'MyCustomText-Regular';
+        }
+        return '';
+      }}
+    />
+  );
+
+  if (snapshotMode) {
+    return (
+      <ScrollView
+        testID="divkit-snapshot-area"
+        style={styles.snapshotContainer}
+        contentContainerStyle={styles.snapshotContentContainer}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+      >
+        {divKitView}
+      </ScrollView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -188,26 +236,7 @@ function AppContent() {
         showsVerticalScrollIndicator={false}
         bounces={false}
       >
-        <DivKit
-          key={selectedExample} // Force re-mount on example change
-          data={currentExample.data as DivJson}
-          onStat={handleStat}
-          onCustomAction={handleCustomAction}
-          onError={handleError}
-          direction="ltr"
-          platform="touch"
-          style={styles.divKit}
-          globalVariablesController={globalController}
-          typefaceProvider={(fontFamily, opts) => {
-            if (fontFamily === 'display') return '';
-            if (fontFamily === 'text') {
-              return opts?.fontWeight && opts.fontWeight >= 700
-                ? 'MyCustomText-Bold'
-                : 'MyCustomText-Regular';
-            }
-            return '';
-          }}
-        />
+        {divKitView}
       </ScrollView>
 
       {/* Log panel */}
@@ -240,6 +269,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5F5F5',
+  },
+  snapshotContainer: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  snapshotContentContainer: {
+    flexGrow: 1,
   },
   header: {
     padding: 16,
@@ -296,6 +332,9 @@ const styles = StyleSheet.create({
   divKit: {
     flex: 1,
   },
+  divKitSnapshot: {
+    flex: 1,
+  },
   logPanel: {
     height: 140,
     backgroundColor: '#1E1E1E',
@@ -337,10 +376,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function App() {
+export default function App(props: AppInitialProps) {
   return (
     <SafeAreaProvider>
-      <AppContent />
+      <AppContent {...props} />
     </SafeAreaProvider>
   );
 }

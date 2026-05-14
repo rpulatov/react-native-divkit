@@ -2,11 +2,13 @@ appId: com.newexample
 ---
 - launchApp:
     clearState: true
+    arguments:
+      snapshotMode: true
+      initialExample: "Start"
 - extendedWaitUntil:
     visible:
       id: "divkit-snapshot-area"
     timeout: 30000
-- tapOn: "Example Start"
 - waitForAnimationToEnd
 - takeScreenshot:
     path: .maestro/goldens/android/start

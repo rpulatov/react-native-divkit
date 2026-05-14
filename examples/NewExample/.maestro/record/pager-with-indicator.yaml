@@ -4,19 +4,22 @@ appId: com.newexample
     clearState: true
     arguments:
       snapshotMode: true
-      initialExample: "State"
+      initialExample: "Pager + Indicator"
 - extendedWaitUntil:
     visible:
       id: "divkit-snapshot-area"
     timeout: 30000
 - waitForAnimationToEnd
 - takeScreenshot:
-    path: .maestro/goldens/android/state-switching
+    path: .maestro/goldens/android/pager-with-indicator
     cropOn:
       id: "divkit-snapshot-area"
-- tapOn: "State 1 - Blue"
+- swipe:
+    from:
+      id: "pager_with_indicator"
+    direction: LEFT
 - waitForAnimationToEnd
 - takeScreenshot:
-    path: .maestro/goldens/android/state-switching_part2
+    path: .maestro/goldens/android/pager-with-indicator_part2
     cropOn:
       id: "divkit-snapshot-area"
