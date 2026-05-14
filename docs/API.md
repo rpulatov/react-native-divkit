@@ -12,6 +12,10 @@ Complete API documentation for `react-native-divkit`.
 - [Variables](#variables)
 - [Context](#context)
 - [Utilities](#utilities)
+- [Components (MVP)](#components-mvp)
+- [Action Animation](#action-animation)
+- [Transitions](#transitions)
+- [Expression Syntax](#expression-syntax)
 
 ---
 
@@ -222,6 +226,10 @@ interface DivBaseData {
     height?: Size;
     actions?: Action[];
     action_animation?: Animation;
+    transition_in?: AppearanceTransition;
+    transition_out?: AppearanceTransition;
+    transition_change?: TransitionChange;
+    transition_triggers?: TransitionTrigger[];
     // ... component-specific properties
 }
 ```
@@ -250,6 +258,57 @@ interface AnimationSet {
 type Animation = AnyAnimation | AnimationSet;
 
 type Interpolation = 'linear' | 'ease' | 'ease_in' | 'ease_out' | 'ease_in_out' | 'spring';
+```
+
+### `AppearanceTransition` (transition_in / transition_out)
+
+```typescript
+interface TransitionBase {
+    duration?: number;       // ms, default: 300
+    start_delay?: number;    // ms, default: 0
+    interpolator?: Interpolation;
+}
+
+interface FadeTransition extends TransitionBase {
+    type: 'fade';
+    alpha?: number;          // start (for in) / end (for out) alpha, default: 0
+}
+
+interface ScaleTransition extends TransitionBase {
+    type: 'scale';
+    scale?: number;          // start / end scale, default: 0
+    pivot_x?: number;        // 0..1, default: 0.5
+    pivot_y?: number;        // 0..1, default: 0.5
+}
+
+interface SlideTransition extends TransitionBase {
+    type: 'slide';
+    edge?: 'left' | 'top' | 'right' | 'bottom'; // default: 'bottom'
+    distance?: Dimension;    // if absent — window size is used
+}
+
+type AnyTransition = FadeTransition | ScaleTransition | SlideTransition;
+
+interface TransitionSet {
+    type: 'set';
+    items: AppearanceTransition[];
+}
+
+type AppearanceTransition = AnyTransition | TransitionSet;
+
+type TransitionTrigger = 'state_change' | 'visibility_change';
+```
+
+### `TransitionChange` (transition_change)
+
+```typescript
+interface ChangeBoundsTransition extends TransitionBase {
+    type: 'change_bounds';
+}
+
+type TransitionChange =
+    | ChangeBoundsTransition
+    | { type: 'set'; items: TransitionChange[] };
 ```
 
 ---
@@ -692,6 +751,161 @@ Components with actions can have tap animations. Supported types: `fade`, `scale
 - On `pressOut`: animates back from `end_value` to `start_value`
 - Uses React Native `Animated` API with `useNativeDriver: true` for smooth 60fps animations
 - `native` and `no_animation` types are ignored (no custom animation applied)
+
+---
+
+## Transitions
+
+Any DivBase element supports three independent transition fields:
+
+- `transition_in` — plays when the element appears (visibility flips to `visible`,
+  or it mounts as part of a newly-active `DivState`).
+- `transition_out` — plays when the element disappears (visibility flips to
+  `gone` / `invisible`, or it unmounts because the enclosing `DivState`
+  switches to another state).
+- `transition_change` — plays when the element's size or position changes
+  (a "change_bounds" / FLIP-style transition).
+
+All three are handled by the `Outer` wrapper that wraps every component. No
+extra wiring is required from the user — declare them in JSON and they fire
+automatically.
+
+### transition_in / transition_out (Appearance)
+
+Supported types: `fade`, `scale`, `slide`, and `set` (parallel composition).
+
+```json
+{
+    "type": "text",
+    "text": "Hello",
+    "visibility": "@{is_visible}",
+    "transition_in":  { "type": "fade",  "duration": 1000 },
+    "transition_out": { "type": "fade",  "duration": 1000 }
+}
+```
+
+```json
+{
+    "transition_in":  { "type": "scale", "duration": 800, "scale": 0, "pivot_x": 0.5, "pivot_y": 0 },
+    "transition_out": { "type": "scale", "duration": 800 }
+}
+```
+
+```json
+{
+    "transition_in":  { "type": "slide", "edge": "right", "duration": 600 },
+    "transition_out": { "type": "slide", "edge": "left",  "duration": 600 }
+}
+```
+
+```json
+{
+    "transition_in": {
+        "type": "set",
+        "items": [
+            { "type": "fade",  "duration": 1000 },
+            { "type": "slide", "edge": "right", "duration": 1000 }
+        ]
+    }
+}
+```
+
+#### Parameters
+
+| Field         | Applies to | Description                                            |
+| ------------- | ---------- | ------------------------------------------------------ |
+| `duration`    | all        | Duration in ms (default `300`)                         |
+| `start_delay` | all        | Delay in ms before the transition starts (default `0`) |
+| `interpolator`| all        | `linear`, `ease`, `ease_in`, `ease_out`, `ease_in_out`, `spring` |
+| `alpha`       | `fade`     | Starting (in) / ending (out) alpha — default `0`       |
+| `scale`       | `scale`    | Starting / ending scale factor — default `0`           |
+| `pivot_x`     | `scale`    | Pivot X (0..1) — default `0.5` (center)                |
+| `pivot_y`     | `scale`    | Pivot Y (0..1) — default `0.5` (center)                |
+| `edge`        | `slide`    | `left` / `top` / `right` / `bottom` — default `bottom` |
+| `distance`    | `slide`    | Slide distance; if absent, `Dimensions.get('window')` size is used |
+
+#### How it works
+
+- Implemented in [`useAppearanceTransition`](../src/hooks/useAppearanceTransition.ts).
+- On `visibility` flip → mounts/unmounts the child after running the
+  appropriate transition. `gone` collapses layout (returns `null`),
+  `invisible` keeps layout but goes to `opacity: 0`.
+- On state switch inside `DivState`: out-transition is played on the outgoing
+  children (awaited in parallel via `Promise.all`); the new state is then
+  mounted and its `transition_in` plays automatically via the hook's
+  `'auto-in'` mode.
+- Driven by `Animated` API with `useNativeDriver: true` (transform + opacity).
+- Off-center `pivot_x` / `pivot_y` are emulated through a
+  translate-scale-translate composition once `onLayout` reports the element's
+  size.
+- The hook also exposes imperative `playIn()` / `playOut()` (returning a
+  `Promise<void>`) for advanced cases. `DivState` uses this internally — most
+  consumers do not need to call them directly.
+
+### transition_change (change_bounds)
+
+Triggered when the element's geometry changes. Two layers cooperate:
+
+1. The element itself is animated via FLIP (First-Last-Invert-Play) using
+   `Animated` with native driver — respects custom `interpolator` and
+   `start_delay`. See [`useChangeBoundsTransition`](../src/hooks/useChangeBoundsTransition.ts).
+2. Neighbors reflow smoothly via React Native's `LayoutAnimation.configureNext`
+   queued at the right moments (collapse/expand of the wrapper itself, and
+   inside `DivState` when swapping states). See
+   [`configureChangeBoundsLayout`](../src/utils/configureChangeBoundsLayout.ts).
+
+```json
+{
+    "type": "image",
+    "image_url": "https://example.com/photo.jpg",
+    "transition_change": {
+        "type": "change_bounds",
+        "duration": 1000,
+        "interpolator": "ease_in_out"
+    }
+}
+```
+
+```json
+{
+    "type": "state",
+    "id": "image_state",
+    "states": [
+        {
+            "state_id": "state1",
+            "div": {
+                "type": "image",
+                "image_url": "https://example.com/photo.jpg",
+                "width": { "type": "match_parent" },
+                "transition_change": { "type": "change_bounds", "duration": 1000 }
+            }
+        },
+        {
+            "state_id": "state2",
+            "div": {
+                "type": "image",
+                "image_url": "https://example.com/photo.jpg",
+                "alignment_horizontal": "right",
+                "alignment_vertical": "bottom",
+                "transition_change": { "type": "change_bounds", "duration": 1000 }
+            }
+        }
+    ]
+}
+```
+
+#### Known limitations
+
+- `onLayout` reports coordinates relative to the parent — if the parent itself
+  moves, FLIP will perceive that as the child moving. For stable containers
+  (the common case) this is fine.
+- The first `onLayout` is treated as the baseline; the very first appearance
+  is not animated by FLIP (use `transition_in` for that).
+- React Native's `LayoutAnimation` accepts only coarse easings (`linear`,
+  `easeIn`, `easeOut`, `easeInEaseOut`, `spring`) and a single duration per
+  configuration window, so neighbor reflow may not perfectly match a custom
+  cubic-bezier interpolator. The element itself uses `Animated`, which does
+  respect the spec's interpolator.
 
 ---
 

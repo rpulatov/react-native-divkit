@@ -29,13 +29,14 @@ DivKit React Native is based on the DivKit Web (TypeScript + Svelte) implementat
 
 ### Key Differences
 
-| Feature          | Web (Svelte)        | React Native               |
-| ---------------- | ------------------- | -------------------------- |
-| Rendering        | DOM + CSS           | React Native Views         |
-| State management | Svelte stores       | React hooks + Observable   |
-| Styling          | CSS + inline styles | StyleSheet                 |
-| Animations       | CSS transitions     | Animated API (fade, scale) |
-| Events           | DOM events          | Pressable/TouchableOpacity |
+| Feature          | Web (Svelte)        | React Native                                      |
+| ---------------- | ------------------- | ------------------------------------------------- |
+| Rendering        | DOM + CSS           | React Native Views                                |
+| State management | Svelte stores       | React hooks + Observable                          |
+| Styling          | CSS + inline styles | StyleSheet                                        |
+| Animations       | CSS transitions     | Animated API (action_animation, transition_in/out) |
+| Transitions      | CSS transitions     | Animated API + FLIP + LayoutAnimation             |
+| Events           | DOM events          | Pressable/TouchableOpacity                        |
 
 ---
 
@@ -431,7 +432,7 @@ Animated.timing(animOpacity, {
 });
 ```
 
-### Supported animation types
+### Supported action_animation types
 
 | Type             | Web | React Native |
 | ---------------- | --- | ------------ |
@@ -443,6 +444,30 @@ Animated.timing(animOpacity, {
 | `translate`      | No* | No           |
 
 \* `translate` is only used for transition_in/transition_out in Web, not for action_animation.
+
+### transition_in / transition_out / transition_change
+
+Fully supported (since v1.8.0). JSON is identical to Web.
+
+| Type / Field      | Web | React Native |
+| ----------------- | --- | ------------ |
+| `transition_in`   | Yes | Yes (fade, scale, slide, set) |
+| `transition_out`  | Yes | Yes (fade, scale, slide, set) |
+| `transition_change` | Yes | Yes (change_bounds, set) |
+| Off-center `pivot_x` / `pivot_y` | Yes | Yes (via translate-scale-translate after `onLayout`) |
+| `slide.distance`  | Yes | Yes (falls back to `Dimensions.get('window')` if absent) |
+| `interpolator` (custom cubic) | Yes | Element-level: yes (Animated). Neighbour reflow under change_bounds: approximated via `LayoutAnimation`. |
+| `transition_triggers` | Yes | Yes (`state_change`, `visibility_change`) |
+
+Under the hood:
+
+- `transition_in` / `transition_out` are driven by [`useAppearanceTransition`](../src/hooks/useAppearanceTransition.ts).
+- `transition_change` uses FLIP via [`useChangeBoundsTransition`](../src/hooks/useChangeBoundsTransition.ts)
+  for the element itself, and `LayoutAnimation.configureNext` for neighbours
+  (via [`configureChangeBoundsLayout`](../src/utils/configureChangeBoundsLayout.ts)).
+- Inside `DivState` swaps, the outgoing children's `transition_out` is awaited
+  in parallel before the new state mounts — out-animations stay visible.
+  Implemented through [`DivStateScopeContext`](../src/context/DivStateScopeContext.tsx).
 
 ### Interpolators
 
@@ -467,27 +492,28 @@ All interpolators are mapped:
 
 These features are planned for future versions:
 
-| Feature           | Web Support | RN MVP  |
-| ----------------- | ----------- | ------- |
-| Text              | Full        | Basic   |
-| Container         | Full        | Basic   |
-| Image             | Full        | Basic   |
-| State             | Full        | Full    |
-| Pager             | Full        | Full    |
-| Indicator         | Full        | Full    |
-| Gallery           | Full        | No      |
-| Tabs              | Full        | No      |
-| Input             | Full        | No      |
-| Select            | Full        | No      |
-| Video             | Full        | No      |
-| Lottie            | Full        | No      |
-| Text ranges       | Full        | No      |
-| Gradients         | Full        | Partial |
-| Action Animation  | Full        | Partial |
-| Transitions       | Full        | No      |
-| Timers            | Full        | No      |
-| Tooltips          | Full        | No      |
-| Custom components | Full        | No      |
+| Feature                          | Web Support | RN MVP  |
+| -------------------------------- | ----------- | ------- |
+| Text                             | Full        | Basic   |
+| Container                        | Full        | Basic   |
+| Image                            | Full        | Basic   |
+| State                            | Full        | Full    |
+| Pager                            | Full        | Full    |
+| Indicator                        | Full        | Full    |
+| Gallery                          | Full        | No      |
+| Tabs                             | Full        | No      |
+| Input                            | Full        | No      |
+| Select                           | Full        | No      |
+| Video                            | Full        | No      |
+| Lottie                           | Full        | No      |
+| Text ranges                      | Full        | No      |
+| Gradients                        | Full        | Partial |
+| Action Animation                 | Full        | Partial |
+| transition_in / transition_out   | Full        | Full    |
+| transition_change (change_bounds)| Full        | Full    |
+| Timers                           | Full        | No      |
+| Tooltips                         | Full        | No      |
+| Custom components                | Full        | No      |
 
 ### Platform Differences
 
@@ -532,7 +558,7 @@ These features are planned for future versions:
 
 - GitHub Issues: https://github.com/divkit/divkit/issues
 - Documentation: https://divkit.tech
-- Examples: `examples/BasicExample/`
+- Examples: `examples/NewExample/`
 
 ---
 
