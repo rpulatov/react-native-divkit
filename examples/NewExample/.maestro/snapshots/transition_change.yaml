@@ -4,21 +4,21 @@ appId: com.newexample
     clearState: true
     arguments:
       snapshotMode: true
-      initialExample: "State"
+      initialExample: "Transition Change"
 - extendedWaitUntil:
     visible:
       id: "divkit-snapshot-area"
     timeout: 30000
 - waitForAnimationToEnd
 - assertScreenshot:
-    path: .maestro/goldens/android/state-switching.png
+    path: .maestro/goldens/android/transition_out.png
     cropOn:
       id: "divkit-snapshot-area"
     thresholdPercentage: 98
-- tapOn: "State 1 - Blue"
+- tapOn: "Test Button"
 - waitForAnimationToEnd
 - assertScreenshot:
-    path: .maestro/goldens/android/state-switching_part2.png
+    path: .maestro/goldens/android/transition_out_part2.png
     cropOn:
       id: "divkit-snapshot-area"
     thresholdPercentage: 98

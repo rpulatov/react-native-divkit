@@ -2,11 +2,13 @@ appId: com.newexample
 ---
 - launchApp:
     clearState: true
+    arguments:
+      snapshotMode: true
+      initialExample: "Stories"
 - extendedWaitUntil:
     visible:
       id: "divkit-snapshot-area"
     timeout: 30000
-- tapOn: "Stories"
 - waitForAnimationToEnd
 - assertScreenshot:
     path: .maestro/goldens/android/stories.png

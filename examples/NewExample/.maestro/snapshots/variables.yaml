@@ -2,14 +2,13 @@ appId: com.newexample
 ---
 - launchApp:
     clearState: true
+    arguments:
+      snapshotMode: true
+      initialExample: "Variables"
 - extendedWaitUntil:
     visible:
       id: "divkit-snapshot-area"
     timeout: 30000
-- scrollUntilVisible:
-    element:
-      point: 0%,22%
-- tapOn: "Example Variables"
 - waitForAnimationToEnd
 - assertScreenshot:
     path: .maestro/goldens/android/variables.png
