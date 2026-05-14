@@ -1,3 +1,10 @@
+# [1.8.0](https://github.com/rpulatov/react-native-divkit/compare/v1.7.0...v1.8.0) (2026-05-14)
+
+
+### Features
+
+* **transition:** добавлен функционал по работе с transition элементов divkit ([cdfac89](https://github.com/rpulatov/react-native-divkit/commit/cdfac89849ab63223fc8dd41a4cbd52c63f583f9))
+
 # [1.7.0](https://github.com/rpulatov/react-native-divkit/compare/v1.6.5...v1.7.0) (2026-05-13)
 
 
