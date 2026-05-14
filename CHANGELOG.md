@@ -1,3 +1,11 @@
+## [1.8.1](https://github.com/rpulatov/react-native-divkit/compare/v1.8.0...v1.8.1) (2026-05-14)
+
+
+### Bug Fixes
+
+* **ci:** использовать RELEASE_TOKEN для доступа к репозиторию ([5364a3d](https://github.com/rpulatov/react-native-divkit/commit/5364a3d88f690317d075271b3db4677631d9098d))
+* **pager:** улучшить генерацию ключей для элементов ([a368183](https://github.com/rpulatov/react-native-divkit/commit/a36818303d8022f4b2a4b23ab88a0b43a404146d))
+
 # [1.8.0](https://github.com/rpulatov/react-native-divkit/compare/v1.7.0...v1.8.0) (2026-05-14)
 
 
