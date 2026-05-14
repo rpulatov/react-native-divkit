@@ -12,6 +12,8 @@ This document describes the internal architecture of the DivKit React Native lib
 - [Expression Engine](#expression-engine)
 - [Variable System](#variable-system)
 - [Action System](#action-system)
+- [Animation System](#animation-system)
+- [Transition System](#transition-system)
 - [Context Architecture](#context-architecture)
 - [Rendering Pipeline](#rendering-pipeline)
 - [Design Decisions](#design-decisions)
@@ -71,19 +73,30 @@ src/
 │   │   └── DivImage.tsx        # Image component
 │   ├── state/
 │   │   └── DivState.tsx        # State component
+│   ├── pager/
+│   │   └── DivPager.tsx        # Pager component
+│   ├── indicator/
+│   │   └── DivIndicator.tsx    # Indicator component
 │   └── utilities/
-│       ├── Outer.tsx           # Base wrapper
+│       ├── Outer.tsx           # Base wrapper (visibility, actions,
+│       │                       #   action_animation, transitions)
+│       ├── Background.tsx      # Background renderer
 │       └── Unknown.tsx         # Unknown type fallback
 │
 ├── context/                    # React contexts
 │   ├── DivKitContext.tsx       # Main context
 │   ├── ActionContext.tsx       # Action context
-│   └── StateContext.tsx        # State context
+│   ├── StateContext.tsx        # State context
+│   ├── PagerContext.tsx        # Pager ↔ Indicator binding
+│   ├── LayoutParamsContext.tsx # Layout params (alignment, etc.)
+│   └── DivStateScopeContext.tsx # Per-DivState transition_out registry
 │
 ├── hooks/                      # React hooks
 │   ├── useDerivedFromVars.ts   # Expression evaluation hook
 │   ├── useVariable.ts          # Variable subscription hooks
 │   ├── useAction.ts            # Action execution hooks
+│   ├── useAppearanceTransition.ts   # transition_in / transition_out driver
+│   ├── useChangeBoundsTransition.ts # transition_change FLIP driver
 │   └── index.ts                # Hook exports
 │
 ├── expressions/                # Expression engine (from Web)
@@ -107,7 +120,9 @@ src/
 ├── utils/                      # Utilities (from Web)
 │   ├── applyTemplate.ts        # Template resolution
 │   ├── correctColor.ts         # Color conversion
-│   ├── flattenAnimation.ts     # Flatten animation sets
+│   ├── flattenAnimation.ts     # Flatten action_animation sets
+│   ├── flattenTransition.ts    # Flatten transition sets (appearance / change)
+│   ├── configureChangeBoundsLayout.ts # LayoutAnimation for neighbour reflow
 │   ├── correct*.ts             # Value converters
 │   └── ...                     # Other utilities
 │
@@ -189,6 +204,9 @@ ActionContext
 StateContext
 ├── registerState: (id, setter) => unsubscribe
 └── switchState: (stateId) => Promise<void>
+
+DivStateScopeContext (per DivState)
+└── registerTransitionOutPlayer(play: () => Promise<void>): () => void
 ```
 
 ### Layer 4: Component System
@@ -201,8 +219,11 @@ DivComponent.tsx    → Type router
 DivText.tsx         → <Text> rendering
 DivContainer.tsx    → <View> with flex
 DivImage.tsx        → <Image> loading
-DivState.tsx        → Conditional render
-Outer.tsx           → Base wrapper
+DivState.tsx        → Conditional render + state transitions
+DivPager.tsx        → <ScrollView> with snap-to-page
+DivIndicator.tsx    → Dots bound to a pager via PagerContext
+Outer.tsx           → Base wrapper (visibility, actions, action_animation,
+                      transition_in / transition_out / transition_change)
 ```
 
 ---
@@ -335,6 +356,8 @@ switch (json.type) {
   case 'container':  return <DivContainer ... />;
   case 'image':      return <DivImage ... />;
   case 'state':      return <DivState ... />;
+  case 'pager':      return <DivPager ... />;
+  case 'indicator':  return <DivIndicator ... />;
   default:           return <Unknown ... />;
 }
 ```
@@ -531,6 +554,103 @@ Tap animations are handled in the `Outer` component using React Native's `Animat
 
 ---
 
+## Transition System
+
+DivKit defines three kinds of transitions, all driven by the `Outer` wrapper:
+
+- `transition_in`  — appearance on mount / visibility flip to `visible`.
+- `transition_out` — disappearance on visibility flip to `gone` / `invisible`,
+  or unmount triggered by `DivState`.
+- `transition_change` (change_bounds) — element geometry change.
+
+### Appearance transitions (in / out)
+
+Implemented in [`hooks/useAppearanceTransition.ts`](../src/hooks/useAppearanceTransition.ts).
+
+```
+1. JSON spec (fade / scale / slide / set) is flattened via flattenTransition()
+   │
+2. normalize() merges items into one NormalizedTransition (per-type duration,
+   delay, easing, plus pivot / slide edge / alpha / scale endpoint)
+   │
+3. Animated.Value refs created: opacity, scale, slideTx, slideTy
+   │
+4. Driver mode chooses when to fire:
+   - 'visibility'  → visibility prop change triggers in/out
+   - 'imperative'  → consumer calls playIn() / playOut() manually
+   - 'auto-in'     → like imperative, but transition_in plays on first mount
+   │
+5. transition_out finished → rendered = false (collapsed = true)
+   transition_in  finished → returns to identity, child stays mounted
+```
+
+The hook exposes both **declarative** outputs (`rendered`, `collapsed`,
+`opacity`, `transform`) and **imperative** controls (`playIn()`, `playOut()`
+returning `Promise<void>`).
+
+#### Off-center scale (pivot_x / pivot_y)
+
+React Native's `Animated.transform` only supports center-anchored scale. Off-
+center pivots are emulated via translate-scale-translate, computed from
+`onLayout` measurements (`layoutWidth` / `layoutHeight`).
+
+#### Slide without `distance`
+
+If `distance` is omitted, the hook falls back to `Dimensions.get('window')` for
+the relevant axis (mirrors Web's window-size fallback).
+
+### transition_change (change_bounds)
+
+Two layers cooperate for smooth change_bounds:
+
+1. **The element itself** — animated by FLIP via
+   [`useChangeBoundsTransition`](../src/hooks/useChangeBoundsTransition.ts).
+   On each `onLayout`:
+   - Capture previous (First) and new (Last) bounds.
+   - Set `transform = translate(-dx, -dy) * scale(prevW/newW, prevH/newH)` so the
+     element visually stays at the old spot (Invert).
+   - `Animated.timing(...)` rides the transforms back to identity (Play).
+   - Uses `useNativeDriver: true` and honors the spec's `interpolator` and
+     `start_delay` (custom cubic curves are respected).
+
+2. **Neighbors** — reflow via React Native's `LayoutAnimation`, queued through
+   [`utils/configureChangeBoundsLayout.ts`](../src/utils/configureChangeBoundsLayout.ts).
+   `LayoutAnimation` only supports coarse easings (`linear`, `easeIn`, `easeOut`,
+   `easeInEaseOut`, `spring`), so neighbour reflow is approximated.
+
+### transitions inside DivState
+
+[`DivStateScopeContext`](../src/context/DivStateScopeContext.tsx) is a scoped
+context provided by each `DivState`. Children rendered inside register their
+`playOut` callback via `registerTransitionOutPlayer`.
+
+State swap sequence:
+
+```
+1. setState(newId) requested via action / variable binding
+   │
+2. DivState collects all registered playOut callbacks
+   │
+3. await Promise.all(playOuts())  — wait for transition_out to finish
+   │
+4. Render new state's children
+   │
+5. Each new Outer mounts with mode='auto-in' and plays transition_in
+   │
+6. transition_change of the state container queues LayoutAnimation
+   for smooth size change of the wrapper
+```
+
+This mirrors Web's `stateCtx.registerChildWithTransitionOut`.
+
+### Triggers
+
+`transition_triggers` (`state_change`, `visibility_change`) are honored by the
+underlying hooks. `visibility_change` is the implicit default for in/out
+transitions; `state_change` for change_bounds inside `DivState`.
+
+---
+
 ## Context Architecture
 
 ### DivKitContext
@@ -571,6 +691,29 @@ interface StateContextValue {
     registerState: (componentId: string, setState: StateSetter) => () => void;
     switchState: (stateId: string) => Promise<void>;
     getStateSetter: (componentId: string) => StateSetter | undefined;
+}
+```
+
+### DivStateScopeContext
+
+Scoped per `DivState` — collects `transition_out` players from its children so
+that the state swap can await all out-animations in parallel:
+
+```typescript
+interface DivStateScopeValue {
+    registerTransitionOutPlayer(play: () => Promise<void>): () => void;
+}
+```
+
+### PagerContext
+
+Binds a `DivPager` to its `DivIndicator(s)`:
+
+```typescript
+interface PagerContextValue {
+    registerPager: (id: string, snapshot: PagerSnapshot) => () => void;
+    listenPager: (id: string, callback: (snapshot: PagerSnapshot) => void) => () => void;
+    scrollToItem: (id: string, index: number) => void;
 }
 ```
 
@@ -726,7 +869,7 @@ Simple Observable pattern:
 - Expression evaluation
 - Variable operations
 - Action handlers
-- Utility functions
+- Utility functions (`flattenTransition`, `configureChangeBoundsLayout`, …)
 
 ### Component Tests
 
@@ -739,7 +882,15 @@ Simple Observable pattern:
 
 - Variable → Component updates
 - Action → State changes
+- URL-action `set_variable` (`tests/integration-rn/url-action-set-variable.test.tsx`)
 - Full render cycle
+
+### Snapshot / Visual Tests
+
+- Jest snapshot tests for component output
+- Maestro flows for end-to-end visual verification on Android
+  (`examples/NewExample/.maestro/snapshots/*.yaml`), covering all examples
+  including `transition_change` and `transition_in_out_visibility`.
 
 ---
 
