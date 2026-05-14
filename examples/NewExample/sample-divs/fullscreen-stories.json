@@ -105,6 +105,12 @@
                     "visibility_action": {
                         "log_id": "visible"
                     },
+                    "width": {
+                        "type": "match_parent"
+                    },
+                    "height": {
+                        "type": "match_parent"
+                    },
                     "content_alignment_vertical": "center",
                     "content_alignment_horizontal": "center"
                 }

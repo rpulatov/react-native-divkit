@@ -4,19 +4,13 @@ appId: com.newexample
     clearState: true
     arguments:
       snapshotMode: true
-      initialExample: "State"
+      initialExample: "Image"
 - extendedWaitUntil:
     visible:
       id: "divkit-snapshot-area"
     timeout: 30000
 - waitForAnimationToEnd
 - takeScreenshot:
-    path: .maestro/goldens/android/state-switching
-    cropOn:
-      id: "divkit-snapshot-area"
-- tapOn: "State 1 - Blue"
-- waitForAnimationToEnd
-- takeScreenshot:
-    path: .maestro/goldens/android/state-switching_part2
+    path: .maestro/goldens/android/image
     cropOn:
       id: "divkit-snapshot-area"
