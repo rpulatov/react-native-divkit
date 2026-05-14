@@ -168,24 +168,38 @@ export function buildRenderedItems<T extends { id?: string }>(
     duplicates = DUPLICATES_IN_INFINITE
 ): RenderedItemEntry<T>[] {
     if (!items.length) return [];
+    const itemKey = (item: T, fallbackIdx: number): string =>
+        item?.id || `r-${fallbackIdx}`;
     if (!isInfinite) {
-        return items.map((item, index) => ({ item, realIndex: index, key: `r-${index}` }));
+        return items.map((item, index) => ({
+            item,
+            realIndex: index,
+            key: itemKey(item, index)
+        }));
     }
     const size = items.length;
     const head: RenderedItemEntry<T>[] = [];
     const tail: RenderedItemEntry<T>[] = [];
     for (let i = 0; i < duplicates; i++) {
         const realIdx = (size - duplicates + i + size) % size;
-        head.push({ item: items[realIdx], realIndex: realIdx, key: `dup-h-${i}` });
+        head.push({
+            item: items[realIdx],
+            realIndex: realIdx,
+            key: `dup-h-${i}-${itemKey(items[realIdx], realIdx)}`
+        });
     }
     for (let i = 0; i < duplicates; i++) {
         const realIdx = i % size;
-        tail.push({ item: items[realIdx], realIndex: realIdx, key: `dup-t-${i}` });
+        tail.push({
+            item: items[realIdx],
+            realIndex: realIdx,
+            key: `dup-t-${i}-${itemKey(items[realIdx], realIdx)}`
+        });
     }
     const real: RenderedItemEntry<T>[] = items.map((item, index) => ({
         item,
         realIndex: index,
-        key: `r-${index}`
+        key: itemKey(item, index)
     }));
     return [...head, ...real, ...tail];
 }
