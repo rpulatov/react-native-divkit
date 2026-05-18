@@ -159,7 +159,7 @@ Base wrapper component providing common functionality for all components.
 - Visibility handling (visible/invisible/gone)
 - Sizing (width/height with fixed/match_parent/wrap_content)
 - Padding and margins
-- Background (solid colors)
+- Background layers: `solid`, `radial_gradient`, `gradient` (linear) — `image` / `nine_patch_image` не поддержаны
 - Borders and border radius
 - Shadows
 - Opacity/alpha

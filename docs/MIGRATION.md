@@ -507,7 +507,8 @@ These features are planned for future versions:
 | Video                            | Full        | No      |
 | Lottie                           | Full        | No      |
 | Text ranges                      | Full        | No      |
-| Gradients                        | Full        | Partial |
+| Gradients (linear + radial)      | Full        | Full    |
+| Image / nine_patch background    | Full        | No      |
 | Action Animation                 | Full        | Partial |
 | transition_in / transition_out   | Full        | Full    |
 | transition_change (change_bounds)| Full        | Full    |

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, ViewStyle } from 'react-native';
-import Svg, { Defs, RadialGradient, Stop, Rect } from 'react-native-svg';
-import type { Background as BackgroundType, RadialBackground } from '../../types/background';
+import Svg, { Defs, LinearGradient, RadialGradient, Stop, Rect } from 'react-native-svg';
+import type { Background as BackgroundType, GradientBackground, RadialBackground } from '../../types/background';
 import { correctColor } from '../../utils/correctColor';
 
 export interface BackgroundProps {
@@ -10,6 +10,63 @@ export interface BackgroundProps {
     width?: number;
     height?: number;
 }
+
+const LinearGradientLayer = ({ layer }: { layer: GradientBackground }) => {
+    let stops: React.ReactElement[] = [];
+
+    if (layer.color_map?.length) {
+        stops = layer.color_map.map((point, index) => (
+            <Stop
+                key={index}
+                offset={point.position}
+                stopColor={correctColor(point.color)}
+                stopOpacity={1}
+            />
+        ));
+    } else if (layer.colors?.length) {
+        const colors = layer.colors;
+        stops = colors.map((color, index) => (
+            <Stop
+                key={index}
+                offset={colors.length === 1 ? 0 : index / (colors.length - 1)}
+                stopColor={correctColor(color)}
+                stopOpacity={1}
+            />
+        ));
+    }
+
+    if (!stops.length) {
+        return null;
+    }
+
+    // DivKit angle: counter-clockwise from +X axis (0 = left→right, 90 = bottom→top).
+    // SVG y-axis is inverted, so use -sin for dy.
+    const rad = ((layer.angle ?? 0) * Math.PI) / 180;
+    const dx = Math.cos(rad);
+    const dy = -Math.sin(rad);
+    const x1 = 0.5 - dx * 0.5;
+    const y1 = 0.5 - dy * 0.5;
+    const x2 = 0.5 + dx * 0.5;
+    const y2 = 0.5 + dy * 0.5;
+
+    return (
+        <Svg height="100%" width="100%" style={StyleSheet.absoluteFill}>
+            <Defs>
+                <LinearGradient
+                    id="lgrad"
+                    x1={x1}
+                    y1={y1}
+                    x2={x2}
+                    y2={y2}
+                    gradientUnits="objectBoundingBox"
+                >
+                    {stops}
+                </LinearGradient>
+            </Defs>
+            <Rect x="0" y="0" width="100%" height="100%" fill="url(#lgrad)" />
+        </Svg>
+    );
+};
 
 const RadialGradientLayer = ({ layer }: { layer: RadialBackground }) => {
     // Default to 50% 50% if not specified
@@ -111,6 +168,13 @@ export const Background = ({ layers, style }: BackgroundProps) => {
                     return (
                         <View key={index} style={StyleSheet.absoluteFill}>
                             <RadialGradientLayer layer={layer} />
+                        </View>
+                    );
+                }
+                if (layer.type === 'gradient') {
+                    return (
+                        <View key={index} style={StyleSheet.absoluteFill}>
+                            <LinearGradientLayer layer={layer} />
                         </View>
                     );
                 }
