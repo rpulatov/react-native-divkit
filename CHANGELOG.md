@@ -1,3 +1,10 @@
+# [1.9.0](https://github.com/rpulatov/react-native-divkit/compare/v1.8.1...v1.9.0) (2026-05-18)
+
+
+### Features
+
+* **Background:** добавить поддержку линейных градиентов ([7dac82e](https://github.com/rpulatov/react-native-divkit/commit/7dac82e514e592d2cfc501d858780306475edb1d))
+
 ## [1.8.1](https://github.com/rpulatov/react-native-divkit/compare/v1.8.0...v1.8.1) (2026-05-14)
 
 
