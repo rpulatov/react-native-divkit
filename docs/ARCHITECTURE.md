@@ -253,15 +253,18 @@ Outer.tsx           → Base wrapper (visibility, actions, action_animation,
 ```
 1. DivComponent receives ComponentContext
    │
-2. Switch on json.type
+2. useLocalVariables: if json.variables is set, instantiate them and
+   merge into componentContext.variables (local wins over parent)
    │
-3. Render specific component (DivText, DivContainer, etc.)
+3. Switch on json.type
    │
-4. Component calls useDerivedFromVars for expressions
+4. Render specific component (DivText, DivContainer, etc.)
    │
-5. Outer wrapper applies common styles
+5. Component calls useDerivedFromVars for expressions
    │
-6. Return React Native elements
+6. Outer wrapper applies common styles
+   │
+7. Return React Native elements
 ```
 
 ### Variable Update Flow
@@ -494,12 +497,25 @@ function handleAction(
 ### Action Execution
 
 ```typescript
-async execAnyActions(actions: Action[]): Promise<void> {
-  for (const action of actions) {
-    // 1. Log statistics
+async execAnyActions(
+  actions: Action[],
+  opts?: { componentContext?: ComponentContext; processUrls?: boolean }
+): Promise<void> {
+  // Variable scope for expressions inside actions — falls back to the global
+  // scope when called outside a component context.
+  const vars = opts?.componentContext?.variables ?? globalVariables;
+
+  for (const raw of actions) {
+    // 1. Resolve @{...} in every string field of the action (url, typed.value,
+    //    payload, ...). Mirrors Web getJsonWithVars(action).
+    const action = prepareVars(raw).hasExpression
+      ? prepareVars(raw).applyVars(vars, undefined, true).result
+      : raw;
+
+    // 2. Log statistics
     if (action.log_id) onStat({ type: 'action', action });
 
-    // 2. Execute typed action
+    // 3. Execute typed action
     if (action.typed) {
       switch (action.typed.type) {
         case 'set_variable': /* ... */
@@ -508,7 +524,7 @@ async execAnyActions(actions: Action[]): Promise<void> {
       }
     }
 
-    // 3. Handle URL action
+    // 4. Handle URL action (URL is already substituted)
     if (action.url) onCustomAction(action);
   }
 }
@@ -726,7 +742,7 @@ interface ComponentContext<T = DivBaseData> {
     path: string[];
     json: T;
     origJson: T;
-    variables: Map<string, Variable>;
+    variables?: Map<string, Variable>; // root scope + ancestors' local variables
     id: string;
     parent?: ComponentContext;
 
@@ -737,6 +753,11 @@ interface ComponentContext<T = DivBaseData> {
     getVariable: (name: string) => Variable | undefined;
 }
 ```
+
+`produceChildContext` is a regular method (not an arrow), so `this.variables`
+refers to whichever context the caller is on — that's how local variables from
+`useLocalVariables` propagate to descendants without being clobbered by the
+root closure.
 
 ---
 
@@ -756,6 +777,8 @@ const { json: resolvedDiv } = applyTemplate(divData, {}, templates, logError);
 
 ### Phase 2: Variable Initialization
 
+Root scope is seeded from `card.variables`:
+
 ```typescript
 const variables = new Map<string, Variable>();
 
@@ -763,6 +786,23 @@ card.variables?.forEach(varData => {
     const variable = createVariable(varData.name, varData.type, varData.value);
     variables.set(varData.name, variable);
 });
+```
+
+Any inner div-node may declare its own `variables` array; those are instantiated
+lazily by the `useLocalVariables` hook (in `DivComponent.tsx`) and merged with
+the parent scope. Combined with template `$value` substitution this lets a
+template parameter flow into a real DivKit variable visible inside `@{...}`:
+
+```json
+"templates": {
+  "prize_card": {
+    "type": "container",
+    "variables": [
+      { "name": "description", "type": "string", "value": "", "$value": "description" }
+    ],
+    "items": [ /* @{description} is now resolvable here */ ]
+  }
+}
 ```
 
 ### Phase 3: Context Creation

@@ -16,6 +16,7 @@ Complete API documentation for `react-native-divkit`.
 - [Action Animation](#action-animation)
 - [Transitions](#transitions)
 - [Expression Syntax](#expression-syntax)
+- [Local Variables](#local-variables)
 
 ---
 
@@ -70,6 +71,11 @@ interface DivJson {
     templates?: Record<string, any>;
 }
 ```
+
+> **Note.** Beyond `card.variables`, any inner div-node (or template body) can
+> declare its own `variables: DivVariable[]` array — it creates a local scope
+> visible to that node's descendants in `@{...}` expressions and inside
+> action `url` / `typed.value` fields. See [Local Variables](#local-variables).
 
 **Example:**
 
@@ -947,6 +953,70 @@ Variables can be referenced in JSON values using the `@{expression}` syntax.
 { "text": "@{toString(count)}" }
 { "text": "@{toUpperCase(name)}" }
 ```
+
+### Expressions in actions
+
+`@{...}` is also resolved in action fields (`url`, `typed.value`, `payload`)
+right before the action is dispatched. The scope is the calling component's
+`componentContext.variables`, so a `url` action declared inside a template can
+reference variables local to that template:
+
+```json
+{
+  "url": "myapp://open?desc=@{description}",
+  "log_id": "navigate"
+}
+```
+
+## Local Variables
+
+Local `variables` can be declared on any div-node, not just on `card`.
+Children of that node — including expressions inside their actions —
+see the variable in their scope. Local names shadow same-named parent variables.
+
+### Inline on a container
+
+```json
+{
+  "type": "container",
+  "variables": [
+    { "name": "selected", "type": "string", "value": "" }
+  ],
+  "items": [
+    { "type": "text", "text": "Picked: @{selected}" }
+  ]
+}
+```
+
+### As a template parameter bridge
+
+Template `$key` substitution copies a field of the template instance into a
+property of the template body, so combining `$value` with a `variables` entry
+turns a template parameter into a real DivKit variable:
+
+```json
+"templates": {
+  "prize_card": {
+    "type": "container",
+    "variables": [
+      { "name": "description", "type": "string", "value": "", "$value": "description" }
+    ],
+    "items": [
+      { "type": "text", "$text": "description" },
+      {
+        "type": "container",
+        "actions": [
+          { "url": "myapp://prize?desc=@{description}", "log_id": "tap" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Each `prize_card` instance now produces its own `description` variable and
+`@{description}` resolves per-card — inside text, action URLs, and any other
+expression-aware field.
 
 ---
 

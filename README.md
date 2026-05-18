@@ -203,6 +203,36 @@ export default function App() {
 | `dict`    | Словарь (объект) | `{"key": "value"}` |
 | `array`   | Список (массив)  | `[1, 2, 3]`        |
 
+### Локальные переменные на узле / в шаблоне
+
+`variables` можно объявить не только на `card`, но и на любом div-узле.
+Они видны только внутри этого узла и его потомков (в том числе в `@{...}`
+внутри `url` и `typed.value` экшенов). Совместно с подменой `$value` в
+шаблонах это позволяет провести параметр шаблона как полноценную переменную:
+
+```json
+"templates": {
+  "prize_card": {
+    "type": "container",
+    "variables": [
+      { "name": "description", "type": "string", "value": "", "$value": "description" }
+    ],
+    "items": [
+      { "type": "text", "$text": "description" },
+      {
+        "type": "container",
+        "actions": [
+          { "url": "myapp://prize?d=@{description}", "log_id": "tap" }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Каждый инстанс `prize_card` получит свой `description` — `@{description}`
+резолвится индивидуально для каждой карточки.
+
 ## Действия (Actions)
 
 Действия вызываются при взаимодействии с пользователем:
@@ -219,6 +249,11 @@ export default function App() {
     ]
 }
 ```
+
+> Перед отправкой action в обработчик все поля (`url`, `typed.value`,
+> `payload`, …) пропускаются через резолв `@{...}` против переменных
+> компонента — то же поведение, что у Web (`getJsonWithVars(action)`).
+> В колбэк `onCustomAction` приходит уже подставленный URL.
 
 ### Типизированные действия
 
