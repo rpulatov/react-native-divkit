@@ -1,3 +1,10 @@
+# [1.10.0](https://github.com/rpulatov/react-native-divkit/compare/v1.9.0...v1.10.0) (2026-05-18)
+
+
+### Features
+
+* **variable:** добавить поддержку локальных переменных в шаблонах ([f456967](https://github.com/rpulatov/react-native-divkit/commit/f4569671ee18898bfb052d428d10b68dfb6f0e95))
+
 # [1.9.0](https://github.com/rpulatov/react-native-divkit/compare/v1.8.1...v1.9.0) (2026-05-18)
 
 
