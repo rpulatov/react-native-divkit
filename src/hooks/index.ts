@@ -11,3 +11,6 @@ export { useVariable, useVariableInstance, useVariableSetter, useVariableState }
 
 // Action execution hooks
 export { useAction, useActions, useActionHandler, useHasActions, type UseActionOptions } from './useAction';
+
+// Local variables scope for inner nodes / templates
+export { useLocalVariables } from './useLocalVariables';

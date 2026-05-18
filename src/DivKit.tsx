@@ -310,8 +310,34 @@ export function DivKit({
             const processUrls = opts?.processUrls ?? true;
             const componentContext = opts?.componentContext;
 
-            for (const action of actions) {
-                if (!action) continue;
+            // Variable scope for resolving expressions inside actions.
+            // Mirrors Web execAnyActions, which calls getJsonWithVars(action) before dispatch:
+            // every field (url, typed.value, etc.) is resolved against the action's
+            // component context (where local template/node variables live), falling back
+            // to the global scope.
+            const effectiveVars = componentContext?.variables ?? variables;
+
+            for (const rawAction of actions) {
+                if (!rawAction) continue;
+
+                // Pre-resolve @{...} in all string fields of the action so URL handlers,
+                // typed handlers, and onCustomAction all see fully-substituted values.
+                let action = rawAction;
+                try {
+                    const prepared = prepareVars(rawAction, logError, undefined, 0);
+                    if (prepared.hasExpression) {
+                        const applied = prepared.applyVars(effectiveVars, undefined, true);
+                        if (applied.result) {
+                            action = applied.result as MaybeMissing<Action>;
+                        }
+                    }
+                } catch (err) {
+                    logError(
+                        wrapError(err as Error, {
+                            additional: { phase: 'action_expression_resolve' }
+                        })
+                    );
+                }
 
                 // Log statistics
                 if (action.log_id && onStat) {
@@ -728,17 +754,23 @@ export function DivKit({
                 return evalExpression(allVars, undefined, store, expr, opts);
             },
 
-            produceChildContext: (div: MaybeMissing<DivBaseData>, opts?: any): ComponentContext => {
-                const childPath = opts?.path !== undefined ? [...context.path, String(opts.path)] : context.path;
+            // NB: declared as a regular method so that `this` refers to whichever context
+            // the consumer calls `.produceChildContext(...)` on. The same function value
+            // is shared via `{...context}` in the spread below, so children also use their
+            // own `this.variables` — which is what propagates local-scope variables down.
+            produceChildContext(this: ComponentContext, div: MaybeMissing<DivBaseData>, opts?: any): ComponentContext {
+                const childPath = opts?.path !== undefined ? [...this.path, String(opts.path)] : this.path;
 
                 const childContext: ComponentContext = {
-                    ...context,
+                    ...this,
                     path: childPath,
-                    parent: context,
+                    parent: this,
                     json: div,
                     origJson: opts?.origJson || div,
                     id: opts?.id || genId('component'),
-                    variables: opts?.variables || variables,
+                    // Fall back to parent scope (which may include local variables added by
+                    // useLocalVariables), not the root closure.
+                    variables: opts?.variables || this.variables || variables,
                     isRootState: opts?.isRootState,
                     isTooltipRoot: opts?.isTooltipRoot,
                     key: opts?.key

@@ -78,7 +78,42 @@ function Counter() {
 
 ---
 
-### 3. `useAction` - Выполнение actions
+### 3. `useLocalVariables` (internal) — локальные переменные узла
+
+Используется в `DivComponent.tsx` для обработки `json.variables` на любом
+div-узле (а не только на корне `card.variables`). Создаёт инстансы `Variable`
+через `createVariable`, мерджит с родительским scope (локальные перекрывают
+одноимённые родительские) и возвращает обновлённый `componentContext`.
+
+```tsx
+import { useLocalVariables } from '../hooks/useLocalVariables';
+
+export function DivComponent({ componentContext }) {
+    const effectiveContext = useLocalVariables(componentContext);
+    // дальше всем детям пробрасывается effectiveContext, в котором уже
+    // видны переменные, объявленные в json.variables этого узла.
+}
+```
+
+В сочетании с template `$value`-подменой это позволяет провести параметр
+шаблона в реальную DivKit-переменную:
+
+```json
+{
+  "type": "container",
+  "variables": [
+    { "name": "desc", "type": "string", "value": "", "$value": "desc" }
+  ],
+  "items": [ /* @{desc} тут уже резолвится */ ]
+}
+```
+
+Хук НЕ экспортируется через `react-native-divkit` — это часть внутренней
+маршрутизации, прикладному коду он не нужен.
+
+---
+
+### 4. `useAction` - Выполнение actions
 
 Hooks для выполнения DivKit actions (click, visibility, etc.)
 

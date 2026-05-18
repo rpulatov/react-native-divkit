@@ -130,6 +130,10 @@ Page-position dots for a `DivPager`, ported from `Indicator.svelte`.
 ### 7. DivComponent (`DivComponent.tsx`)
 
 Universal component router that dispatches to appropriate component based on type.
+Before routing it runs `useLocalVariables(componentContext)`, which instantiates
+any `json.variables` declared on the current node and merges them into the
+descendant scope. This is what makes `variables` declared inside templates (or
+on inner containers) visible to children and to `@{...}` inside their actions.
 
 **Supported Types:**
 

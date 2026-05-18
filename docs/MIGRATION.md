@@ -335,6 +335,10 @@ onCustomAction: action => {
 };
 ```
 
+> `action.url` arrives with `@{...}` expressions already resolved against the
+> calling component's variable scope (same behaviour as Web's
+> `getJsonWithVars(action)`). Pass through to your router as-is.
+
 ### set_variable Action
 
 Identical JSON, but callback signature differs slightly.
@@ -405,6 +409,34 @@ $: text = getDerivedFromVars(json.text);
 ```tsx
 const text = useDerivedFromVars(json.text, variables);
 ```
+
+### Local variables on inner nodes
+
+Identical to Web: any div-node (or template body) may declare a `variables`
+array. The variables are visible to that node's descendants, including inside
+action `url` / `typed.value` expressions. Combined with template `$value`
+substitution this is how a template parameter becomes a `@{...}`-resolvable
+variable:
+
+```json
+"templates": {
+  "card": {
+    "type": "container",
+    "variables": [
+      { "name": "desc", "type": "string", "value": "", "$value": "desc" }
+    ],
+    "items": [
+      { "type": "container", "actions": [
+        { "url": "myapp://open?d=@{desc}", "log_id": "tap" }
+      ] }
+    ]
+  }
+}
+```
+
+Wiring on the RN side lives in `useLocalVariables` (called from
+`DivComponent.tsx`) and in `ComponentContext.produceChildContext`, which
+inherits `this.variables` rather than the root scope.
 
 ---
 
