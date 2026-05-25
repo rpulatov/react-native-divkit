@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { Image, View, ViewStyle, ImageStyle, ActivityIndicator } from 'react-native';
+import { Image, View, ViewStyle, ImageStyle, UIManager, NativeModules } from 'react-native';
 import type { ComponentContext } from '../../types/componentContext';
 import type { DivImageData } from '../../types/image';
 import type { ImageScale } from '../../types/imageScale';
@@ -7,6 +7,56 @@ import { Outer } from '../utilities/Outer';
 import { useDerivedFromVarsSimple } from '../../hooks/useDerivedFromVars';
 import { wrapError } from '../../utils/wrapError';
 import { alignHToFlex, alignVToFlex } from '../../utils/correctImageAlignment';
+
+// Optional dependency: react-native-fast-image. If installed AND the native side is
+// actually linked into the host app, it gives us a real disk cache + concurrent decode
+// pool — dramatically faster than RN's default <Image> on pages with many remote
+// images. Otherwise we fall back to <Image>.
+//
+// Important: a successful `require()` only proves the JS package is on disk. The
+// native ViewManager `FastImageView` is registered by the host app's autolinking —
+// if the app wasn't rebuilt after installing the package, JS resolves but renders
+// blow up with "View config not found for component `FastImageView`". So we also
+// probe the native registration before deciding to use it.
+type ImageImpl = {
+    Component: React.ComponentType<any>;
+    isFastImage: boolean;
+};
+
+function isFastImageNativelyAvailable(): boolean {
+    // UIManager.getViewManagerConfig is the canonical probe on the old architecture.
+    // Returns null/undefined when the view manager isn't registered.
+    const probe = UIManager as unknown as {
+        getViewManagerConfig?: (name: string) => unknown;
+    };
+    if (typeof probe.getViewManagerConfig === 'function') {
+        try {
+            if (probe.getViewManagerConfig('FastImageView')) return true;
+        } catch {
+            /* fall through */
+        }
+    }
+    // Fabric / new arch: native module is exposed via NativeModules. If neither
+    // probe succeeds we treat it as unavailable — the cost of guessing wrong is a
+    // hard crash, the cost of being conservative is using <Image>.
+    const modules = NativeModules as unknown as Record<string, unknown>;
+    if (modules.FastImageView) return true;
+    return false;
+}
+
+const imageImpl: ImageImpl = (() => {
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const mod = require('react-native-fast-image');
+        const FastImage = mod?.default ?? mod;
+        if (FastImage && isFastImageNativelyAvailable()) {
+            return { Component: FastImage, isFastImage: true };
+        }
+    } catch {
+        /* not installed — fall through */
+    }
+    return { Component: Image, isFastImage: false };
+})();
 
 
 export interface DivImageProps {
@@ -170,32 +220,22 @@ export function DivImage({ componentContext }: DivImageProps) {
         );
     }
 
+    const ImageComponent = imageImpl.Component;
+
     return (
         <Outer componentContext={componentContext}>
             <View style={containerStyle}>
-                <Image
-                    source={{ uri: imageUrl }}
+                <ImageComponent
+                    source={imageImpl.isFastImage
+                        // FastImage caches by URL on disk by default. 'immutable' is
+                        // correct for the prize/product CDN URLs that never change.
+                        ? { uri: imageUrl, cache: 'immutable' }
+                        : { uri: imageUrl }}
                     style={imageStyle}
                     resizeMode={resizeMode}
                     onLoadEnd={handleLoadEnd}
                     onError={handleError}
                 />
-                {loading && (
-                    <View
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            backgroundColor: placeholderColor || 'transparent'
-                        }}
-                    >
-                        <ActivityIndicator size="small" color="#999999" />
-                    </View>
-                )}
             </View>
         </Outer>
     );

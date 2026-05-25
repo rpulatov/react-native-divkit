@@ -47,21 +47,28 @@ export function useLocalVariables<T extends ComponentContext>(componentContext: 
         return map.size > 0 ? map : null;
     }, [localVarsList, logError]);
 
-    return useMemo(() => {
-        if (!localVariables) return componentContext;
-
-        const parent = componentContext.variables;
+    // Merge parent + local into a single Variables Map. Depend on the parent Map
+    // identity (not the whole componentContext), so the merged Map keeps its identity
+    // across parent re-renders that don't actually change variables — this is what
+    // lets React.memo(DivComponent) skip work for template subtrees.
+    const parentVariables = componentContext.variables;
+    const mergedVariables = useMemo(() => {
+        if (!localVariables) return parentVariables;
         const merged = new Map<string, Variable>();
-        if (parent) {
-            for (const [k, v] of parent) merged.set(k, v);
+        if (parentVariables) {
+            for (const [k, v] of parentVariables) merged.set(k, v);
         }
         for (const [k, v] of localVariables) {
             merged.set(k, v);
         }
+        return merged;
+    }, [parentVariables, localVariables]);
 
+    return useMemo(() => {
+        if (!localVariables) return componentContext;
         return {
             ...componentContext,
-            variables: merged
+            variables: mergedVariables
         };
-    }, [componentContext, localVariables]);
+    }, [componentContext, localVariables, mergedVariables]);
 }

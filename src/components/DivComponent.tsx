@@ -35,7 +35,7 @@ export interface DivComponentProps {
  *
  * Based on Web component resolution logic
  */
-export function DivComponent({ componentContext }: DivComponentProps) {
+function DivComponentImpl({ componentContext }: DivComponentProps) {
     // Apply local variables declared on the node (mirrors Web Root.svelte
     // childProcessedJson.variables): they merge with the parent scope and are
     // visible to all descendants of this node, including `@{...}` expressions.
@@ -84,3 +84,26 @@ export function DivComponent({ componentContext }: DivComponentProps) {
             return <Unknown type={json.type} />;
     }
 }
+
+/**
+ * Memoization gate. produceChildContext allocates a fresh context wrapper on every
+ * parent render, so the default React.memo (referential equality) wouldn't help.
+ * We compare what actually drives rendering:
+ *   - json identity: the source JSON node — only changes when the document is reloaded
+ *     (or when a parent rewrites items, e.g. item_builder), so it's a stable signal
+ *     of "this subtree changed".
+ *   - variables identity: the Variables Map. useLocalVariables returns a NEW Map only
+ *     when the node declares its own `variables`. Root-level variables stay identical
+ *     across renders, so non-template nodes get to skip work.
+ *
+ * Other context fields (path, parent, callbacks) are derived and don't drive what
+ * renders. If they change without json/variables changing, downstream rendering is
+ * identical anyway.
+ */
+function arePropsEqual(prev: DivComponentProps, next: DivComponentProps): boolean {
+    const a = prev.componentContext;
+    const b = next.componentContext;
+    return a.json === b.json && a.variables === b.variables;
+}
+
+export const DivComponent = React.memo(DivComponentImpl, arePropsEqual);
