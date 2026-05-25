@@ -335,6 +335,21 @@ export function DivPager({ componentContext }: DivPagerProps) {
         [items, isInfinite]
     );
 
+    const frameStyle = useMemo(() => {
+        const heightType = (json.height as { type?: string } | undefined)?.type;
+        return isHorizontal && heightType === 'wrap_content'
+            ? styles.wrapContentFrame
+            : styles.fill;
+    }, [isHorizontal, json.height]);
+
+    const unmeasuredItemMainSize = useMemo((): `${number}%` => {
+        const lm = layoutMode as
+            | { type?: string; page_width?: { value?: number } }
+            | null
+            | undefined;
+        return lm?.type === 'percentage' ? `${lm.page_width?.value ?? 100}%` : '100%';
+    }, [layoutMode]);
+
     if (!json.layout_mode) {
         componentContext.logError(
             wrapError(new Error('Empty "layout_mode" prop for div "pager"'))
@@ -360,9 +375,25 @@ export function DivPager({ componentContext }: DivPagerProps) {
         });
     };
 
+    const renderMeasurementPlaceholder = () => {
+        const item = items[0];
+        if (!item || pageSize > 0) return null;
+        const childContext = componentContext.produceChildContext(item, { path: 0 });
+        const itemStyle = isHorizontal
+            ? { width: unmeasuredItemMainSize }
+            : { height: unmeasuredItemMainSize };
+        return (
+            <View style={styles.measurePlaceholder} pointerEvents="none">
+                <View style={[styles.itemWrapper, itemStyle]}>
+                    <DivComponent componentContext={childContext} />
+                </View>
+            </View>
+        );
+    };
+
     return (
         <Outer componentContext={outerContext}>
-            <View style={styles.fill} onLayout={onLayout}>
+            <View style={frameStyle} onLayout={onLayout}>
                 {pageSize > 0 ? (
                     <ScrollView
                         ref={scrollRef}
@@ -381,11 +412,13 @@ export function DivPager({ componentContext }: DivPagerProps) {
                                 ? { paddingLeft: contentPad.start, paddingRight: contentPad.end }
                                 : { paddingTop: contentPad.start, paddingBottom: contentPad.end }
                         }
-                        style={styles.fill}
+                        style={frameStyle}
                     >
                         {renderItems()}
                     </ScrollView>
-                ) : null}
+                ) : (
+                    renderMeasurementPlaceholder()
+                )}
             </View>
         </Outer>
     );
@@ -396,7 +429,14 @@ const styles = StyleSheet.create({
         flex: 1,
         alignSelf: 'stretch'
     },
+    wrapContentFrame: {
+        alignSelf: 'stretch'
+    },
     itemWrapper: {
         overflow: 'hidden'
+    },
+    measurePlaceholder: {
+        opacity: 0,
+        alignSelf: 'stretch'
     }
 });
