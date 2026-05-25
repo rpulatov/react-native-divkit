@@ -1,3 +1,11 @@
+# [1.11.0](https://github.com/rpulatov/react-native-divkit/compare/v1.10.0...v1.11.0) (2026-05-25)
+
+
+### Features
+
+* **DivPager:** добавить поддержку динамического стиля фрейма ([8f59305](https://github.com/rpulatov/react-native-divkit/commit/8f59305134d32143b71ba78cdbab2c9343c59381))
+* **image:** добавлен адаптер для работы с изображениями ([18408c8](https://github.com/rpulatov/react-native-divkit/commit/18408c8ba1b834739951071cce3b350672af0cca))
+
 # [1.10.0](https://github.com/rpulatov/react-native-divkit/compare/v1.9.0...v1.10.0) (2026-05-18)
 
 
