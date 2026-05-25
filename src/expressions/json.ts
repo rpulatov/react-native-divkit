@@ -167,6 +167,21 @@ class VariableBinding {
     }
 }
 
+/**
+ * Subtrees (arrays/objects) returned by prepareVarsObj that contain no Expression/Variable
+ * bindings anywhere inside — i.e. they are byte-for-byte identical to the original JSON.
+ * applyVars consults this set to skip walking static subtrees entirely.
+ *
+ * WeakSet keeps the entries alive only as long as the JSON itself is alive.
+ */
+const STATIC_SUBTREES = new WeakSet<object>();
+
+function hasBinding(node: unknown): boolean {
+    if (node === null || typeof node !== 'object') return false;
+    if (node instanceof ExpressionBinding || node instanceof VariableBinding) return true;
+    return !STATIC_SUBTREES.has(node as object);
+}
+
 export type MaybeMissing<T> =
     | T
     | (T extends (infer U)[]
@@ -238,11 +253,34 @@ function prepareVarsObj<T>(
                 }
             }
         } else if (Array.isArray(jsonProp) && maxDepth > 0) {
-            return jsonProp.map(item => prepareVarsObj(item, store, logError, maxDepth - 1));
+            // Walk children, but only allocate a new array if any child returned
+            // something different (i.e. got wrapped into an ExpressionBinding /
+            // VariableBinding). Otherwise reuse the same array and tag it as a
+            // static subtree so applyVars can skip walking it entirely.
+            let changed = false;
+            const mapped = new Array(jsonProp.length);
+            for (let i = 0; i < jsonProp.length; i++) {
+                const r = prepareVarsObj(jsonProp[i], store, logError, maxDepth - 1);
+                mapped[i] = r;
+                if (r !== jsonProp[i]) changed = true;
+            }
+            if (!changed) {
+                STATIC_SUBTREES.add(jsonProp);
+                return jsonProp;
+            }
+            return mapped;
         } else if (typeof jsonProp === 'object' && maxDepth > 0) {
+            // Same idea: keep the original object if nothing got rewritten.
+            let changed = false;
             const res: Record<string, unknown> = {};
             for (const key in jsonProp) {
-                res[key] = prepareVarsObj(jsonProp[key], store, logError, maxDepth - 1);
+                const r = prepareVarsObj(jsonProp[key], store, logError, maxDepth - 1);
+                res[key] = r;
+                if (r !== (jsonProp as Record<string, unknown>)[key]) changed = true;
+            }
+            if (!changed) {
+                STATIC_SUBTREES.add(jsonProp as object);
+                return jsonProp;
             }
             return res;
         }
@@ -279,32 +317,19 @@ function applyVars<T>(
                 result: jsonProp.apply(opts.variables) as T
             };
         } else if (Array.isArray(jsonProp)) {
+            // Fast path: if no item is a binding (i.e. prepareVarsObj returned the
+            // same array because the subtree was fully static), don't walk children
+            // or allocate a new array. Preserves identity across renders.
+            if (!hasBinding(jsonProp)) {
+                return { result: jsonProp as MaybeMissing<T> };
+            }
             let usedVars: Set<Variable> | undefined;
-            const arr = jsonProp.map(it => {
-                const subres = applyVars(it, opts);
-
-                if (subres.usedVars) {
-                    if (!usedVars) {
-                        usedVars = new Set();
-                    }
-                    for (const instance of subres.usedVars) {
-                        usedVars.add(instance);
-                    }
-                }
-
-                return subres.result;
-            });
-
-            return {
-                result: arr as MaybeMissing<T>,
-                usedVars
-            };
-        } else if (typeof jsonProp === 'object') {
-            const res: Record<string, unknown> = {};
-            let usedVars: Set<Variable> | undefined;
-            for (const key in jsonProp) {
-                const subres = applyVars(jsonProp[key as keyof typeof jsonProp], opts);
-                res[key] = subres.result;
+            let changed = false;
+            const arr = new Array(jsonProp.length);
+            for (let i = 0; i < jsonProp.length; i++) {
+                const subres = applyVars(jsonProp[i], opts);
+                arr[i] = subres.result;
+                if (subres.result !== jsonProp[i]) changed = true;
 
                 if (subres.usedVars) {
                     if (!usedVars) {
@@ -316,7 +341,32 @@ function applyVars<T>(
                 }
             }
             return {
-                result: res as MaybeMissing<T>,
+                result: (changed ? arr : jsonProp) as MaybeMissing<T>,
+                usedVars
+            };
+        } else if (typeof jsonProp === 'object') {
+            if (!hasBinding(jsonProp)) {
+                return { result: jsonProp as MaybeMissing<T> };
+            }
+            const res: Record<string, unknown> = {};
+            let usedVars: Set<Variable> | undefined;
+            let changed = false;
+            for (const key in jsonProp) {
+                const subres = applyVars(jsonProp[key as keyof typeof jsonProp], opts);
+                res[key] = subres.result;
+                if (subres.result !== jsonProp[key as keyof typeof jsonProp]) changed = true;
+
+                if (subres.usedVars) {
+                    if (!usedVars) {
+                        usedVars = new Set();
+                    }
+                    for (const instance of subres.usedVars) {
+                        usedVars.add(instance);
+                    }
+                }
+            }
+            return {
+                result: (changed ? res : jsonProp) as MaybeMissing<T>,
                 usedVars
             };
         }

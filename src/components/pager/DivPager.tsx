@@ -255,13 +255,22 @@ export function DivPager({ componentContext }: DivPagerProps) {
         if (snapInterval <= 0) return;
         const initial = Math.max(0, Math.min(items.length - 1, defaultItem ?? 0));
         currentItemRef.current = initial;
+
+        // Fast path: in non-infinite mode, page 0 is already at scroll offset 0.
+        // No need to defer an async scroll commit just to land where we already are.
+        if (initial === 0 && !isInfinite) {
+            initialScrollDone.current = true;
+            pushPagerState(initial);
+            return;
+        }
+
         const id = setTimeout(() => {
             scrollToItem(initial, false);
             initialScrollDone.current = true;
             pushPagerState(initial);
         }, 0);
         return () => clearTimeout(id);
-    }, [snapInterval, defaultItem, items.length, scrollToItem, pushPagerState]);
+    }, [snapInterval, defaultItem, items.length, isInfinite, scrollToItem, pushPagerState]);
 
     const onScrollEnd = useCallback(
         (event: NativeSyntheticEvent<NativeScrollEvent>) => {
