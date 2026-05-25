@@ -196,7 +196,9 @@ DivKitContext
 ├── variables: Map<string, Variable>
 ├── execAnyActions: (actions) => Promise<void>
 ├── direction: 'ltr' | 'rtl'
-└── platform: 'desktop' | 'touch'
+├── platform: 'desktop' | 'touch'
+├── typefaceProvider: (fontFamily, opts?) => string
+└── imageAdapter: DivImageAdapter  // render+getSize for <DivImage>; default rn-image
 
 ActionContext
 └── hasAction: () => boolean
@@ -218,7 +220,7 @@ DivKit.tsx          → Provider setup
 DivComponent.tsx    → Type router
 DivText.tsx         → <Text> rendering
 DivContainer.tsx    → <View> with flex
-DivImage.tsx        → <Image> loading
+DivImage.tsx        → image loading via DivImageAdapter (rn-image / expo-image / fast-image)
 DivState.tsx        → Conditional render + state transitions
 DivPager.tsx        → <ScrollView> with snap-to-page
 DivIndicator.tsx    → Dots bound to a pager via PagerContext

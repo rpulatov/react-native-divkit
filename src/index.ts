@@ -48,6 +48,12 @@ export { useDivKitContext, DivKitContext } from './context/DivKitContext';
 
 export type { DivKitContextValue, TypefaceProvider } from './context/DivKitContext';
 
+// Image adapter contract — for writing custom adapters. Built-in presets
+// (rn-image / expo-image / fast-image) are exported via their own subpaths
+// to keep optional peer deps out of the default import.
+export type { DivImageAdapter, DivImageAdapterRenderProps } from './types/imageAdapter';
+export { rnImageAdapter } from './adapters/rn-image';
+
 // Hooks (for custom components)
 export { useDerivedFromVars, useDerivedFromVarsSimple } from './hooks/useDerivedFromVars';
 
