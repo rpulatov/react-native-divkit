@@ -169,6 +169,37 @@ describe('Pager + Indicator integration', () => {
         jest.clearAllMocks();
     });
 
+    it('renders one pager item before the first layout pass to reserve wrap_content height', () => {
+        const pagerCtx = makeContext({
+            ...pagerJson,
+            height: { type: 'wrap_content' },
+            layout_mode: { type: 'percentage', page_width: { type: 'percentage', value: 42 } }
+        } as DivPagerData);
+        const indicatorCtx = makeContext(indicatorJson);
+
+        render(<Harness pagerCtx={pagerCtx} indicatorCtx={indicatorCtx} />);
+
+        expect(pagerCtx.produceChildContext).toHaveBeenCalledTimes(1);
+    });
+
+    it('renders all pager items after the layout pass', async () => {
+        const pagerCtx = makeContext({
+            ...pagerJson,
+            height: { type: 'wrap_content' },
+            layout_mode: { type: 'percentage', page_width: { type: 'percentage', value: 42 } }
+        } as DivPagerData);
+        const indicatorCtx = makeContext(indicatorJson);
+
+        const api = render(<Harness pagerCtx={pagerCtx} indicatorCtx={indicatorCtx} />);
+        (pagerCtx.produceChildContext as jest.Mock).mockClear();
+
+        await act(async () => {
+            fireLayoutOnPager(api, CONTAINER_WIDTH);
+        });
+
+        expect(pagerCtx.produceChildContext).toHaveBeenCalledTimes(pagerJson.items!.length);
+    });
+
     it('pager registers in context and publishes initial state to indicator', async () => {
         const pagerCtx = makeContext(pagerJson);
         const indicatorCtx = makeContext(indicatorJson);
