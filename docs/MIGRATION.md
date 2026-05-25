@@ -223,9 +223,21 @@ function MyComponent() {
 
 **React Native (renders as):**
 
+By default — `<Image>` from `react-native`. The actual renderer is a
+pluggable `DivImageAdapter` taken from `DivKitContext`. The host app can opt
+into `expo-image` or `react-native-fast-image` for disk caching, GIF/WebP,
+blurhash, etc., without forking the library:
+
 ```tsx
-<Image source={{ uri: 'https://...' }} style={{ resizeMode: 'cover' }} />
+import { expoImageAdapter } from 'react-native-divkit/adapters/expo-image';
+// or:
+import { fastImageAdapter } from 'react-native-divkit/adapters/fast-image';
+
+<DivKit data={json} imageAdapter={expoImageAdapter} />;
 ```
+
+See [API → Image adapter](API.md#image-adapter) for the contract and how to
+write a custom adapter (e.g. CDN URL preprocessing).
 
 ### State Component
 

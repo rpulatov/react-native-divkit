@@ -3,6 +3,7 @@ import type { Action, Direction } from '../../typings/common';
 import type { MaybeMissing } from '../expressions/json';
 import type { Variable } from '../expressions/variable';
 import type { ComponentContext } from '../types/componentContext';
+import type { DivImageAdapter } from '../types/imageAdapter';
 
 /**
  * Custom font provider function
@@ -49,6 +50,10 @@ export interface DivKitContextValue {
 
     // Font provider
     typefaceProvider: TypefaceProvider;
+
+    // Image renderer (always set — DivKit falls back to `rnImageAdapter` if the
+    // host didn't supply one)
+    imageAdapter: DivImageAdapter;
 
     // Variable system
     variables: Map<string, Variable>;

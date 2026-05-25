@@ -50,7 +50,10 @@ npm install react-native-divkit
 
 ```bash
 # Оптимизированная загрузка изображений с кешированием
+# (используется через imageAdapter — см. ниже)
 npm install react-native-fast-image
+# или
+npx expo install expo-image
 
 # Поддержка градиентов (фоны)
 npm install react-native-linear-gradient
@@ -58,6 +61,22 @@ npm install react-native-linear-gradient
 # Поддержка буфера обмена
 npm install @react-native-clipboard/clipboard
 ```
+
+### Кастомный загрузчик картинок
+
+По умолчанию `DivImage` рендерит через `react-native` `Image`. Чтобы получить
+дисковый кэш / GIF / blurhash без форка библиотеки — подключите готовый пресет:
+
+```tsx
+import { DivKit } from 'react-native-divkit';
+import { expoImageAdapter } from 'react-native-divkit/adapters/expo-image';
+// или: import { fastImageAdapter } from 'react-native-divkit/adapters/fast-image';
+
+<DivKit data={json} imageAdapter={expoImageAdapter} />;
+```
+
+Свой адаптер пишется через интерфейс `DivImageAdapter` —
+см. [docs/API.md → Image adapter](docs/API.md#image-adapter).
 
 ## Быстрый старт
 

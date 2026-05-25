@@ -282,27 +282,6 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
               }
             }
           />
-          <View
-            ref={null}
-            style={
-              {
-                "alignItems": "center",
-                "backgroundColor": "transparent",
-                "bottom": 0,
-                "justifyContent": "center",
-                "left": 0,
-                "position": "absolute",
-                "right": 0,
-                "top": 0,
-              }
-            }
-          >
-            <ActivityIndicator
-              color="#999999"
-              ref={null}
-              size="small"
-            />
-          </View>
         </View>
       </View>
       <View
@@ -395,27 +374,6 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
                   }
                 }
               />
-              <View
-                ref={null}
-                style={
-                  {
-                    "alignItems": "center",
-                    "backgroundColor": "transparent",
-                    "bottom": 0,
-                    "justifyContent": "center",
-                    "left": 0,
-                    "position": "absolute",
-                    "right": 0,
-                    "top": 0,
-                  }
-                }
-              >
-                <ActivityIndicator
-                  color="#999999"
-                  ref={null}
-                  size="small"
-                />
-              </View>
             </View>
           </View>
         </View>
@@ -608,27 +566,6 @@ exports[`DivKit Snapshot Tests Full JSON fixtures story.json renders correctly 1
                           }
                         }
                       />
-                      <View
-                        ref={null}
-                        style={
-                          {
-                            "alignItems": "center",
-                            "backgroundColor": "transparent",
-                            "bottom": 0,
-                            "justifyContent": "center",
-                            "left": 0,
-                            "position": "absolute",
-                            "right": 0,
-                            "top": 0,
-                          }
-                        }
-                      >
-                        <ActivityIndicator
-                          color="#999999"
-                          ref={null}
-                          size="small"
-                        />
-                      </View>
                     </View>
                   </View>
                   <View
@@ -1167,27 +1104,6 @@ exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template)
                   }
                 }
               />
-              <View
-                ref={null}
-                style={
-                  {
-                    "alignItems": "center",
-                    "backgroundColor": "transparent",
-                    "bottom": 0,
-                    "justifyContent": "center",
-                    "left": 0,
-                    "position": "absolute",
-                    "right": 0,
-                    "top": 0,
-                  }
-                }
-              >
-                <ActivityIndicator
-                  color="#999999"
-                  ref={null}
-                  size="small"
-                />
-              </View>
             </View>
           </View>
         </View>
@@ -1283,27 +1199,6 @@ exports[`DivKit Snapshot Tests Full JSON fixtures widget.json (overlap template)
                     }
                   }
                 />
-                <View
-                  ref={null}
-                  style={
-                    {
-                      "alignItems": "center",
-                      "backgroundColor": "transparent",
-                      "bottom": 0,
-                      "justifyContent": "center",
-                      "left": 0,
-                      "position": "absolute",
-                      "right": 0,
-                      "top": 0,
-                    }
-                  }
-                >
-                  <ActivityIndicator
-                    color="#999999"
-                    ref={null}
-                    size="small"
-                  />
-                </View>
               </View>
             </View>
           </View>
@@ -1367,27 +1262,6 @@ exports[`DivKit Snapshot Tests Horizontal container alignment content_alignment_
             }
           }
         />
-        <View
-          ref={null}
-          style={
-            {
-              "alignItems": "center",
-              "backgroundColor": "transparent",
-              "bottom": 0,
-              "justifyContent": "center",
-              "left": 0,
-              "position": "absolute",
-              "right": 0,
-              "top": 0,
-            }
-          }
-        >
-          <ActivityIndicator
-            color="#999999"
-            ref={null}
-            size="small"
-          />
-        </View>
       </View>
     </View>
     <View
@@ -1661,27 +1535,6 @@ exports[`DivKit Snapshot Tests Overlap container match_parent children fill pare
               }
             }
           />
-          <View
-            ref={null}
-            style={
-              {
-                "alignItems": "center",
-                "backgroundColor": "transparent",
-                "bottom": 0,
-                "justifyContent": "center",
-                "left": 0,
-                "position": "absolute",
-                "right": 0,
-                "top": 0,
-              }
-            }
-          >
-            <ActivityIndicator
-              color="#999999"
-              ref={null}
-              size="small"
-            />
-          </View>
         </View>
       </View>
     </View>

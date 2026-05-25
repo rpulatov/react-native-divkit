@@ -25,6 +25,8 @@ import type { DivBaseData } from './types/base';
 import type { ComponentContext } from './types/componentContext';
 import type { MaybeMissing } from './expressions/json';
 import { DivKitContext, type DivKitContextValue, type TypefaceProvider } from './context/DivKitContext';
+import type { DivImageAdapter } from './types/imageAdapter';
+import { rnImageAdapter } from './adapters/rn-image';
 import { ActionContext, type ActionContextValue } from './context/ActionContext';
 import { StateContext, type StateContextValue, type StateSetter } from './context/StateContext';
 import { PagerProvider } from './context/PagerContext';
@@ -106,6 +108,19 @@ export interface DivKitProps {
      * ```
      */
     typefaceProvider?: TypefaceProvider;
+
+    /**
+     * Custom image renderer. Shipped presets live under
+     * `react-native-divkit/adapters/{rn-image,expo-image,fast-image}`.
+     * Defaults to the bundled `rnImageAdapter` (React Native `Image`).
+     *
+     * @example
+     * ```tsx
+     * import { expoImageAdapter } from 'react-native-divkit/adapters/expo-image';
+     * <DivKit data={json} imageAdapter={expoImageAdapter} />
+     * ```
+     */
+    imageAdapter?: DivImageAdapter;
 }
 
 /**
@@ -123,7 +138,8 @@ export function DivKit({
     style,
     id = 'root',
     globalVariablesController,
-    typefaceProvider = _fontFamily => ''
+    typefaceProvider = _fontFamily => '',
+    imageAdapter = rnImageAdapter
 }: DivKitProps) {
     const componentIdCounter = useRef(0);
     const componentsMap = useRef<Map<string, ComponentContext>>(new Map());
@@ -692,6 +708,8 @@ export function DivKit({
 
             typefaceProvider,
 
+            imageAdapter,
+
             variables,
             getVariable,
             setVariable,
@@ -709,6 +727,7 @@ export function DivKit({
             direction,
             platform,
             typefaceProvider,
+            imageAdapter,
             variables,
             getVariable,
             setVariable,

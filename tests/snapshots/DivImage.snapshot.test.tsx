@@ -1,4 +1,15 @@
+import { act } from '@testing-library/react-native';
 import { renderDivKit, makeCard } from './helpers';
+
+// `Image.getSize` is now invoked via the image adapter, which wraps it in a
+// Promise — the resolving `.then` runs one microtask later than the old
+// callback-style call. Flush microtasks inside `act()` so the resulting
+// `setNaturalSize` is applied before assertions.
+async function flushMicrotasks() {
+    await act(async () => {
+        await Promise.resolve();
+    });
+}
 
 type TreeNode = {
     type: string;
@@ -246,7 +257,7 @@ describe('DivImage snapshots', () => {
             expect(RNImage.getSize).not.toHaveBeenCalled();
         });
 
-        test('without aspect — calls getSize and uses natural ratio', () => {
+        test('without aspect — calls getSize and uses natural ratio', async () => {
             const { Image: RNImage } = require('react-native');
             RNImage.getSize.mockClear();
 
@@ -257,6 +268,8 @@ describe('DivImage snapshots', () => {
                 expect.any(Function),
                 expect.any(Function)
             );
+
+            await flushMicrotasks();
 
             function findParentOfImage(tree: TreeNode): TreeNode | null {
                 if (!tree || typeof tree !== 'object') return null;
@@ -283,7 +296,7 @@ describe('DivImage snapshots', () => {
     // =========================================================================
 
     describe('no_scale with natural dimensions', () => {
-        test('image sized to natural dimensions from getSize', () => {
+        test('image sized to natural dimensions from getSize', async () => {
             const { Image: RNImage } = require('react-native');
             // Mock returns 300x150
             RNImage.getSize.mockImplementationOnce(
@@ -294,6 +307,8 @@ describe('DivImage snapshots', () => {
                 ...BASE_IMAGE,
                 scale: 'no_scale'
             }));
+
+            await flushMicrotasks();
 
             const image = findNode(result.toJSON() as TreeNode, 'Image');
             expect(image?.props?.style?.width).toBe(300);

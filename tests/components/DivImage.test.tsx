@@ -5,6 +5,7 @@
 import React from 'react';
 import { DivImage } from '../../src/components/image/DivImage';
 import { DivKitContext, type DivKitContextValue } from '../../src/context/DivKitContext';
+import { rnImageAdapter } from '../../src/adapters/rn-image';
 import type { ComponentContext } from '../../src/types/componentContext';
 import type { DivImageData } from '../../src/types/image';
 
@@ -68,6 +69,8 @@ describe('DivImage', () => {
         execCustomAction: jest.fn(),
         direction: 'ltr',
         platform: 'touch',
+        typefaceProvider: () => '',
+        imageAdapter: rnImageAdapter,
         variables: new Map(),
         getVariable: jest.fn(),
         setVariable: jest.fn(),

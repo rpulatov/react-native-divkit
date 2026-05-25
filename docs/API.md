@@ -55,6 +55,8 @@ import { DivKit } from 'react-native-divkit';
 | `platform`       | `'desktop' \| 'touch'` | No       | `'touch'` | Platform type                     |
 | `style`          | `ViewStyle`            | No       | -         | Custom style for root container   |
 | `id`             | `string`               | No       | `'root'`  | Component ID for debugging        |
+| `typefaceProvider` | `TypefaceProvider`   | No       | system    | Maps `font_family` → platform font |
+| `imageAdapter`   | `DivImageAdapter`      | No       | `rnImageAdapter` | Pluggable image renderer ([details](#image-adapter)) |
 
 ### `data` - DivJson Structure
 
@@ -595,7 +597,9 @@ Flex layout container.
 
 ### DivImage
 
-Image component.
+Image component. The actual `<Image>` rendering is delegated to a swappable
+[image adapter](#image-adapter) — by default RN `Image`, but you can plug in
+`expo-image` or `react-native-fast-image` without forking the library.
 
 ```json
 {
@@ -605,6 +609,89 @@ Image component.
     "width": { "type": "fixed", "value": 200 },
     "height": { "type": "fixed", "value": 150 }
 }
+```
+
+---
+
+## Image adapter
+
+DivKit ships with a small `DivImageAdapter` contract so the host app can pick
+the image-loading library that fits its needs (disk cache, blurhash, GIF, …)
+without forking `react-native-divkit`.
+
+### Contract
+
+```ts
+import type { DivImageAdapter } from 'react-native-divkit';
+
+interface DivImageAdapter {
+    render(props: {
+        uri: string;
+        scale: 'fill' | 'fit' | 'stretch' | 'no_scale';
+        style: ImageStyle;            // width / height / aspectRatio precomputed
+        onLoadEnd: () => void;
+        onError: () => void;
+    }): ReactElement;
+
+    getSize(uri: string): Promise<{ width: number; height: number }>;
+}
+```
+
+`DivImage` does all DivKit-side layout (alignment, aspect, wrap_content sizing,
+placeholder color, error fallback). The adapter only renders the actual image
+and resolves natural dimensions. `scale` is passed through as-is; each adapter
+maps it to its library's prop (`resizeMode`, `contentFit`, …).
+
+### Built-in presets
+
+Adapters live behind subpath imports — `expo-image` and `react-native-fast-image`
+are **optional** peer dependencies, so they're only resolved if you import the
+matching preset.
+
+```tsx
+// Default — react-native Image (used automatically when `imageAdapter` is omitted)
+import { rnImageAdapter } from 'react-native-divkit';
+<DivKit data={json} />
+<DivKit data={json} imageAdapter={rnImageAdapter} />
+
+// expo-image — disk cache, blurhash, transitions, GIF/WebP/AVIF
+import { expoImageAdapter } from 'react-native-divkit/adapters/expo-image';
+<DivKit data={json} imageAdapter={expoImageAdapter} />
+
+// react-native-fast-image — disk cache + concurrent decode (needs native rebuild)
+import { fastImageAdapter } from 'react-native-divkit/adapters/fast-image';
+<DivKit data={json} imageAdapter={fastImageAdapter} />
+```
+
+### Scale mapping
+
+| DivKit `scale` | rn-image (`resizeMode`) | expo-image (`contentFit`) | fast-image (`resizeMode`) |
+|----------------|-------------------------|---------------------------|---------------------------|
+| `fill`         | `cover`                 | `cover`                   | `cover`                   |
+| `fit`          | `contain`               | `contain`                 | `contain`                 |
+| `stretch`      | `stretch`               | `fill`                    | `stretch`                 |
+| `no_scale`     | `center`                | `none`                    | `center`                  |
+
+### Custom adapter
+
+```tsx
+import { Image as ExpoImage } from 'expo-image';
+import type { DivImageAdapter } from 'react-native-divkit';
+
+const cdnAdapter: DivImageAdapter = {
+    render: ({ uri, scale, style, onLoadEnd, onError }) => (
+        <ExpoImage
+            source={{ uri: `https://cdn.example/?u=${encodeURIComponent(uri)}&w=400` }}
+            style={style}
+            contentFit={scale === 'fit' ? 'contain' : 'cover'}
+            onLoad={onLoadEnd}
+            onError={() => { onLoadEnd(); onError(); }}
+        />
+    ),
+    getSize: (uri) => ExpoImage.getSize(uri),
+};
+
+<DivKit data={json} imageAdapter={cdnAdapter} />
 ```
 
 ### DivState
