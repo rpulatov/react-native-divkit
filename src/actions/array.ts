@@ -4,7 +4,7 @@ import type {
     ActionArraySetValue,
     WrappedError
 } from '../../typings/common';
-import type { ArrayVariable, Variable } from '../../typings/variables';
+import type { ArrayVariable, Variable } from '../expressions/variable';
 import type { MaybeMissing } from '../expressions/json';
 import { convertTypedValue } from '../expressions/utils';
 import type { ComponentContext } from '../types/componentContext';

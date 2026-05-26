@@ -33,19 +33,21 @@
   },
   "files": [
     "dist",
-    "src",
+    "typings",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "build": "npm run build:peggy && tsc",
+    "build": "npm run build:peggy && tsc && npm run build:copy-types",
     "build:peggy": "peggy src/expressions/expressions.peggy --allowed-start-rules start,JsonStringContents --format es -o src/expressions/expressions.ts && printf '%s\n%s\n' '// @ts-nocheck' \"$(cat src/expressions/expressions.ts)\" > src/expressions/expressions.ts",
+    "build:copy-types": "node scripts/copy-types.js",
     "test": "jest",
     "test:snapshot": "jest --config jest.snapshot.config.js",
     "test:snapshot:update": "jest --config jest.snapshot.config.js -u",
     "test:integration": "jest --config jest.integration.config.js",
     "lint": "eslint src --ext .ts,.tsx",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify:pack": "node scripts/verify-pack.js"
   },
   "keywords": [
     "divkit",

@@ -1,5 +1,5 @@
 import type { ActionUpdateStructure, WrappedError } from '../../typings/common';
-import type { Variable } from '../../typings/variables';
+import type { Variable } from '../expressions/variable';
 import type { MaybeMissing } from '../expressions/json';
 import { convertTypedValue } from '../expressions/utils';
 import type { ComponentContext } from '../types/componentContext';
