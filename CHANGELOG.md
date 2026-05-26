@@ -1,3 +1,10 @@
+## [1.11.2](https://github.com/rpulatov/react-native-divkit/compare/v1.11.1...v1.11.2) (2026-05-26)
+
+
+### Bug Fixes
+
+* **snapshot-tests:** обновлены URL изображений на base64 ([b4d554d](https://github.com/rpulatov/react-native-divkit/commit/b4d554df7f91a69b676c8664274da1b1aa0877b5))
+
 ## [1.11.1](https://github.com/rpulatov/react-native-divkit/compare/v1.11.0...v1.11.1) (2026-05-26)
 
 
