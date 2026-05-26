@@ -138,7 +138,7 @@
                         "right": 12,
                         "bottom": 2
                     },
-                    "image_url": "https://yastatic.net/s3/home/div/div_fullscreens/hyphen.4.png",
+                    "image_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAABwBAMAAAA0zul4AAAACXBIWXMAACxLAAAsSwGlPZapAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAbUExURQAAAIqKiouLi4yMjIqKiouLi4yMjIyMjIyMjNxOjn4AAAAIdFJOUwAwQF9ggL6/URRkLQAAADhJREFUWMPt07ENABAUQEESiTlYSawkxjYAxS8Vd/0rX0oAAMBDmSHjCusOWcK/w9xDmlUAAOAPB9rfuAz5Ogx8AAAAAElFTkSuQmCC",
                     "$tint_color": "list_color"
                 },
                 {
