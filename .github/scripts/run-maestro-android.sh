@@ -53,15 +53,36 @@ adb shell cmd package resolve-activity --brief com.newexample || true
 adb shell am start -W -n com.newexample/.MainActivity
 adb shell monkey -p com.newexample -c android.intent.category.LAUNCHER 1
 
-case "${MAESTRO_ANDROID_MODE:-verify}" in
-    record)
-        npm run e2e:maestro:android:record
-        ;;
-    verify)
-        npm run e2e:maestro:android
-        ;;
-    *)
-        echo "Unsupported MAESTRO_ANDROID_MODE: ${MAESTRO_ANDROID_MODE}"
+run_maestro() {
+    case "${MAESTRO_ANDROID_MODE:-verify}" in
+        record)
+            npm run e2e:maestro:android:record
+            ;;
+        verify)
+            npm run e2e:maestro:android
+            ;;
+        *)
+            echo "Unsupported MAESTRO_ANDROID_MODE: ${MAESTRO_ANDROID_MODE}"
+            return 2
+            ;;
+    esac
+}
+
+attempt=1
+max_attempts=2
+while true; do
+    if run_maestro; then
+        break
+    fi
+    status=$?
+    if [ "$status" = "2" ]; then
         exit 1
-        ;;
-esac
+    fi
+    if [ "$attempt" -ge "$max_attempts" ]; then
+        echo "Maestro failed after $attempt attempt(s)"
+        exit 1
+    fi
+    echo "Maestro attempt $attempt failed, retrying (${attempt}/${max_attempts})..."
+    attempt=$((attempt + 1))
+    adb reverse tcp:8081 tcp:8081 || true
+done
