@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/rpulatov/react-native-divkit/compare/v1.11.0...v1.11.1) (2026-05-26)
+
+
+### Bug Fixes
+
+* **packaging:** исправлена публикация TypeScript-типов в npm ([2adcabe](https://github.com/rpulatov/react-native-divkit/commit/2adcabea3b9da6e584a9383c611f7de7b404bc74))
+
 # [1.11.0](https://github.com/rpulatov/react-native-divkit/compare/v1.10.0...v1.11.0) (2026-05-25)
 
 
