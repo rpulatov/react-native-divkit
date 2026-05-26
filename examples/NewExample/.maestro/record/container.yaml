@@ -8,7 +8,7 @@ appId: com.newexample
 - extendedWaitUntil:
     visible:
       id: "divkit-snapshot-area"
-    timeout: 30000
+    timeout: 60000
 - waitForAnimationToEnd
 - takeScreenshot:
     path: .maestro/goldens/android/container
