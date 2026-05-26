@@ -7,7 +7,7 @@
     "e2e:android:build": "cd android && ./gradlew assembleDebug",
     "e2e:android:install": "cd android && ./gradlew installDebug",
     "e2e:maestro:android": "maestro test --test-output-dir .maestro/output .maestro/snapshots",
-    "e2e:maestro:android:record": "maestro test .maestro/record",
+    "e2e:maestro:android:record": "maestro test --test-output-dir .maestro/output .maestro/record",
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",

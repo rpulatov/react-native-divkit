@@ -23,6 +23,24 @@ if [ "$metro_ready" != "1" ]; then
     exit 1
 fi
 
+echo "Warming up Metro bundle..."
+bundle_url="http://localhost:8081/index.bundle?platform=android&dev=true&minify=false"
+bundle_ready=0
+for _ in $(seq 1 60); do
+    code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 120 "$bundle_url" 2>/dev/null || echo "000")
+    if [ "$code" = "200" ]; then
+        bundle_ready=1
+        break
+    fi
+    sleep 2
+done
+
+if [ "$bundle_ready" != "1" ]; then
+    echo "Metro bundle did not build in time"
+    tail -n 200 metro.log
+    exit 1
+fi
+
 npm run e2e:android:install
 
 adb wait-for-device
