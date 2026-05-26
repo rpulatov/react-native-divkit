@@ -38,6 +38,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Verify packed tarball exposes resolvable types
+        run: npm run verify:pack
+
       - name: Test
         run: npm test
 

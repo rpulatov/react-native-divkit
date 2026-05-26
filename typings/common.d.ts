@@ -1,4 +1,8 @@
-import type { Variable } from './variables';
+// DivExtensionContext is part of the (not-yet-implemented) extension API.
+// The concrete Variable class lives in dist/expressions/variable but living off
+// `typings/` (a sibling tree, not part of the declaration emit) we keep this
+// loose to avoid a cross-tree import that drags src/ into consumer typechecks.
+type Variable = unknown;
 
 export type Subscriber<T> = (value: T) => void;
 export type Unsubscriber = () => void;
