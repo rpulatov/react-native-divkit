@@ -1,3 +1,10 @@
+# [1.13.0-alpha.1](https://github.com/rpulatov/react-native-divkit/compare/v1.12.1...v1.13.0-alpha.1) (2026-07-06)
+
+
+### Features
+
+* **patch:** императивный API applyPatch (div-patch) ([2647124](https://github.com/rpulatov/react-native-divkit/commit/264712450472623edb40a16212f92eaa92c1c364))
+
 ## [1.12.1](https://github.com/rpulatov/react-native-divkit/compare/v1.12.0...v1.12.1) (2026-07-06)
 
 
