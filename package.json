@@ -4,6 +4,11 @@
   "description": "DivKit renderer for React Native - Server-driven UI framework",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "adapters/*": ["dist/adapters/*"]
+    }
+  },
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
