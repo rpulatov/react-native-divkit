@@ -15,10 +15,10 @@
 
 // Main component
 export { DivKit } from './DivKit';
-export type { DivKitProps, StatCallback, CustomActionCallback, ErrorCallback } from './DivKit';
+export type { DivKitProps, DivKitHandle, StatCallback, CustomActionCallback, ErrorCallback } from './DivKit';
 
 // Types
-export type { Action, DivJson, DivBase, DivVariable, Direction, TemplateContext, BooleanInt } from '../typings/common';
+export type { Action, DivJson, DivBase, DivVariable, Direction, TemplateContext, BooleanInt, Patch, PatchChange } from '../typings/common';
 
 export type { DivBaseData } from './types/base';
 
@@ -46,7 +46,7 @@ export { createGlobalVariablesController, GlobalVariablesController } from './ex
 // Context hooks (for advanced usage)
 export { useDivKitContext, DivKitContext } from './context/DivKitContext';
 
-export type { DivKitContextValue, DivImageLoadTracker, TypefaceProvider } from './context/DivKitContext';
+export type { DivKitContextValue, DivImageLoadTracker, ParentMethods, TypefaceProvider } from './context/DivKitContext';
 
 // Image adapter contract — for writing custom adapters. Built-in presets
 // (rn-image / expo-image / fast-image) are exported via their own subpaths

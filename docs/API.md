@@ -5,6 +5,7 @@ Complete API documentation for `react-native-divkit`.
 ## Table of Contents
 
 - [DivKit Component](#divkit-component)
+- [Imperative API (applyPatch)](#imperative-api-divkithandle)
 - [Props](#props)
 - [Callbacks](#callbacks)
 - [Types](#types)
@@ -38,6 +39,48 @@ import { DivKit } from 'react-native-divkit';
     id="my-divkit"
 />;
 ```
+
+### Imperative API (`DivKitHandle`)
+
+`DivKit` accepts a `ref` exposing the imperative API:
+
+```tsx
+import { useRef } from 'react';
+import { DivKit, type DivKitHandle, type Patch } from 'react-native-divkit';
+
+const ref = useRef<DivKitHandle>(null);
+
+<DivKit ref={ref} data={divKitJson} />;
+
+// Apply a div-patch: replace / insert / delete elements by id in place,
+// re-rendering only the affected parents (sibling subtrees keep their
+// identity: selected states, scroll positions, running animations).
+const applied: boolean = ref.current!.applyPatch(patch);
+```
+
+#### `applyPatch(patch: Patch): boolean`
+
+Applies a standard [div-patch](https://divkit.tech/docs/en/concepts/divjson-patches):
+
+```ts
+interface Patch {
+    templates?: Record<string, DivBase>; // merged first-wins with card templates
+    patch: {
+        mode?: 'transactional' | 'partial'; // default: 'partial'
+        changes: { id: string; items?: DivBase[] }[];
+        on_applied_actions?: Action[];
+        on_failed_actions?: Action[];
+    };
+}
+```
+
+- A change without `items` deletes the element; multiple `items` are inserted in its place.
+- `transactional` — all-or-nothing: if any `id` is not found (or a single-item slot such as
+  `state.states[].div` receives != 1 items), the whole patch is rejected,
+  `on_failed_actions` fire and `false` is returned.
+- `partial` — every matched change is applied, unmatched ones are skipped.
+- Patchable slots: children of `container`, `state` and `pager`. The root div of the card
+  cannot be patched (same as the Web implementation).
 
 ---
 

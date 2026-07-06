@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import type { Action, Direction } from '../../typings/common';
+import type { Action, Direction, DivBase } from '../../typings/common';
 import type { MaybeMissing } from '../expressions/json';
 import type { Variable } from '../expressions/variable';
 import type { ComponentContext } from '../types/componentContext';
@@ -49,6 +49,19 @@ export interface DivImageLoadTracker {
 }
 
 /**
+ * Methods a parent component (container/state/pager) registers for each child
+ * that has an `id`, so `applyPatch` can replace that child in place.
+ *
+ * Based on ParentMethods from Web implementation (context/root.ts)
+ */
+export interface ParentMethods {
+    /** Replace the child `id` with the given items (already template-resolved) */
+    replaceWith: (id: string, items?: DivBase[]) => void;
+    /** Single-item slot (DivState): a change must carry exactly one item */
+    isSingleMode: boolean;
+}
+
+/**
  * Main DivKit context interface
  * Based on RootCtxValue from Web implementation with simplifications for MVP
  */
@@ -79,6 +92,11 @@ export interface DivKitContextValue {
     // Component registration (simplified for MVP)
     registerComponent(id: string, context: ComponentContext): void;
     unregisterComponent(id: string): void;
+
+    // Patch support: parents register a replaceWith per child id
+    // (mirrors registerParentOf/unregisterParentOf from Web RootCtxValue)
+    registerParentOf(id: string, methods: ParentMethods): void;
+    unregisterParentOf(id: string): void;
 
     // Action execution
     execAnyActions(
