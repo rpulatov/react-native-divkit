@@ -36,6 +36,19 @@ export type TypefaceProvider = (fontFamily: string, opts?: {
 }) => string;
 
 /**
+ * Tracker of in-flight image loads.
+ *
+ * The host app can pass it via `<DivKit imageLoadTracker={...}>` to know when
+ * all images inside the card have finished loading (e.g. to signal readiness
+ * to screenshot-based UI tests). Every `DivImage` calls `increment()` when it
+ * starts loading and `decrement()` when the load ends (success or error).
+ */
+export interface DivImageLoadTracker {
+    increment(): void;
+    decrement(): void;
+}
+
+/**
  * Main DivKit context interface
  * Based on RootCtxValue from Web implementation with simplifications for MVP
  */
@@ -54,6 +67,9 @@ export interface DivKitContextValue {
     // Image renderer (always set — DivKit falls back to `rnImageAdapter` if the
     // host didn't supply one)
     imageAdapter: DivImageAdapter;
+
+    // Optional tracker of in-flight image loads (readiness signal for tests)
+    imageLoadTracker?: DivImageLoadTracker;
 
     // Variable system
     variables: Map<string, Variable>;

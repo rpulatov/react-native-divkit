@@ -46,7 +46,7 @@ export { createGlobalVariablesController, GlobalVariablesController } from './ex
 // Context hooks (for advanced usage)
 export { useDivKitContext, DivKitContext } from './context/DivKitContext';
 
-export type { DivKitContextValue, TypefaceProvider } from './context/DivKitContext';
+export type { DivKitContextValue, DivImageLoadTracker, TypefaceProvider } from './context/DivKitContext';
 
 // Image adapter contract — for writing custom adapters. Built-in presets
 // (rn-image / expo-image / fast-image) are exported via their own subpaths

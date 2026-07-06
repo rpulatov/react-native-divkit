@@ -17,7 +17,7 @@ import {
   createVariable,
 } from '../../src';
 import type { DivKitProps } from '../../src';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import startJson from './sample-divs/start.json';
 import storiesJson from './sample-divs/fullscreen-stories.json';
@@ -102,6 +102,38 @@ function AppContent({ snapshotMode = false, initialExample }: AppInitialProps) {
 
   const currentExample = examples[selectedExample];
 
+  // Readiness signal for Maestro screenshot tests: count in-flight image
+  // loads reported by DivKit and expose an invisible marker once everything
+  // has settled, so tests wait for content instead of guessing timeouts.
+  const [pendingImages, setPendingImages] = useState(0);
+  const [contentReady, setContentReady] = useState(false);
+  const imageLoadTracker = useMemo(
+    () => ({
+      increment: () => setPendingImages(count => count + 1),
+      decrement: () => setPendingImages(count => count - 1),
+    }),
+    [],
+  );
+
+  // Hide the marker immediately when the example changes (before effects run)
+  const [readyForExample, setReadyForExample] = useState(selectedExample);
+  if (readyForExample !== selectedExample) {
+    setReadyForExample(selectedExample);
+    setContentReady(false);
+  }
+
+  useEffect(() => {
+    if (pendingImages > 0) {
+      setContentReady(false);
+      return undefined;
+    }
+    // Debounce: images register asynchronously after mount, and one loaded
+    // image may cause the next one to mount (layout cascades) — so require
+    // the counter to stay at zero for a moment before declaring readiness.
+    const timer = setTimeout(() => setContentReady(true), 500);
+    return () => clearTimeout(timer);
+  }, [pendingImages, selectedExample]);
+
   // Global variables controller — shared between two DivKit instances
   const globalController = useMemo(() => {
     const controller = createGlobalVariablesController();
@@ -161,6 +193,7 @@ function AppContent({ snapshotMode = false, initialExample }: AppInitialProps) {
       platform="touch"
       style={snapshotMode ? styles.divKitSnapshot : styles.divKit}
       globalVariablesController={globalController}
+      imageLoadTracker={imageLoadTracker}
       typefaceProvider={(fontFamily, opts) => {
         if (fontFamily === 'display') return '';
         if (fontFamily === 'text') {
@@ -173,17 +206,26 @@ function AppContent({ snapshotMode = false, initialExample }: AppInitialProps) {
     />
   );
 
+  // Transparent 1x1 marker outside the snapshot area — Maestro waits for it
+  // via extendedWaitUntil before taking a screenshot
+  const contentReadyMarker = contentReady ? (
+    <View testID="divkit-content-ready" style={styles.contentReadyMarker} />
+  ) : null;
+
   if (snapshotMode) {
     return (
-      <ScrollView
-        testID="divkit-snapshot-area"
-        style={styles.snapshotContainer}
-        contentContainerStyle={styles.snapshotContentContainer}
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-      >
-        {divKitView}
-      </ScrollView>
+      <View style={styles.container}>
+        <ScrollView
+          testID="divkit-snapshot-area"
+          style={styles.snapshotContainer}
+          contentContainerStyle={styles.snapshotContentContainer}
+          showsVerticalScrollIndicator={false}
+          bounces={false}
+        >
+          {divKitView}
+        </ScrollView>
+        {contentReadyMarker}
+      </View>
     );
   }
 
@@ -261,6 +303,8 @@ function AppContent({ snapshotMode = false, initialExample }: AppInitialProps) {
           )}
         </ScrollView>
       </View>
+
+      {contentReadyMarker}
     </SafeAreaView>
   );
 }
@@ -276,6 +320,13 @@ const styles = StyleSheet.create({
   },
   snapshotContentContainer: {
     flexGrow: 1,
+  },
+  contentReadyMarker: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 1,
+    height: 1,
   },
   header: {
     padding: 16,

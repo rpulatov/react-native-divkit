@@ -7,7 +7,7 @@ appId: com.newexample
       initialExample: "State"
 - extendedWaitUntil:
     visible:
-      id: "divkit-snapshot-area"
+      id: "divkit-content-ready"
     timeout: 30000
 - waitForAnimationToEnd
 - assertScreenshot:
@@ -16,6 +16,10 @@ appId: com.newexample
       id: "divkit-snapshot-area"
     thresholdPercentage: 98
 - tapOn: "State 1 - Blue"
+- extendedWaitUntil:
+    visible:
+      id: "divkit-content-ready"
+    timeout: 30000
 - waitForAnimationToEnd
 - assertScreenshot:
     path: .maestro/goldens/android/state-switching_part2.png

@@ -7,7 +7,7 @@ appId: com.newexample
       initialExample: "Transition In/Out Visibility"
 - extendedWaitUntil:
     visible:
-      id: "divkit-snapshot-area"
+      id: "divkit-content-ready"
     timeout: 60000
 - waitForAnimationToEnd
 - takeScreenshot:
@@ -18,6 +18,10 @@ appId: com.newexample
     from:
       id: "divkit-snapshot-area"
     direction: UP
+- extendedWaitUntil:
+    visible:
+      id: "divkit-content-ready"
+    timeout: 60000
 - waitForAnimationToEnd
 - takeScreenshot:
     path: .maestro/goldens/android/transition_in_out_visibility_part_2
