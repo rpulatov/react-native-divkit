@@ -125,7 +125,7 @@ exports[`DivImage snapshots full render snapshots image with aspect ratio and fi
         }
         style={
           {
-            "height": "100%",
+            "aspectRatio": 1.78,
             "width": "100%",
           }
         }
