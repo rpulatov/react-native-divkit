@@ -1,3 +1,10 @@
+## [1.11.3](https://github.com/rpulatov/react-native-divkit/compare/v1.11.2...v1.11.3) (2026-07-06)
+
+
+### Bug Fixes
+
+* **release:** добавлены ветки alpha для релизов ([d782526](https://github.com/rpulatov/react-native-divkit/commit/d78252650d96e5fa18f4ad9820f2192eced5368b))
+
 ## [1.11.2](https://github.com/rpulatov/react-native-divkit/compare/v1.11.1...v1.11.2) (2026-05-26)
 
 
