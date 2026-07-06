@@ -7,7 +7,7 @@ appId: com.newexample
       initialExample: "Pager + Indicator"
 - extendedWaitUntil:
     visible:
-      id: "divkit-snapshot-area"
+      id: "divkit-content-ready"
     timeout: 30000
 - waitForAnimationToEnd
 - assertScreenshot:
@@ -19,6 +19,10 @@ appId: com.newexample
     from:
       id: "pager_with_indicator"
     direction: LEFT
+- extendedWaitUntil:
+    visible:
+      id: "divkit-content-ready"
+    timeout: 30000
 - waitForAnimationToEnd
 - assertScreenshot:
     path: .maestro/goldens/android/pager-with-indicator_part2.png

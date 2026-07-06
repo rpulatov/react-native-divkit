@@ -45,7 +45,7 @@ export interface DivImageProps {
  */
 export function DivImage({ componentContext }: DivImageProps) {
     const { json, variables } = componentContext;
-    const { imageAdapter } = useDivKitContext();
+    const { imageAdapter, imageLoadTracker } = useDivKitContext();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
     const [naturalSize, setNaturalSize] = useState<{ width: number; height: number } | null>(null);
@@ -94,6 +94,17 @@ export function DivImage({ componentContext }: DivImageProps) {
         setNaturalSize(null);
         return undefined;
     }, [imageUrl, needsNaturalSize, imageAdapter]);
+
+    // Report the in-flight load to the host tracker (readiness signal for
+    // screenshot tests): counted while the image is loading, released on
+    // load end / error / unmount.
+    useEffect(() => {
+        if (!imageLoadTracker || !imageUrl || !loading) {
+            return undefined;
+        }
+        imageLoadTracker.increment();
+        return () => imageLoadTracker.decrement();
+    }, [imageLoadTracker, imageUrl, loading]);
 
     // Effective aspect ratio for container sizing (wrap_content case only)
     const effectiveAspectRatio = aspectRatio ?? (

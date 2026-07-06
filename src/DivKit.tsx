@@ -24,7 +24,7 @@ import type { Action, DivJson, DivVariable, Direction, VariableTrigger } from '.
 import type { DivBaseData } from './types/base';
 import type { ComponentContext } from './types/componentContext';
 import type { MaybeMissing } from './expressions/json';
-import { DivKitContext, type DivKitContextValue, type TypefaceProvider } from './context/DivKitContext';
+import { DivKitContext, type DivKitContextValue, type DivImageLoadTracker, type TypefaceProvider } from './context/DivKitContext';
 import type { DivImageAdapter } from './types/imageAdapter';
 import { rnImageAdapter } from './adapters/rn-image';
 import { ActionContext, type ActionContextValue } from './context/ActionContext';
@@ -121,6 +121,14 @@ export interface DivKitProps {
      * ```
      */
     imageAdapter?: DivImageAdapter;
+
+    /**
+     * Tracker of in-flight image loads. Every `DivImage` calls `increment()`
+     * when it starts loading and `decrement()` when the load ends (success or
+     * error). Lets the host know when all images have finished loading —
+     * useful as a readiness signal for screenshot-based UI tests.
+     */
+    imageLoadTracker?: DivImageLoadTracker;
 }
 
 /**
@@ -139,7 +147,8 @@ export function DivKit({
     id = 'root',
     globalVariablesController,
     typefaceProvider = _fontFamily => '',
-    imageAdapter = rnImageAdapter
+    imageAdapter = rnImageAdapter,
+    imageLoadTracker
 }: DivKitProps) {
     const componentIdCounter = useRef(0);
     const componentsMap = useRef<Map<string, ComponentContext>>(new Map());
@@ -709,6 +718,7 @@ export function DivKit({
             typefaceProvider,
 
             imageAdapter,
+            imageLoadTracker,
 
             variables,
             getVariable,
@@ -728,6 +738,7 @@ export function DivKit({
             platform,
             typefaceProvider,
             imageAdapter,
+            imageLoadTracker,
             variables,
             getVariable,
             setVariable,

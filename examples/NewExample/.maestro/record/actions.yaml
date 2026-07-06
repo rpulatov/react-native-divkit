@@ -7,7 +7,7 @@ appId: com.newexample
       initialExample: "Actions"
 - extendedWaitUntil:
     visible:
-      id: "divkit-snapshot-area"
+      id: "divkit-content-ready"
     timeout: 60000
 - waitForAnimationToEnd
 - takeScreenshot:
@@ -15,6 +15,10 @@ appId: com.newexample
     cropOn:
       id: "divkit-snapshot-area"
 - tapOn: "Increment Counter"
+- extendedWaitUntil:
+    visible:
+      id: "divkit-content-ready"
+    timeout: 60000
 - waitForAnimationToEnd
 - takeScreenshot:
     path: .maestro/goldens/android/actions_part2
