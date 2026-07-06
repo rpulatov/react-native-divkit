@@ -1,3 +1,18 @@
+# [1.12.0](https://github.com/rpulatov/react-native-divkit/compare/v1.11.3...v1.12.0) (2026-07-06)
+
+
+### Bug Fixes
+
+* **maestro:** добавить retry-count в команды maestro ([fbd7e99](https://github.com/rpulatov/react-native-divkit/commit/fbd7e999048cc05e8b1289068e1478be2a72cd86))
+* **maestro:** добавить retry-count в команды maestro ([52e6eb8](https://github.com/rpulatov/react-native-divkit/commit/52e6eb82a3746fa5787cf1acfebc4293d218f533))
+* **maestro:** добавить повторные попытки для запуска maestro ([da033ef](https://github.com/rpulatov/react-native-divkit/commit/da033ef89e8bc9e5d91ef20e806229901cea822d))
+* **maestro:** увеличить таймаут ожидания до 60 секунд ([f16e94b](https://github.com/rpulatov/react-native-divkit/commit/f16e94b3d44f1cbbef98d9008f9a94afe251980c))
+
+
+### Features
+
+* **maestro:** добавить трекер загрузки изображений ([364073e](https://github.com/rpulatov/react-native-divkit/commit/364073e86d856235cf775e078dca8b06e324a0d0))
+
 ## [1.11.3](https://github.com/rpulatov/react-native-divkit/compare/v1.11.2...v1.11.3) (2026-07-06)
 
 
