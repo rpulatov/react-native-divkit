@@ -83,6 +83,8 @@ describe('DivState', () => {
         setVariable: jest.fn(),
         registerComponent: jest.fn(),
         unregisterComponent: jest.fn(),
+        registerParentOf: jest.fn(),
+        unregisterParentOf: jest.fn(),
         execAnyActions: jest.fn(),
         genId: () => 'test-id'
     });

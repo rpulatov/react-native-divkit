@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { View, ViewStyle } from 'react-native';
+import type { DivBase } from '../../../typings/common';
 import type { ComponentContext } from '../../types/componentContext';
 import type { DivContainerData, ContainerOrientation } from '../../types/container';
 import type { ContentAlignmentHorizontal, ContentAlignmentVertical } from '../../types/alignment';
@@ -7,6 +8,7 @@ import type { LayoutParams } from '../../types/layoutParams';
 import { Outer } from '../utilities/Outer';
 import { DivComponent } from '../DivComponent';
 import { useDerivedFromVarsSimple } from '../../hooks/useDerivedFromVars';
+import { useParentOf } from '../../hooks/useParentOf';
 import { useDivKitContext } from '../../context/DivKitContext';
 import { LayoutParamsContext } from '../../context/LayoutParamsContext';
 
@@ -21,6 +23,37 @@ export interface DivContainerProps {
 export function DivContainer({ componentContext }: DivContainerProps) {
     const { direction } = useDivKitContext();
     const { json, variables } = componentContext;
+
+    // applyPatch support: patched items override json.items until the document
+    // itself is replaced (setData/new json identity resets the override).
+    // Mirrors Web Container.svelte replaceItems, which rewrites componentContext.json.
+    const [itemsOverride, setItemsOverride] = useState<DivBase[] | null>(null);
+    const prevJsonRef = useRef(json);
+    if (prevJsonRef.current !== json) {
+        prevJsonRef.current = json;
+        if (itemsOverride !== null) {
+            setItemsOverride(null);
+        }
+    }
+
+    const items = useMemo(
+        () => itemsOverride ?? (Array.isArray(json.items) ? json.items : []),
+        [itemsOverride, json.items]
+    );
+
+    const parentOfItems = useMemo(
+        () => items.map(item => ({
+            json: item,
+            id: (item as { id?: string } | undefined)?.id
+        })),
+        [items]
+    );
+
+    const replaceItems = useCallback((newItems: (DivBase | undefined)[]) => {
+        setItemsOverride(newItems.filter(Boolean) as DivBase[]);
+    }, []);
+
+    useParentOf(parentOfItems, replaceItems);
 
     // Reactive properties
     const orientation = useDerivedFromVarsSimple<ContainerOrientation>(
@@ -141,11 +174,11 @@ export function DivContainer({ componentContext }: DivContainerProps) {
         (json.height?.type === 'match_parent' || json.height?.type === 'fixed');
 
     const renderChildren = () => {
-        if (!json.items || json.items.length === 0) {
+        if (items.length === 0) {
             return null;
         }
 
-        return json.items.map((item, index) => {
+        return items.map((item, index) => {
             const childContext = componentContext.produceChildContext(item, {
                 path: index
             });
@@ -154,7 +187,8 @@ export function DivContainer({ componentContext }: DivContainerProps) {
                 return null;
             }
 
-            const child = <DivComponent key={item.id || `item-${index}`} componentContext={childContext} />;
+            const itemKey = (item as { id?: string }).id || `item-${index}`;
+            const child = <DivComponent key={itemKey} componentContext={childContext} />;
 
             // Wrap in positioned View for overlap mode.
             // When the container has a definite height (match_parent/fixed), ALL children are
@@ -163,7 +197,7 @@ export function DivContainer({ componentContext }: DivContainerProps) {
             // the first child stays in normal flow to establish the container's intrinsic height.
             if (orientation === 'overlap' && (overlapAllAbsolute || index > 0) && getOverlapWrapperStyle) {
                 return (
-                    <View key={item.id || `item-${index}`} style={getOverlapWrapperStyle(item)}>
+                    <View key={itemKey} style={getOverlapWrapperStyle(item)}>
                         {child}
                     </View>
                 );
