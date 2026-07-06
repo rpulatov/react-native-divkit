@@ -14,6 +14,7 @@ import type { EdgeInsets } from '../../types/edgeInserts';
 import { Outer } from '../utilities/Outer';
 import { DivComponent } from '../DivComponent';
 import { useDerivedFromVarsSimple } from '../../hooks/useDerivedFromVars';
+import { useParentOf } from '../../hooks/useParentOf';
 import { useDivKitContext } from '../../context/DivKitContext';
 import { usePagerContextOptional } from '../../context/PagerContext';
 import { wrapError } from '../../utils/wrapError';
@@ -81,9 +82,37 @@ export function DivPager({ componentContext }: DivPagerProps) {
     const isHorizontal = orientation !== 'vertical';
     const itemSpacing = (itemSpacingObj as { value?: number } | undefined)?.value ?? 0;
 
+    // applyPatch support: patched items override json.items until the document
+    // itself is replaced (mirrors Web Pager.svelte parentOf={items}).
+    const [itemsOverride, setItemsOverride] = useState<any[] | null>(null);
+    const prevJsonRef = useRef(json);
+    if (prevJsonRef.current !== json) {
+        prevJsonRef.current = json;
+        if (itemsOverride !== null) {
+            setItemsOverride(null);
+        }
+    }
+
     const items = useMemo(() => {
+        if (itemsOverride) {
+            return itemsOverride;
+        }
         return Array.isArray(json.items) ? json.items : [];
-    }, [json.items]);
+    }, [itemsOverride, json.items]);
+
+    const parentOfItems = useMemo(
+        () => items.map((item: any) => ({
+            json: item,
+            id: item?.id as string | undefined
+        })),
+        [items]
+    );
+
+    const replaceItems = useCallback((newItems: unknown[]) => {
+        setItemsOverride(newItems.filter(Boolean));
+    }, []);
+
+    useParentOf(parentOfItems, replaceItems);
 
     const isInfinite = useMemo(
         () => isInfiniteEnabled(infiniteScroll, items.length),

@@ -28,6 +28,7 @@ DivKit — это фреймворк для построения UI на осн�
 | Анимации нажатия (action_animation)| ✅ Готово   |
 | Transition_in / transition_out     | ✅ Готово   |
 | Transition_change (change_bounds)  | ✅ Готово   |
+| Патчи (applyPatch, div-patch)      | ✅ Готово   |
 
 ## Скриншоты
 
@@ -390,6 +391,54 @@ export default function App() {
 | `direction`      | `'ltr' \| 'rtl'`       | Нет         | Направление текста (по умолч.: `'ltr'`) |
 | `platform`       | `'desktop' \| 'touch'` | Нет         | Тип платформы (по умолч.: `'touch'`) |
 | `style`          | `ViewStyle`            | Нет         | Стили контейнера                   |
+
+## Патчи (applyPatch)
+
+Императивный API для точечного обновления карточки без полного перерендера —
+основа для server-driven UI и стриминга контента. Изменения адресуются по `id`
+элемента; заменяется только затронутое поддерево, поэтому состояние соседних
+элементов (выбранный state, позиция скролла, анимации) сохраняется.
+
+```tsx
+import { useRef } from 'react';
+import { DivKit, type DivKitHandle, type Patch } from 'react-native-divkit';
+
+function Screen({ data }) {
+    const divKitRef = useRef<DivKitHandle>(null);
+
+    const onServerPatch = (patch: Patch) => {
+        const applied = divKitRef.current?.applyPatch(patch);
+        // applied === false — транзакционный патч отклонён целиком
+    };
+
+    return <DivKit ref={divKitRef} data={data} />;
+}
+```
+
+Формат патча — стандартный [div-patch](https://divkit.tech/docs/en/concepts/divjson-patches):
+
+```json
+{
+    "templates": { "..." : "шаблоны патча (мерж first-wins с шаблонами карточки)" },
+    "patch": {
+        "mode": "partial",
+        "changes": [
+            { "id": "some-id", "items": [{ "type": "text", "text": "Замена" }] },
+            { "id": "removed-id" }
+        ],
+        "on_applied_actions": [],
+        "on_failed_actions": []
+    }
+}
+```
+
+- `mode: "transactional"` — патч применяется целиком или не применяется вовсе
+  (если хотя бы один `id` не найден, срабатывают `on_failed_actions`);
+  `"partial"` (по умолчанию) — применяется всё, что нашлось.
+- Изменение без `items` удаляет элемент; несколько `items` вставляются на его место.
+- Слоты с одним элементом (`state.states[].div`) принимают ровно один item на изменение.
+- Патчить можно детей `container`, `state` и `pager`; корневой div карточки не патчится
+  (как и в Web-версии).
 
 ## Хуки
 

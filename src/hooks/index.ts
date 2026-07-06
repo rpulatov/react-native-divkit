@@ -14,3 +14,6 @@ export { useAction, useActions, useActionHandler, useHasActions, type UseActionO
 
 // Local variables scope for inner nodes / templates
 export { useLocalVariables } from './useLocalVariables';
+
+// applyPatch support: parents register replaceable children
+export { useParentOf, type ParentOfItem, type ReplaceItemsFn } from './useParentOf';

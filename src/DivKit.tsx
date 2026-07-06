@@ -18,13 +18,13 @@
  * - Extensions
  */
 
-import React, { useMemo, useCallback, useRef, useEffect } from 'react';
+import React, { useMemo, useCallback, useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
 import { View, type ViewStyle } from 'react-native';
-import type { Action, DivJson, DivVariable, Direction, VariableTrigger } from '../typings/common';
+import type { Action, DivJson, DivVariable, Direction, Patch, VariableTrigger } from '../typings/common';
 import type { DivBaseData } from './types/base';
 import type { ComponentContext } from './types/componentContext';
 import type { MaybeMissing } from './expressions/json';
-import { DivKitContext, type DivKitContextValue, type DivImageLoadTracker, type TypefaceProvider } from './context/DivKitContext';
+import { DivKitContext, type DivKitContextValue, type DivImageLoadTracker, type ParentMethods, type TypefaceProvider } from './context/DivKitContext';
 import type { DivImageAdapter } from './types/imageAdapter';
 import { rnImageAdapter } from './adapters/rn-image';
 import { ActionContext, type ActionContextValue } from './context/ActionContext';
@@ -132,11 +132,26 @@ export interface DivKitProps {
 }
 
 /**
+ * Imperative API exposed via ref: `<DivKit ref={ref} ... />`.
+ * Mirrors the relevant part of Web DivkitInstance (typings/common.d.ts).
+ */
+export interface DivKitHandle {
+    /**
+     * Apply a div-patch: replace, insert or delete elements by id in place
+     * without re-rendering the whole card. Returns whether the patch was applied
+     * (in `transactional` mode a single unmatched change rejects the whole patch).
+     *
+     * Based on applyPatchInternal from Web Root.svelte.
+     */
+    applyPatch(patch: Patch): boolean;
+}
+
+/**
  * DivKit - Main component
  *
  * Renders DivKit JSON as React Native components
  */
-export function DivKit({
+export const DivKit = forwardRef<DivKitHandle, DivKitProps>(function DivKit({
     data,
     onStat,
     onCustomAction,
@@ -149,10 +164,26 @@ export function DivKit({
     typefaceProvider = _fontFamily => '',
     imageAdapter = rnImageAdapter,
     imageLoadTracker
-}: DivKitProps) {
+}: DivKitProps, ref) {
     const componentIdCounter = useRef(0);
     const componentsMap = useRef<Map<string, ComponentContext>>(new Map());
     const statesMap = useRef<Map<string, StateSetter>>(new Map());
+
+    // applyPatch support: child id -> replaceWith registered by its parent
+    // (mirrors parentOfMap from Web Root.svelte)
+    const parentOfMap = useRef<Map<string, ParentMethods>>(new Map());
+    // Templates dictionary for patches: card templates + first-wins merged patch
+    // templates. Lazily (re)initialized whenever `data` changes, since patches
+    // only make sense against the currently rendered document.
+    const patchTemplates = useRef<{ source: unknown; templates: Record<string, unknown> } | null>(null);
+
+    const registerParentOf = useCallback((childId: string, methods: ParentMethods): void => {
+        parentOfMap.current.set(childId, methods);
+    }, []);
+
+    const unregisterParentOf = useCallback((childId: string): void => {
+        parentOfMap.current.delete(childId);
+    }, []);
 
     // Error logging
     const logError = useCallback(
@@ -541,6 +572,70 @@ export function DivKit({
         [variables, logError, onStat, onCustomAction, setVariable]
     );
 
+    // Apply a div-patch (based on applyPatchInternal from Web Root.svelte).
+    // Unlike Web, this port resolves templates eagerly (the whole card is expanded
+    // once in the useMemo above), so patch items are template-resolved here, at
+    // application time, against card templates merged first-wins with patch templates.
+    const applyPatch = useCallback((json: Patch): boolean => {
+        if (!patchTemplates.current || patchTemplates.current.source !== data) {
+            patchTemplates.current = {
+                source: data,
+                templates: { ...(data.templates || {}) }
+            };
+        }
+        const templates = patchTemplates.current.templates;
+
+        if (json.templates) {
+            for (const name in json.templates) {
+                if (!Object.prototype.hasOwnProperty.call(templates, name)) {
+                    templates[name] = json.templates[name];
+                }
+            }
+        }
+
+        if (Array.isArray(json.patch?.changes)) {
+            if (json.patch.mode === 'transactional') {
+                const failed = json.patch.changes.find(change => {
+                    const methods = parentOfMap.current.get(change.id);
+                    if (!methods) {
+                        return true;
+                    }
+                    const newItemsLen = Array.isArray(change.items) ? change.items.length : 0;
+                    if (methods.isSingleMode && newItemsLen !== 1) {
+                        return true;
+                    }
+                    return false;
+                });
+                if (failed) {
+                    logError(wrapError(new Error('Skipping transactional, child is not found or broken'), {
+                        additional: {
+                            id: failed.id
+                        }
+                    }));
+                    execAnyActions(json.patch?.on_failed_actions);
+                    return false;
+                }
+            }
+            json.patch.changes.forEach(change => {
+                const methods = parentOfMap.current.get(change.id);
+                if (methods) {
+                    const items = Array.isArray(change.items) ?
+                        change.items.map(item => applyTemplatesRecursively(item, templates, logError)) :
+                        change.items;
+                    methods.replaceWith(change.id, items);
+                }
+            });
+            execAnyActions(json.patch?.on_applied_actions);
+            return true;
+        }
+
+        return false;
+    }, [data, logError, execAnyActions]);
+
+    useImperativeHandle(ref, () => ({
+        applyPatch
+    }), [applyPatch]);
+
     // Subscribe card-level variable_triggers (по образцу Web Root.svelte processVariableTriggers).
     // on_condition — actions fire only on false→true transition.
     // on_variable  — actions fire every time used variables change while condition is true.
@@ -727,6 +822,9 @@ export function DivKit({
             registerComponent,
             unregisterComponent,
 
+            registerParentOf,
+            unregisterParentOf,
+
             execAnyActions,
 
             genId
@@ -744,6 +842,8 @@ export function DivKit({
             setVariable,
             registerComponent,
             unregisterComponent,
+            registerParentOf,
+            unregisterParentOf,
             execAnyActions,
             genId
         ]
@@ -879,4 +979,4 @@ export function DivKit({
             </ActionContext.Provider>
         </DivKitContext.Provider>
     );
-}
+});
