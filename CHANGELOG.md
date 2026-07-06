@@ -1,3 +1,11 @@
+## [1.12.2](https://github.com/rpulatov/react-native-divkit/compare/v1.12.1...v1.12.2) (2026-07-06)
+
+
+### Bug Fixes
+
+* **image:** исправить размер изображения с учетом соотношения сторон ([fd96020](https://github.com/rpulatov/react-native-divkit/commit/fd960205c3f62d33de666c15be7e68b4965e4052))
+* **image:** обновить изображение для тестов ([c90cabf](https://github.com/rpulatov/react-native-divkit/commit/c90cabf1a3540971e8d2a725c9ec4db3bd3f9a3a))
+
 ## [1.12.1](https://github.com/rpulatov/react-native-divkit/compare/v1.12.0...v1.12.1) (2026-07-06)
 
 
