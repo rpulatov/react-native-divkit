@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Animated, Easing, View, ViewStyle, LayoutChangeEvent } from 'react-native';
+import type { DivBase } from '../../../typings/common';
 import type { ComponentContext } from '../../types/componentContext';
 import type { DivStateData, State } from '../../types/state';
 import type { TransitionChange } from '../../types/base';
 import type { MaybeMissing } from '../../expressions/json';
 import { Outer } from '../utilities/Outer';
+import { useParentOf } from '../../hooks/useParentOf';
 import { useStateContext } from '../../context/StateContext';
 import { useDivKitContext } from '../../context/DivKitContext';
 import { DivStateScopeContext, type DivStateScopeValue } from '../../context/DivStateScopeContext';
@@ -52,15 +54,50 @@ export function DivState({ componentContext }: DivStateProps) {
 
     const stateId = json.div_id || json.id;
 
+    // applyPatch support: patched state divs override json.states until the document
+    // itself is replaced. Mirrors Web State.svelte (parentOfSimpleMode: each states[].div
+    // with an id is an optional-item slot, a change must carry exactly one item).
+    const [statesOverride, setStatesOverride] = useState<typeof json.states | null>(null);
+    const prevJsonRef = useRef(json);
+    if (prevJsonRef.current !== json) {
+        prevJsonRef.current = json;
+        if (statesOverride !== null) {
+            setStatesOverride(null);
+        }
+    }
+
+    const states = statesOverride ?? json.states;
+
+    const parentOfItems = useMemo(
+        () => (Array.isArray(states) ? states : []).map(it => ({
+            json: it.div,
+            id: (it.div as { id?: string } | undefined)?.id
+        })),
+        [states]
+    );
+
+    const replaceItems = useCallback((newDivs: (DivBase | undefined)[]) => {
+        // state_id metadata never changes under patches (single mode replaces divs
+        // 1:1 in place), so the original json.states is a safe base even when several
+        // patch changes land before a re-render — newDivs is always the full list.
+        const base = Array.isArray(json.states) ? json.states : [];
+        setStatesOverride(base.map((it, index) => ({
+            ...it,
+            div: newDivs[index] as typeof it.div
+        })));
+    }, [json.states]);
+
+    useParentOf(parentOfItems, replaceItems, true);
+
     const defaultStateId = useMemo(() => {
         if (json.default_state_id) {
             return json.default_state_id;
         }
-        if (json.states && json.states.length > 0) {
-            return json.states[0].state_id;
+        if (states && states.length > 0) {
+            return states[0].state_id;
         }
         return undefined;
-    }, [json.default_state_id, json.states]);
+    }, [json.default_state_id, states]);
 
     const [currentStateId, setCurrentStateId] = useState<string | undefined>(defaultStateId);
     const [stagedStateChange, setStagedStateChange] = useState<StagedStateChange | null>(null);
@@ -106,8 +143,8 @@ export function DivState({ componentContext }: DivStateProps) {
             }
         }
 
-        const nextState = json.states?.find(state => state.state_id === newStateId);
-        const previousState = json.states?.find(state => state.state_id === currentStateId);
+        const nextState = states?.find(state => state.state_id === newStateId);
+        const previousState = states?.find(state => state.state_id === currentStateId);
         const nextTransitionChange = (nextState?.div as any)?.transition_change as MaybeMissing<TransitionChange> | undefined;
         const currentTransitionChange = (previousState?.div as any)?.transition_change as MaybeMissing<TransitionChange> | undefined;
         const effectiveTransitionChange = nextTransitionChange || currentTransitionChange || transitionChange;
@@ -166,7 +203,7 @@ export function DivState({ componentContext }: DivStateProps) {
         setCurrentStateId(newStateId);
         setStagedStateChange(null);
         setPendingStateId(undefined);
-    }, [currentStateId, pendingStateId, json.states, transitionChange, contentSize, animatedFrame, componentContext]);
+    }, [currentStateId, pendingStateId, states, transitionChange, contentSize, animatedFrame, componentContext]);
 
     // Handle state_id_variable (two-way binding)
     const stateVariableName = json.state_id_variable;
@@ -205,13 +242,13 @@ export function DivState({ componentContext }: DivStateProps) {
     }, [stateId, registerState, applyStateChange]);
 
     useEffect(() => {
-        if (!json.states || json.states.length === 0) {
+        if (!states || states.length === 0) {
             componentContext.logError(wrapError(new Error('Empty "states" prop for div "state"')));
         }
         if (!stateId) {
             componentContext.logError(wrapError(new Error('Missing "id" prop for div "state"')));
         }
-    }, [json.states, stateId, componentContext]);
+    }, [states, stateId, componentContext]);
 
     useEffect(() => {
         return () => {
@@ -223,11 +260,11 @@ export function DivState({ componentContext }: DivStateProps) {
     }, []);
 
     const currentState = useMemo((): State | undefined => {
-        if (!json.states) return undefined;
-        const found = json.states.find(s => s.state_id === currentStateId);
+        if (!states) return undefined;
+        const found = states.find(s => s.state_id === currentStateId);
         if (!found || !found.state_id) return undefined;
         return found as State;
-    }, [json.states, currentStateId]);
+    }, [states, currentStateId]);
 
     const renderedDiv = currentState?.div;
 
