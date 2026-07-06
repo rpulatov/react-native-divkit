@@ -136,8 +136,16 @@ export function DivImage({ componentContext }: DivImageProps) {
         if (scale === 'no_scale' && naturalSize) {
             return { width: naturalSize.width, height: naturalSize.height };
         }
+        // Aspect-ratio-driven sizing: give the Image its own width + aspectRatio so it
+        // self-sizes on the main axis. Relying on height:'100%' here is unreliable on
+        // Android when the container height is derived purely from aspectRatio (there is
+        // no definite pixel height in the chain) — the image collapses / fails to render
+        // (e.g. a logo with `aspect` and no explicit height).
+        if (effectiveAspectRatio !== undefined) {
+            return { width: '100%', aspectRatio: effectiveAspectRatio };
+        }
         // wrap_content without known size yet: zero height until getSize resolves
-        if (isHeightWrapContent && effectiveAspectRatio === undefined) {
+        if (isHeightWrapContent) {
             return { width: '100%', height: 0 };
         }
         return { width: '100%', height: '100%' };
