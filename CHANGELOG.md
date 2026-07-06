@@ -1,3 +1,10 @@
+## [1.12.1](https://github.com/rpulatov/react-native-divkit/compare/v1.12.0...v1.12.1) (2026-07-06)
+
+
+### Bug Fixes
+
+* **maestro:** включить новый архитектурный режим ([8847a98](https://github.com/rpulatov/react-native-divkit/commit/8847a9842a0ca64240eca2ce7f7110821773242c))
+
 # [1.12.0](https://github.com/rpulatov/react-native-divkit/compare/v1.11.3...v1.12.0) (2026-07-06)
 
 
